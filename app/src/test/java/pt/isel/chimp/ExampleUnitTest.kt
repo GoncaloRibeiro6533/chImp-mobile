@@ -1,4 +1,4 @@
-package com.example.chimp
+package pt.isel.chimp
 
 import org.junit.Test
 
