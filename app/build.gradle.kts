@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.chimp"
+    namespace = "pt.isel.chimp"
     compileSdk = 34
 
     defaultConfig {
