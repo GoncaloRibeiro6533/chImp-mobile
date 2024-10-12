@@ -8,6 +8,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import pt.isel.chimp.R
 import pt.isel.chimp.TAG
 
@@ -17,24 +19,33 @@ import pt.isel.chimp.TAG
  * In this case ee don't need one because the screen is static and doesn't have any dynamic data.
  */
 class AboutActivity : ComponentActivity() {
+    private val viewModel by viewModels<AboutScreenViewModel>()
+
+    companion object {
+        fun navigateTo(origin: ComponentActivity) {
+            val intent = Intent(origin, AboutActivity::class.java)
+            origin.startActivity(intent)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.v(TAG, "AboutActivity.onCreate() called")
+        enableEdgeToEdge()
         setContent {
             AboutScreen(
                 onNavigateBack = { finish() },
-                onSendEmailRequested = { openSendEmail() },
-                onOpenUrlRequested = { openURL(it) },
-                socials = socialLinks
+                onSendEmailRequested = { openSendEmail(it) },
+                onOpenUrlRequested = { openURL(it) }
             )
         }
     }
 
-    private fun openSendEmail() {
+    private fun openSendEmail(email: String) {
         try {
             val intent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
-                putExtra(Intent.EXTRA_EMAIL, arrayOf(AUTHOR_EMAIL))
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
                 putExtra(Intent.EXTRA_SUBJECT, EMAIL_SUBJECT)
             }
 
@@ -68,12 +79,26 @@ class AboutActivity : ComponentActivity() {
     }
 }
 
-val socialLinks = listOf(
+val defaultAuthors = listOf(
     CreatorInfo(
-        link = Uri.parse("https://www.github.com"),
-        imageId = R.drawable.ic_github_img
+        name = "Tiago Silva",
+        imageId = R.drawable.ic_user_img,
+        socials = socialsDefault("tiago15ts"),
+        email = "A48252@alunos.isel.pt"
     ),
+    CreatorInfo(
+        name = "Name",
+        imageId = R.drawable.ic_user_img,
+        socials = socialsDefault("name"),
+        email = "A48xxx@alunos.isel.pt"
+    ),
+    CreatorInfo(
+        name = "Name",
+        imageId = R.drawable.ic_user_img,
+        socials = socialsDefault("name"),
+        email = "A48xxx@alunos.isel.pt"
+    )
 )
 
-private const val AUTHOR_EMAIL = "A48XXX@alunos.isel.pt"
+
 private const val EMAIL_SUBJECT = "About the Channel and Messages App"
