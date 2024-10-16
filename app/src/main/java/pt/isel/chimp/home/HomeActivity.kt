@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import pt.isel.chimp.about.AboutActivity
+import pt.isel.chimp.about.navigateTo
 import pt.isel.chimp.ui.theme.ChImpTheme
 
 const val TAG = "CHIMP"
@@ -28,7 +29,7 @@ class HomeActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     HomeScreen(
-                        onAboutRequested = { AboutActivity.navigateTo(this) },
+                        onAboutRequested = { navigateTo(this,AboutActivity::class.java) },
                         )
                 }
             }

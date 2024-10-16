@@ -1,6 +1,8 @@
 package pt.isel.chimp.about
 
+import android.content.Intent
 import android.net.Uri
+import androidx.activity.ComponentActivity
 import androidx.annotation.DrawableRes
 import pt.isel.chimp.R
 
@@ -26,3 +28,9 @@ fun socialsDefault(gitHub: String) = listOf(
         imageId = R.drawable.ic_github
     )
 )
+
+//todo move this function to a general folder
+fun navigateTo(origin: ComponentActivity, destination: Class<*>) {
+    val intent = Intent(origin, destination)
+    origin.startActivity(intent)
+}

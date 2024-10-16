@@ -21,12 +21,9 @@ import pt.isel.chimp.TAG
 class AboutActivity : ComponentActivity() {
     private val viewModel by viewModels<AboutScreenViewModel>()
 
-    companion object {
-        fun navigateTo(origin: ComponentActivity) {
-            val intent = Intent(origin, AboutActivity::class.java)
-            origin.startActivity(intent)
-        }
-    }
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
