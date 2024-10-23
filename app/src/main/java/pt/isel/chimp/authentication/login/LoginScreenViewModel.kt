@@ -1,4 +1,4 @@
-package pt.isel.chimp.auth.login
+package pt.isel.chimp.authentication.login
 
 import androidx.lifecycle.ViewModel
 
