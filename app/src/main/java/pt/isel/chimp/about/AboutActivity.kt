@@ -21,10 +21,6 @@ import pt.isel.chimp.TAG
 class AboutActivity : ComponentActivity() {
     private val viewModel by viewModels<AboutScreenViewModel>()
 
-
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.v(TAG, "AboutActivity.onCreate() called")

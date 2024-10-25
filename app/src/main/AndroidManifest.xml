@@ -35,6 +35,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".authentication.login.LoginActivity"
+            android:exported="true"
+            android:label="LoginActivity"
+            android:theme="@style/Theme.ChImp" />
+        <activity
+            android:name=".authentication.register.RegisterActivity"
+            android:exported="true"
+            android:label="RegisterActivity"
+            android:theme="@style/Theme.ChImp" />
 
     </application>
 

@@ -16,9 +16,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.chimp.R
 import pt.isel.chimp.ui.theme.ChImpTheme
 
+/**
+ * Used to aggregate [TopBar] navigation handlers. If a handler is null, the corresponding
+ * navigation element is not displayed.
+ *
+ * @property onBackRequested the callback invoked when the user clicks the back button.
+ * @property onAboutRequested the callback invoked when the user clicks the about button.
+ */
 data class NavigationHandlers(
     val onBackRequested: (() -> Unit)? = null,
-    val onAboutRequested: () -> Unit = { }
+    val onAboutRequested: (() -> Unit)? = null
 )
 
 const val NavigateBackTestTag = "NavigateBack"
@@ -44,14 +51,16 @@ fun TopBar(
             }
         },
         actions = {
-            IconButton(
-                onClick = navigation.onAboutRequested,
-                modifier = Modifier.testTag("AboutButton")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = stringResource(id = R.string.top_bar_navigate_to_about)
-                )
+            if (navigation.onAboutRequested != null) {
+                IconButton(
+                    onClick = navigation.onAboutRequested,
+                    modifier = Modifier.testTag("AboutButton")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = stringResource(id = R.string.top_bar_navigate_to_about)
+                    )
+                }
             }
         }
     )
