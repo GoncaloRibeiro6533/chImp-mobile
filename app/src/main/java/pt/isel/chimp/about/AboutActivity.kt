@@ -11,7 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import pt.isel.chimp.R
-
+import pt.isel.chimp.home.TAG
 
 
 /**

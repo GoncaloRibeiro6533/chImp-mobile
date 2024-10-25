@@ -1,6 +1,7 @@
 package pt.isel.chimp.service
 
 import kotlinx.coroutines.delay
+import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.domain.user.User
 
 /**
@@ -15,6 +16,7 @@ import pt.isel.chimp.domain.user.User
 interface UserService {
     suspend fun fetchUser(token: String): User
     suspend fun updateUsername(newUsername: String, token: String): User
+    suspend fun login(username: String, password: String): AuthenticatedUser
 }
 
 
@@ -39,6 +41,7 @@ class UnauthorizedUserException(message: String, cause: Throwable? = null) : Exc
  */
 class UserNotFoundException(message: String, cause: Throwable? = null) : Exception(message, cause)
 class UsernameAlreadyExists(message: String, cause: Throwable? = null) : Exception(message, cause)
+class InvalidPasswordException(message: String, cause: Throwable? = null) : Exception(message, cause)
 
 /**
  * Fake implementation of the [ProfileService] that returns a fixed profile.
@@ -52,6 +55,11 @@ class MockUserService : UserService {
             User(2, "Alice", "alice@example.com"),
             User(3, "John", "john@example.com"),
         )
+    private val passwords = mapOf(
+        "Bob" to "A1234ab",
+        "Alice" to "1234VDd",
+        "John" to "1234SADfs",
+    )
     private var currentId = 4
     private data class Token(val token: String, val userId: Int)
     private val sessions = mutableListOf<Token>(
@@ -77,5 +85,14 @@ class MockUserService : UserService {
         users.remove(user)
         users.add(newUser)
         return newUser
+    }
+
+    override suspend fun login(username: String, password: String): AuthenticatedUser {
+        delay(1000)
+        val user = users.find { it.username == username } ?: throw FetchUserException("User not found")
+        passwords[username] ?: throw InvalidPasswordException("Invalid password")
+        val token = "token${currentId++}"
+        sessions.add(Token(token, user.id))
+        return AuthenticatedUser(user, token)
     }
 }

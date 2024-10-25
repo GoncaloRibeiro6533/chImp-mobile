@@ -28,7 +28,8 @@ import pt.isel.chimp.authentication.login.components.LoginTextFields
 import pt.isel.chimp.authentication.register.REGISTER_SCREEN_TEST_TAG
 import pt.isel.chimp.authentication.validatePassword
 import pt.isel.chimp.authentication.validateUsername
-import pt.isel.chimp.domain.AuthenticatedUser
+import pt.isel.chimp.domain.user.AuthenticatedUser
+import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -46,9 +47,9 @@ var newUsername = ""
 
 @Composable
 fun LoginScreen(
-    //state: LoadState<LoginResponse> = Idle,
-    onLogin: (String, String) -> AuthenticatedUser = { _, _ -> DEFAULT_LOGIN_RESPONSE },
+    viewModel: LoginScreenViewModel,
     //onLoginSuccessful: (UserInfo) -> Unit,
+    onLogin: (String, String) -> AuthenticatedUser = { _, _ -> DEFAULT_LOGIN_RESPONSE },
     onBackRequested: () -> Unit,
     onRegisterRequested: () -> Unit = { }
 ){
@@ -130,9 +131,9 @@ fun LoginScreen(
 @Composable
 private fun LoginView() {
     LoginScreen(
-        //state = Idle,
+        viewModel = LoginScreenViewModel(ChImpService()),
         onLogin = { _, _ -> DEFAULT_LOGIN_RESPONSE },
         //onLoginSuccessful = { },
-        onBackRequested = { }
+        onBackRequested = { },
     )
 }
