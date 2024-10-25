@@ -4,25 +4,29 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import pt.isel.chimp.DependenciesContainer
 import pt.isel.chimp.authentication.register.RegisterActivity
-import pt.isel.chimp.domain.AuthenticatedUser
-import pt.isel.chimp.ui.theme.ChImpTheme
+import pt.isel.chimp.domain.user.AuthenticatedUser
+import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.utils.navigateTo
 
 class LoginActivity: ComponentActivity() {
-    private val viewModel by viewModels<LoginScreenViewModel>()
-
+    private val viewModel by viewModels<LoginScreenViewModel>(
+        factoryProducer = {
+            LoginScreenViewModelFactory((application as DependenciesContainer).chImpService)
+        }
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ChImpTheme {
+
                 LoginScreen(
-                    //state = viewModel.login,
-                    onLogin = { username, password ->
-                        AuthenticatedUser(1, "token")
+                    viewModel = viewModel,
+                    onLogin = { username, email ->
+                        AuthenticatedUser(User(1, username,email), "token")
                         //viewModel.fetchLogin(app.mainService, username, password)
                     },
-                    /* //todo navigate to profile
+                    /* //todo navigate to channelsListScreen
                     onLoginSuccessful = { userInfo ->
                         run {
                             app.userInfo = userInfo
@@ -32,11 +36,9 @@ class LoginActivity: ComponentActivity() {
 
                      */
                     onBackRequested = { finish() },
-                    onRegisterRequested = { navigateTo(this, RegisterActivity::class.java) }
+                    onRegisterRequested = { navigateTo(this, RegisterActivity::class.java) },
                 )
             }
-
-        }
 
     }
 }

@@ -14,7 +14,6 @@ import pt.isel.chimp.service.ChImpService
 
 sealed interface ProfileScreenState {
 
-
     data object Idle : ProfileScreenState
     data object Loading : ProfileScreenState
     data class Success(val profile: Profile) : ProfileScreenState
