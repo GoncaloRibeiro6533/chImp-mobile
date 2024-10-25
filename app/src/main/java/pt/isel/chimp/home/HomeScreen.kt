@@ -16,12 +16,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import pt.isel.chimp.service.ChannelService
+import pt.isel.chimp.service.MockChannelService
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
 
 @Composable
 fun HomeScreen(
+    viewModel: HomeScreenViewModel,
     onAboutRequested : () -> Unit = { },
 ) {
 
@@ -57,5 +60,5 @@ fun HomeScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(HomeScreenViewModel(MockChannelService()))
 }

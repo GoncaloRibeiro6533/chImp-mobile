@@ -36,7 +36,13 @@
             android:label="ProfileActivity"
             android:theme="@style/Theme.ChImp"
             />
-
+        <activity
+            android:name=".menu.MenuActivity"
+            android:exported="true"
+            android:label="MenuActivity"
+            android:theme="@style/Theme.ChImp"
+            android:layoutDirection="ltr"
+            />
     </application>
 
 </manifest>

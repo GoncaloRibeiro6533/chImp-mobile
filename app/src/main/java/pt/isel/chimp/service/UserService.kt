@@ -24,7 +24,19 @@ interface UserService {
  * @property cause the cause of the error.
  */
 class FetchUserException(message: String, cause: Throwable? = null) : Exception(message, cause)
+
+/**
+ * Represents an error that occurred while updating the user profile.
+ * @property message the error message.
+ * @property cause the cause of the error.
+ */
 class UnauthorizedUserException(message: String, cause: Throwable? = null) : Exception(message, cause)
+
+/**
+ * Represents an error that
+ * @property message the error message.
+ * @property cause the cause of the error.
+ */
 class UserNotFoundException(message: String, cause: Throwable? = null) : Exception(message, cause)
 class UsernameAlreadyExists(message: String, cause: Throwable? = null) : Exception(message, cause)
 

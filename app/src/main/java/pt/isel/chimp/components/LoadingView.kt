@@ -24,27 +24,27 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 
 @Composable
 fun LoadingView(modifier: Modifier = Modifier) {
-        Column(
-                modifier = modifier
-                        .fillMaxSize()
-                        .background(Color.White.copy(alpha = .5F)),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-        ){
-           Text("Loading...")
-         CircularProgressIndicator(
-                modifier = Modifier.width(64.dp),
-                color = MaterialTheme.colorScheme.secondary,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant,
-            )
-            }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White.copy(alpha = .5F)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ){
+        Text("Loading...")
+        CircularProgressIndicator(
+            modifier = Modifier.width(64.dp),
+            color = MaterialTheme.colorScheme.secondary,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+        )
+    }
 }
 
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun LoadingViewPreview() {
-        ChImpTheme {
-                LoadingView()
-        }
+    ChImpTheme {
+        LoadingView()
+    }
 }

@@ -1,8 +1,6 @@
 package pt.isel.chimp.service
 
-class ChImpService(){
-
-    val userService: UserService by lazy {
-        MockUserService()
-    }
+interface ChImpService {
+    val userService: UserService
+    val channelService: ChannelService
 }

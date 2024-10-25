@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.profile.Profile
 import pt.isel.chimp.service.ChImpService
+import pt.isel.chimp.service.UserService
 
 
 sealed interface ProfileScreenState {
@@ -23,17 +24,17 @@ sealed interface ProfileScreenState {
 
 }
 
-class ProfileScreenViewModel(private val services: ChImpService) : ViewModel() {
+class ProfileScreenViewModel(private val userServices: UserService) : ViewModel() {
 
     var state: ProfileScreenState by mutableStateOf<ProfileScreenState>(ProfileScreenState.Idle)
         private set
 
     fun fetchProfile(token: String) {
         if (state != ProfileScreenState.Loading) {
-            viewModelScope.launch {
                 state = ProfileScreenState.Loading
+            viewModelScope.launch {
                 state = try {
-                    val user = services.userService.fetchUser(token)
+                    val user = userServices.fetchUser(token)
                     val state = state is ProfileScreenState.Loading
                     Log.d("StateOfProfile", state.toString())
                     ProfileScreenState.Success(Profile(user.username, user.email))
@@ -49,7 +50,7 @@ class ProfileScreenViewModel(private val services: ChImpService) : ViewModel() {
             state = ProfileScreenState.Loading
             viewModelScope.launch {
                 state = try {
-                    val user = services.userService.updateUsername(newUsername, token)
+                    val user = userServices.updateUsername(newUsername, token)
                     ProfileScreenState.Success(Profile(user.username, user.email))
                 } catch (e: Throwable) {
                     ProfileScreenState.Error(e)
@@ -75,7 +76,7 @@ class ProfileScreenViewModel(private val services: ChImpService) : ViewModel() {
 @Suppress("UNCHECKED_CAST")
 class ProfileScreenViewModelFactory(private val service: ChImpService): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>):  T {
-        return ProfileScreenViewModel(service) as T
+        return ProfileScreenViewModel(service.userService) as T
     }
 }
 

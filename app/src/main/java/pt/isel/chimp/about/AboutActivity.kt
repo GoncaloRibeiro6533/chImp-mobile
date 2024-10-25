@@ -11,7 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import pt.isel.chimp.R
-import pt.isel.chimp.TAG
+
 
 
 /**
@@ -23,7 +23,6 @@ class AboutActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.v(TAG, "AboutActivity.onCreate() called")
         enableEdgeToEdge()
         setContent {
             AboutScreen(
@@ -44,7 +43,6 @@ class AboutActivity : ComponentActivity() {
 
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            Log.e(TAG, "Failed to send email", e)
             Toast
                 .makeText(
                     this,
@@ -60,7 +58,6 @@ class AboutActivity : ComponentActivity() {
             val intent = Intent(Intent.ACTION_VIEW, url)
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            Log.e(TAG, "Failed to open URL", e)
             Toast
                 .makeText(
                     this,
