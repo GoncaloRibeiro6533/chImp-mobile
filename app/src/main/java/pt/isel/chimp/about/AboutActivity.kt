@@ -4,14 +4,12 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import pt.isel.chimp.R
-import pt.isel.chimp.home.TAG
 
 
 /**
@@ -77,10 +75,10 @@ val defaultAuthors = listOf(
         email = "A48252@alunos.isel.pt"
     ),
     CreatorInfo(
-        name = "Name",
+        name = "Gonçalo Ribeiro",
         imageId = R.drawable.ic_user_img,
-        socials = socialsDefault("name"),
-        email = "A48xxx@alunos.isel.pt"
+        socials = socialsDefault("GoncaloRibeiro6533"),
+        email = "A48305@alunos.isel.pt"
     ),
     CreatorInfo(
         name = "Name",

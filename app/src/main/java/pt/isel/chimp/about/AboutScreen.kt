@@ -138,10 +138,10 @@ private fun InfoScreenPreview() {
             email = "A48252@alunos.isel.pt"
         ),
         CreatorInfo(
-            name = "Name",
+            name = "Gonçalo Ribeiro",
             imageId = R.drawable.ic_user_img,
-            socials = socialsDefault("name"),
-            email = "A48xxx@alunos.isel.pt"
+            socials = socialsDefault("GoncaloRibeiro6533"),
+            email = "A48305@alunos.isel.pt"
         ),
         CreatorInfo(
             name = "Name",

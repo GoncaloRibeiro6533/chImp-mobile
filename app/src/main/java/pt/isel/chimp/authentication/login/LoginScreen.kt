@@ -29,7 +29,7 @@ import pt.isel.chimp.authentication.register.REGISTER_SCREEN_TEST_TAG
 import pt.isel.chimp.authentication.validatePassword
 import pt.isel.chimp.authentication.validateUsername
 import pt.isel.chimp.domain.user.AuthenticatedUser
-import pt.isel.chimp.service.ChImpService
+import pt.isel.chimp.service.MockUserService
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -131,7 +131,7 @@ fun LoginScreen(
 @Composable
 private fun LoginView() {
     LoginScreen(
-        viewModel = LoginScreenViewModel(ChImpService()),
+        viewModel = LoginScreenViewModel(MockUserService()),
         onLogin = { _, _ -> DEFAULT_LOGIN_RESPONSE },
         //onLoginSuccessful = { },
         onBackRequested = { },

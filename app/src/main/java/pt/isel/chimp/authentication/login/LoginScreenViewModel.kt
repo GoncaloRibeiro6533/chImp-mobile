@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.service.ChImpService
+import pt.isel.chimp.service.UserService
 
 
 sealed interface LoginScreenState {
@@ -18,7 +19,7 @@ sealed interface LoginScreenState {
     data class Error(val exception: Throwable) : LoginScreenState
 }
 
-class LoginScreenViewModel(private val services: ChImpService) : ViewModel() {
+class LoginScreenViewModel(private val userService: UserService ) : ViewModel() {
 
         var state: LoginScreenState by mutableStateOf<LoginScreenState>(LoginScreenState.Idle)
             private set
@@ -28,7 +29,7 @@ class LoginScreenViewModel(private val services: ChImpService) : ViewModel() {
                 state = LoginScreenState.Loading
                 viewModelScope.launch {
                     state = try {
-                        val user = services.userService.login(username, password)
+                        val user = userService.login(username, password)
                         LoginScreenState.Success(user)
                     } catch (e: Throwable) {
                         LoginScreenState.Error(e)
@@ -42,7 +43,7 @@ class LoginScreenViewModel(private val services: ChImpService) : ViewModel() {
 @Suppress("UNCHECKED_CAST")
 class LoginScreenViewModelFactory(private val service: ChImpService): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>):  T {
-        return LoginScreenViewModel(service) as T
+        return LoginScreenViewModel(service.userService) as T
     }
 }
 
