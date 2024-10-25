@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".ChImpApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,28 +13,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChImp"
         tools:targetApi="31">
-        <activity
-            android:name="pt.isel.chimp.MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.ChImp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity android:name="pt.isel.chimp.about.AboutActivity" />
         <activity
             android:name=".home.HomeActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.ChImp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".authentication.login.LoginActivity"
@@ -45,6 +30,12 @@
             android:exported="true"
             android:label="RegisterActivity"
             android:theme="@style/Theme.ChImp" />
+        <activity
+            android:name=".profile.ProfileActivity"
+            android:exported="true"
+            android:label="ProfileActivity"
+            android:theme="@style/Theme.ChImp"
+            />
 
     </application>
 

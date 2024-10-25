@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import pt.isel.chimp.DependenciesContainer
-import pt.isel.chimp.about.navigateTo
 
 class ProfileActivity : ComponentActivity() {
 
