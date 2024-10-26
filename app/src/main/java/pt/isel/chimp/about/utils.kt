@@ -20,9 +20,9 @@ data class SocialInfo(
     @DrawableRes val imageId: Int
 )
 
-fun socialsDefault(gitHub: String) = listOf(
+fun socialsDefault(githubName: String) = listOf(
     SocialInfo(
-        link = Uri.parse("https://github.com/$gitHub"),
+        link = Uri.parse("https://github.com/$githubName"),
         imageId = R.drawable.ic_github
     )
 )

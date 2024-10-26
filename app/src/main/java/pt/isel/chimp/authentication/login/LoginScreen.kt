@@ -1,8 +1,8 @@
 package pt.isel.chimp.authentication.login
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
@@ -21,13 +21,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.chimp.authentication.DEFAULT_LOGIN_RESPONSE
 import pt.isel.chimp.authentication.login.components.LoginButton
 import pt.isel.chimp.authentication.login.components.LoginTextFields
-import pt.isel.chimp.authentication.register.REGISTER_SCREEN_TEST_TAG
 import pt.isel.chimp.authentication.validatePassword
 import pt.isel.chimp.authentication.validateUsername
+import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.service.MockUserService
 import pt.isel.chimp.ui.NavigationHandlers
@@ -48,8 +48,7 @@ var newUsername = ""
 @Composable
 fun LoginScreen(
     viewModel: LoginScreenViewModel,
-    //onLoginSuccessful: (UserInfo) -> Unit,
-    onLogin: (String, String) -> AuthenticatedUser = { _, _ -> DEFAULT_LOGIN_RESPONSE },
+    onLoginSuccessful: (AuthenticatedUser) -> Unit,
     onBackRequested: () -> Unit,
     onRegisterRequested: () -> Unit = { }
 ){
@@ -65,49 +64,49 @@ fun LoginScreen(
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
-                .testTag(REGISTER_SCREEN_TEST_TAG),
+                .testTag(LOGIN_SCREEN_TEST_TAG),
             topBar = { TopBar(NavigationHandlers(onBackRequested = onBackRequested)) },
-            ) { innerPadding ->
+        ) { innerPadding ->
             Column(
-                verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
             ) {
-                Text(
-                    text = "Login",
-                    modifier = Modifier.padding(innerPadding)
-                )
 
-                LoginTextFields(
-                    username = username,
-                    password = password,
-                    onUsernameChangeCallback = { newUsername = it; username = it },
-                    onPasswordChangeCallback = { password = it }
-                )
+                when (val currentState = viewModel.state) {
+                    is LoginScreenState.Idle -> {
+                        Text(
+                            text = "Login",
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                        LoginTextFields(
+                            username = username,
+                            password = password,
+                            onUsernameChangeCallback = { newUsername = it; username = it },
+                            onPasswordChangeCallback = { password = it }
+                        )
+                        LoginButton(enabled = !invalidFields) {
+                            if (!invalidFields)
+                            viewModel.fetchLogin(username, password)
+                        }
 
-                LoginButton(/*enabled = state !is Loading*/) {
-                    if (invalidFields)
-                        return@LoginButton
-
-                    onLogin(username, password)
+                    }
+                    is LoginScreenState.Loading -> {
+                        LoadingView()
+                    }
+                    is LoginScreenState.Success -> {
+                        newUsername = username
+                        Text(text = "Login successful", style = TextStyle(fontSize = 24.sp))
+                        onLoginSuccessful(currentState.user)
+                    }
+                    is LoginScreenState.Error -> {
+                        Text(text = "Login failed. Please try again", style = TextStyle(fontSize = 24.sp))
+                        Spacer(modifier = Modifier.padding(6.dp))
+                        val errorMsg = extractErrorMessage(currentState.exception.toString())
+                        Text(text = errorMsg, style = TextStyle(fontSize = 24.sp))
+                        Spacer(modifier = Modifier.padding(12.dp))
+                    }
                 }
-/*
-                if (state is Loaded && state.value.isSuccess) {
-                    newUsername = username
-                    Text(text = "Login successful", style = TextStyle(fontSize = 24.sp))
-                }
 
-                if (state is Loaded && state.value.isFailure) {
-                    Text(text = "Login failed. Please try again", style = TextStyle(fontSize = 24.sp))
-                    Spacer(modifier = Modifier.padding(6.dp))
-                    val errorMsg = extractErrorMessage(state.value.toString())
-                    Text(text = errorMsg, style = TextStyle(fontSize = 24.sp))
-                    Spacer(modifier = Modifier.padding(12.dp))
-                }
-
- */
                 val annotatedString = buildAnnotatedString {
                     withStyle(style = androidx.compose.ui.text.SpanStyle(color = MaterialTheme.colorScheme.primary)) {
                         append("Sign Up")
@@ -118,11 +117,9 @@ fun LoginScreen(
                     ClickableText(text = annotatedString, onClick = {onRegisterRequested()}, style = TextStyle(fontSize = 24.sp))
                 }
             }
-
-            }
-
         }
     }
+}
 
 
 
@@ -132,8 +129,7 @@ fun LoginScreen(
 private fun LoginView() {
     LoginScreen(
         viewModel = LoginScreenViewModel(MockUserService()),
-        onLogin = { _, _ -> DEFAULT_LOGIN_RESPONSE },
-        //onLoginSuccessful = { },
+        onLoginSuccessful = { },
         onBackRequested = { },
     )
 }

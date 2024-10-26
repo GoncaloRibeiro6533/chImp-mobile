@@ -6,8 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import pt.isel.chimp.DependenciesContainer
 import pt.isel.chimp.authentication.register.RegisterActivity
-import pt.isel.chimp.domain.user.AuthenticatedUser
-import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.menu.MenuActivity
 import pt.isel.chimp.utils.navigateTo
 
 class LoginActivity: ComponentActivity() {
@@ -16,29 +15,22 @@ class LoginActivity: ComponentActivity() {
             LoginScreenViewModelFactory((application as DependenciesContainer).chImpService)
         }
     )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            LoginScreen(
+                viewModel = viewModel,
+                onLoginSuccessful = {
+                    run {
+                        navigateTo(this,MenuActivity::class.java)
+                    }
+                },
 
-                LoginScreen(
-                    viewModel = viewModel,
-                    onLogin = { username, email ->
-                        AuthenticatedUser(User(1, username,email), "token")
-                        //viewModel.fetchLogin(app.mainService, username, password)
-                    },
-                    /* //todo navigate to channelsListScreen
-                    onLoginSuccessful = { userInfo ->
-                        run {
-                            app.userInfo = userInfo
-                            //UserPreferencesActivity.navigateTo(activity)
-                        }
-                    },
-
-                     */
-                    onBackRequested = { finish() },
-                    onRegisterRequested = { navigateTo(this, RegisterActivity::class.java) },
-                )
-            }
+                onBackRequested = { finish() },
+                onRegisterRequested = { navigateTo(this, RegisterActivity::class.java) },
+            )
+        }
 
     }
 }

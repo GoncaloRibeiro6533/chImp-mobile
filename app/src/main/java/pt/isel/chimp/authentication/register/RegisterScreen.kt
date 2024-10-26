@@ -74,11 +74,8 @@ fun RegisterScreen(
             },
         ) { innerPadding ->
             Column(
-                verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
             ) {
                 Text(
                     text = "Register",

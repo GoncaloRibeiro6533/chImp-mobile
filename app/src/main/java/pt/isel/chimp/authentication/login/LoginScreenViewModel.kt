@@ -24,10 +24,10 @@ class LoginScreenViewModel(private val userService: UserService ) : ViewModel() 
         var state: LoginScreenState by mutableStateOf<LoginScreenState>(LoginScreenState.Idle)
             private set
 
-        fun login(username: String, password: String) {
+    fun fetchLogin(username: String, password: String) {
             if (state != LoginScreenState.Loading) {
-                state = LoginScreenState.Loading
                 viewModelScope.launch {
+                    state = LoginScreenState.Loading
                     state = try {
                         val user = userService.login(username, password)
                         LoginScreenState.Success(user)

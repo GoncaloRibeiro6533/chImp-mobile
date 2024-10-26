@@ -92,7 +92,7 @@ class MockUserService : UserService {
         val user = users.find { it.username == username } ?: throw FetchUserException("User not found")
         passwords[username] ?: throw InvalidPasswordException("Invalid password")
         val token = "token${currentId++}"
-        sessions.add(Token(token, user.id))
+        sessions.add(Token("token1", user.id))
         return AuthenticatedUser(user, token)
     }
 }
