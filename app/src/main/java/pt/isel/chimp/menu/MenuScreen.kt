@@ -90,7 +90,7 @@ private fun MenuItemView(item: MenuItem) {
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview
 @Composable
 fun MenuItemViewPreview() {
     MenuItemView(MenuItem("About", "about screen", Icons.Default.Info, { }),)

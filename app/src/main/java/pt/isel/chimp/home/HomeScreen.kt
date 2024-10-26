@@ -1,6 +1,7 @@
 package pt.isel.chimp.home
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,18 +14,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import pt.isel.chimp.R
+import pt.isel.chimp.service.MockUserService
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
 
 @Composable
 fun HomeScreen(
-    //viewModel: HomeScreenViewModel,
+    viewModel: HomeScreenViewModel,
     onAboutRequested : () -> Unit = { },
     onMenuRequested : () -> Unit = { }
 ) {
-
     ChImpTheme {
         Scaffold(
             modifier = Modifier
@@ -49,8 +53,12 @@ fun HomeScreen(
             ) {
                 Log.i(TAG, "ChIMP content: composed")
                 Text("Welcome to ChIMP")
-                //todo add an image
-                //todo add register and login buttons
+                Image(
+                    modifier = Modifier.padding(16.dp),
+                    painter = painterResource(id = R.drawable.ic_logo_app),
+                    contentDescription = "ChIMP logo"
+                )
+                //todo add login buttons
             }
         }
     }
@@ -59,5 +67,5 @@ fun HomeScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(HomeScreenViewModel(MockUserService()))
 }

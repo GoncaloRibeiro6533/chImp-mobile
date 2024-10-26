@@ -18,7 +18,7 @@ class CreateChannelActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             CreateChannelScreen(
-                //viewModel = viewModel,
+                viewModel = viewModel,
                 onNavigateBack = { finish()},
                 onChannelCreated = { /* Handle channel creation */ }
             )

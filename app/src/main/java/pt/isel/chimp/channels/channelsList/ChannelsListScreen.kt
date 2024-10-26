@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isel.chimp.channels.channelsList.components.ChannelItem
-import pt.isel.chimp.channels.createChannel.CreateChannelActivity
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.user.User
@@ -31,7 +30,6 @@ import pt.isel.chimp.service.MockChannelService
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
-import pt.isel.chimp.utils.navigateTo
 
 @Composable
 fun ChannelsListScreen(
@@ -42,7 +40,6 @@ fun ChannelsListScreen(
 ) {
     val state = viewModel.state
     val user = User(1, "Bob", "bob@example.com")
-
     ChImpTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -66,7 +63,7 @@ fun ChannelsListScreen(
                     LoadingView()
                 }
                 is ChannelsListScreenState.Success -> {
-                    val channels = (state as ChannelsListScreenState.Success).channels
+                    val channels = state.channels
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -79,7 +76,6 @@ fun ChannelsListScreen(
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(16.dp)
                         )
-
                         LazyColumn(
                             contentPadding = PaddingValues(
                                 top = 0.dp,
@@ -95,11 +91,19 @@ fun ChannelsListScreen(
                                     channel = channel,
                                     onClick = { onChannelSelected(channel) })
                             }
+                            if (channels.isEmpty()) {
+                                item {
+                                    Text(
+                                        text = "You don't have any channels yet",
+                                        modifier = Modifier.padding(16.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
                 is ChannelsListScreenState.Error -> {
-                    Text(text = "Erro ao carregar canais", modifier = Modifier.padding(innerPadding))
+                    Text(text = state.exception.message, modifier = Modifier.padding(innerPadding))
                 }
             }
         }

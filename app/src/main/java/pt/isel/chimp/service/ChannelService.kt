@@ -34,15 +34,31 @@ class MockChannelService : ChannelService {
         mutableListOf<Channel>(
             Channel(1, "DAW", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
             Channel(2, "PDM", User(2, "Alice", "alice@example.com"), Visibility.PRIVATE),
-            Channel(3, "Teste", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
+            Channel(3, "TVS", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
+            Channel(4, "SegIngf", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
+            Channel(5, "IPW", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
+            Channel(6, "PG", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
+            Channel(7, "PSC", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
+            Channel(8, "LSD", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
+            Channel(9, "LIC", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
+            Channel(10, "EGP", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
+            Channel(11, "AED", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
         )
     private data class UserRole(val userId: Int, val channelId: Int)
     private val userRoles = mutableListOf<UserRole>(
-        UserRole(1, 1, ),
+        UserRole(1, 1),
         UserRole(2, 1),
         UserRole(2, 2),
         UserRole(1, 2),
         UserRole(1, 3),
+        UserRole(1, 4),
+        UserRole(1, 5),
+        UserRole(1, 6),
+        UserRole(1, 7),
+        UserRole(1, 8),
+        UserRole(1, 9),
+        UserRole(1, 10),
+        UserRole(1, 11),
     )
     private var currentId = 2
 
@@ -69,7 +85,7 @@ class MockChannelService : ChannelService {
     override suspend fun getChannelsByUser(user: User, limit: Int, skip: Int): Either<ChannelError, List<Channel>> {
         val userChannels = userRoles
             .filter { it.userId == user.id }
-            .mapNotNull { userRole -> channels.find { it.id == userRole.channelId } }
+            .mapNotNull { userRole -> channels.find { it.id == userRole.channelId } }.drop(skip).take(limit)
         delay(500)
         return success(userChannels)
     }
