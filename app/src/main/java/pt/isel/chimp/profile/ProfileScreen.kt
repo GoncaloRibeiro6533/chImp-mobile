@@ -36,8 +36,7 @@ fun ProfileScreen(
                     .fillMaxSize()
                     .padding(innerPadding),
             ) {
-                val currentState = viewModel.state
-                when (currentState) {
+                when (val currentState = viewModel.state) {
                     is ProfileScreenState.Idle -> {
                             viewModel.fetchProfile(token)
                     }

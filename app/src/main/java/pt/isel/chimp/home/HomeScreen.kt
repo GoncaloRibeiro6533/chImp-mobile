@@ -14,15 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
-import pt.isel.chimp.service.ChannelService
-import pt.isel.chimp.service.MockChannelService
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeScreenViewModel,
+    //viewModel: HomeScreenViewModel,
     onAboutRequested : () -> Unit = { },
     onMenuRequested : () -> Unit = { }
 ) {
@@ -37,7 +35,6 @@ fun HomeScreen(
                 TopBar(
                     NavigationHandlers(
                         onAboutRequested = onAboutRequested,
-                        //onMenuRequested = onMenuRequested
                     )
                 )
             }
@@ -52,6 +49,8 @@ fun HomeScreen(
             ) {
                 Log.i(TAG, "ChIMP content: composed")
                 Text("Welcome to ChIMP")
+                //todo add an image
+                //todo add register and login buttons
             }
         }
     }
@@ -60,5 +59,5 @@ fun HomeScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(HomeScreenViewModel(MockChannelService()))
+    HomeScreen()
 }

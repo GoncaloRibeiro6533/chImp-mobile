@@ -11,18 +11,15 @@ const val TAG = "CHIMP"
 
 class HomeActivity : ComponentActivity() {
 
-    private val viewModel by viewModels<HomeScreenViewModel>(
-        factoryProducer = {
-            HomeScreenViewModelFactory((application as DependenciesContainer).chImpService)
-        }
-    )
+    //private val viewModel by viewModels<HomeScreenViewModel>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            HomeScreen(viewModel)
+            HomeScreen(/*viewModel*/)
         }
     }
 }
+

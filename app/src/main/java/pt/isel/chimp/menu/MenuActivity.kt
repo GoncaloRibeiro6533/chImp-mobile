@@ -1,6 +1,5 @@
 package pt.isel.chimp.menu
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,18 +11,11 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import pt.isel.chimp.about.AboutActivity
+import pt.isel.chimp.channels.createChannel.CreateChannelActivity
 import pt.isel.chimp.profile.ProfileActivity
+import pt.isel.chimp.utils.navigateTo
 
 class MenuActivity : ComponentActivity() {
-
-    private val navigateToAboutIntent: Intent by lazy {
-        Intent(this, AboutActivity::class.java)
-    }
-    private val navigateToProfileIntent: Intent by lazy {
-        Intent(this, ProfileActivity::class.java)
-    }
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,12 +29,12 @@ class MenuActivity : ComponentActivity() {
     }
 
     private val menuItems = listOf(
-        MenuItem("About", "about screen", Icons.Default.Info, { startActivity(navigateToAboutIntent) }),
-        MenuItem("Profile", "profile screen", Icons.Default.Person, { startActivity(navigateToProfileIntent) }),
+        MenuItem("About", "about screen", Icons.Default.Info, { navigateTo(this, AboutActivity::class.java) }),
+        MenuItem("Profile", "profile screen", Icons.Default.Person, { navigateTo(this, ProfileActivity::class.java) }),
         MenuItem("Search channel", "search channel screen", Icons.Default.Search, { }),
-        MenuItem("Create channel", "create channel screen", Icons.Default.Add, { }),
-        MenuItem("Create registration invitation", "create channel invitation screen", Icons.Default.Add, { }),
-        MenuItem("Create registration invitation", "create channel invitation screen", Icons.Default.Add, { }),
+        MenuItem("Create channel", "create channel screen", Icons.Default.Add, { navigateTo(this, CreateChannelActivity::class.java) }),
+        MenuItem("Create Channel invitation", "create channel invitation screen", Icons.Default.Add, { }),
+        MenuItem("Create Registration invitation", "create registration invitation screen", Icons.Default.Add, { }),
         MenuItem("Logout", "logout screen", Icons.AutoMirrored.Filled.ExitToApp, { }),
     )
 }

@@ -34,6 +34,7 @@ class MockChannelService : ChannelService {
         mutableListOf<Channel>(
             Channel(1, "DAW", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
             Channel(2, "PDM", User(2, "Alice", "alice@example.com"), Visibility.PRIVATE),
+            Channel(3, "Teste", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
         )
     private data class UserRole(val userId: Int, val channelId: Int)
     private val userRoles = mutableListOf<UserRole>(
@@ -41,6 +42,7 @@ class MockChannelService : ChannelService {
         UserRole(2, 1),
         UserRole(2, 2),
         UserRole(1, 2),
+        UserRole(1, 3),
     )
     private var currentId = 2
 
@@ -68,7 +70,7 @@ class MockChannelService : ChannelService {
         val userChannels = userRoles
             .filter { it.userId == user.id }
             .mapNotNull { userRole -> channels.find { it.id == userRole.channelId } }
-        delay(2000)
+        delay(500)
         return success(userChannels)
     }
 }

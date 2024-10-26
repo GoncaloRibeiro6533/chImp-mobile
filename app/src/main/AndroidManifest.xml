@@ -43,6 +43,18 @@
             android:theme="@style/Theme.ChImp"
             android:layoutDirection="ltr"
             />
+        <activity
+            android:name=".channels.channelsList.ChannelsListActivity"
+            android:exported="true"
+            android:label="ChannelsListActivity"
+            android:theme="@style/Theme.ChImp"
+            />
+        <activity
+            android:name=".channels.createChannel.CreateChannelActivity"
+            android:exported="true"
+            android:label="ChannelDetailsActivity"
+            android:theme="@style/Theme.ChImp"
+            />
     </application>
 
 </manifest>
