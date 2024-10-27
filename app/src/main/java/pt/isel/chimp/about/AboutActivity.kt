@@ -81,10 +81,10 @@ val defaultAuthors = listOf(
         email = "A48305@alunos.isel.pt"
     ),
     CreatorInfo(
-        name = "Name",
+        name = "João Marques",
         imageId = R.drawable.ic_user_img,
-        socials = socialsDefault("name"),
-        email = "A48xxx@alunos.isel.pt"
+        socials = socialsDefault("joaorvm"),
+        email = "A48297@alunos.isel.pt"
     )
 )
 

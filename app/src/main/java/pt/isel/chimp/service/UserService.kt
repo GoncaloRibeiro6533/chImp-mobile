@@ -17,6 +17,7 @@ interface UserService {
     suspend fun fetchUser(token: String): User
     suspend fun updateUsername(newUsername: String, token: String): User
     suspend fun login(username: String, password: String): AuthenticatedUser
+    suspend fun register(username: String, password: String, email: String): AuthenticatedUser
 }
 
 
@@ -40,8 +41,9 @@ class UnauthorizedUserException(message: String, cause: Throwable? = null) : Exc
  * @property cause the cause of the error.
  */
 class UserNotFoundException(message: String, cause: Throwable? = null) : Exception(message, cause)
-class UsernameAlreadyExists(message: String, cause: Throwable? = null) : Exception(message, cause)
+class UsernameAlreadyExistsException(message: String, cause: Throwable? = null) : Exception(message, cause)
 class InvalidPasswordException(message: String, cause: Throwable? = null) : Exception(message, cause)
+class EmailAlreadyRegisteredException(message: String, cause: Throwable? = null) : Exception(message, cause)
 
 /**
  * Fake implementation of the [ProfileService] that returns a fixed profile.
@@ -55,7 +57,7 @@ class MockUserService : UserService {
             User(2, "Alice", "alice@example.com"),
             User(3, "John", "john@example.com"),
         )
-    private val passwords = mapOf(
+    private val passwords = mutableMapOf(
         "Bob" to "A1234ab",
         "Alice" to "1234VDd",
         "John" to "1234SADfs",
@@ -80,7 +82,7 @@ class MockUserService : UserService {
         val session = sessions.find { it.token == token }
         if (session == null) throw UnauthorizedUserException("Unauthorized")
         val user = users.find { it.id == session.userId } ?: throw UserNotFoundException("User not found")
-        if(users.any { it.username == newUsername }) throw UsernameAlreadyExists("Username already exists")
+        if(users.any { it.username == newUsername }) throw UsernameAlreadyExistsException("Username already exists")
         val newUser = user.copy(username = newUsername)
         users.remove(user)
         users.add(newUser)
@@ -93,6 +95,23 @@ class MockUserService : UserService {
         passwords[username] ?: throw InvalidPasswordException("Invalid password")
         val token = "token${currentId++}"
         sessions.add(Token("token1", user.id))
+        return AuthenticatedUser(user, token)
+    }
+
+    override suspend fun register(
+        username: String,
+        password: String,
+        email: String
+    ): AuthenticatedUser {
+        delay(1000)
+        val nameTaken = users.find { it.username == username } != null
+        if (nameTaken) throw UsernameAlreadyExistsException("Username already exists")
+        val emailTaken = users.find { it.email == email } != null
+        if (emailTaken) throw EmailAlreadyRegisteredException("This email is already registered")
+        val user = User(currentId, username, email)
+        val token = "token${currentId++}"
+        users.add(user)
+        passwords[username] = password
         return AuthenticatedUser(user, token)
     }
 }
