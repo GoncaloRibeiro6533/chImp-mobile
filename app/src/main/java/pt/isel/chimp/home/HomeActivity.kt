@@ -47,7 +47,6 @@ class HomeActivity : ComponentActivity() {
                         onAboutRequested = { navigateTo(this, AboutActivity::class.java) },
                         onLoginRequested = { navigateTo(this, LoginActivity::class.java) },
                         onSigninRequested = { navigateTo(this, RegisterActivity::class.java) },
-                        onMenuRequested = { startActivity(navigateToMenu)}
                         )
                 }
             }

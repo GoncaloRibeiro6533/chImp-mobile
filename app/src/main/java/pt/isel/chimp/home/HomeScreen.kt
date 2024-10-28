@@ -34,7 +34,6 @@ fun HomeScreen(
     onAboutRequested : () -> Unit,
     onLoginRequested : () -> Unit = { },
     onSigninRequested : () -> Unit = { },
-    onMenuRequested : () -> Unit = { }
 ) {
 
     ChImpTheme {
