@@ -1,0 +1,66 @@
+package pt.isel.chimp.authentication.login
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import pt.isel.chimp.authentication.login.components.LoginButton
+import pt.isel.chimp.authentication.login.components.LoginTextFields
+import pt.isel.chimp.authentication.validatePassword
+import pt.isel.chimp.authentication.validateUsername
+
+@Composable
+fun LoginView(
+    onSubmit: (String, String) -> Unit
+){
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    val invalidFields = (username.isEmpty() || password.isEmpty()) ||
+            username.isNotEmpty() && !validateUsername(username) ||
+            password.isNotEmpty() && !validatePassword(password)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(16.dp).fillMaxWidth()
+    ) {
+
+        Row(
+            modifier = Modifier.padding(bottom = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Login",
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
+        LoginTextFields(
+            username = username,
+            password = password,
+            onUsernameChangeCallback = { username = it },
+            onPasswordChangeCallback = { password = it }
+        )
+        LoginButton(enabled = !invalidFields) {
+            onSubmit(username, password)
+        }
+    }
+
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewLoginView() {
+    LoginView(onSubmit = { _, _ -> })
+}

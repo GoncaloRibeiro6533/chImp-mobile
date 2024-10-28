@@ -36,7 +36,11 @@ class LoginScreenViewModel(private val userService: UserService ) : ViewModel() 
                     }
                 }
             }
-        }
+    }
+
+    fun setIdleState() {
+        state = LoginScreenState.Idle
+    }
 
 }
 

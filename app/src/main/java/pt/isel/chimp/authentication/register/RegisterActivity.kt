@@ -22,12 +22,8 @@ class RegisterActivity: ComponentActivity() {
         setContent {
             ChImpTheme {
                 RegisterScreen(
-                    //state = viewModel.register,
-                    onRegister = { email, username, password ->
-                        //viewModel.fetchRegister(email, username, password)
-                    },
-                    onRegisterSuccessful = { navigateTo(this, LoginActivity::class.java) },
-                    onNavigateBack = { finish() }
+                    viewModel = viewModel,
+                    onRegisterSuccessful = { navigateTo(this, LoginActivity::class.java) }
                 )
             }
         }

@@ -1,5 +1,6 @@
 package pt.isel.chimp.menu
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,11 +12,16 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import pt.isel.chimp.about.AboutActivity
+import pt.isel.chimp.authentication.login.LoginActivity
 import pt.isel.chimp.channels.createChannel.CreateChannelActivity
 import pt.isel.chimp.profile.ProfileActivity
 import pt.isel.chimp.utils.navigateTo
 
 class MenuActivity : ComponentActivity() {
+
+    private val logOutIntent : Intent by lazy {
+        Intent(this, LoginActivity::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +41,9 @@ class MenuActivity : ComponentActivity() {
         MenuItem("Create channel", "create channel screen", Icons.Default.Add, { navigateTo(this, CreateChannelActivity::class.java) }),
         MenuItem("Create Channel invitation", "create channel invitation screen", Icons.Default.Add, { }),
         MenuItem("Create Registration invitation", "create registration invitation screen", Icons.Default.Add, { }),
-        MenuItem("Logout", "logout screen", Icons.AutoMirrored.Filled.ExitToApp, { }),
+        MenuItem("Logout", "logout screen", Icons.AutoMirrored.Filled.ExitToApp, {
+            //todo
+            startActivity(logOutIntent)
+        }),
     )
 }

@@ -18,6 +18,7 @@ interface UserService {
     suspend fun updateUsername(newUsername: String, token: String): User
     suspend fun login(username: String, password: String): AuthenticatedUser
     suspend fun register(username: String, password: String, email: String): AuthenticatedUser
+    suspend fun logout(token: String): Unit
 }
 
 
@@ -58,9 +59,9 @@ class MockUserService : UserService {
             User(3, "John", "john@example.com"),
         )
     private val passwords = mutableMapOf(
-        "Bob" to "A1234ab",
-        "Alice" to "1234VDd",
-        "John" to "1234SADfs",
+        1 to "A1234ab",
+        2 to "1234VDd",
+        3 to "1234SADfs",
     )
     private var currentId = 4
     private data class Token(val token: String, val userId: Int)
@@ -91,10 +92,10 @@ class MockUserService : UserService {
 
     override suspend fun login(username: String, password: String): AuthenticatedUser {
         delay(1000)
-        val user = users.find { it.username == username } ?: throw FetchUserException("User not found")
-        passwords[username] ?: throw InvalidPasswordException("Invalid password")
-        val token = "token${currentId++}"
-        sessions.add(Token("token1", user.id))
+        val user = users.find { it.username == username } ?: throw FetchUserException("No user corresponding to $username")
+        if(passwords[user.id] != password) throw InvalidPasswordException("Invalid password")
+        val token = "token${user.id}"
+        sessions.add(Token(token, user.id))
         return AuthenticatedUser(user, token)
     }
 
@@ -111,7 +112,12 @@ class MockUserService : UserService {
         val user = User(currentId, username, email)
         val token = "token${currentId++}"
         users.add(user)
-        passwords[username] = password
+        passwords[user.id] = password
         return AuthenticatedUser(user, token)
+    }
+
+    override suspend fun logout(token: String) {
+        val session = sessions.find { it.token == token } ?: throw UnauthorizedUserException("Unauthorized")
+        sessions.removeIf { it.token == session.token }
     }
 }

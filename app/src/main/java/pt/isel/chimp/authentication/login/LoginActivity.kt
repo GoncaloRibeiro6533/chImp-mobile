@@ -5,8 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import pt.isel.chimp.DependenciesContainer
-import pt.isel.chimp.authentication.register.RegisterActivity
-import pt.isel.chimp.menu.MenuActivity
+import pt.isel.chimp.channels.channelsList.ChannelsListActivity
 import pt.isel.chimp.utils.navigateTo
 
 class LoginActivity: ComponentActivity() {
@@ -22,13 +21,9 @@ class LoginActivity: ComponentActivity() {
             LoginScreen(
                 viewModel = viewModel,
                 onLoginSuccessful = {
-                    run {
-                        navigateTo(this,MenuActivity::class.java)
-                    }
+                        navigateTo(this,ChannelsListActivity::class.java)
                 },
-
                 onBackRequested = { finish() },
-                onRegisterRequested = { navigateTo(this, RegisterActivity::class.java) },
             )
         }
 

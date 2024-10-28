@@ -2,7 +2,6 @@ package pt.isel.chimp.authentication.register
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,18 +16,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import pt.isel.chimp.authentication.register.components.RegisterButton
-import pt.isel.chimp.authentication.register.components.RegisterTextFields
-import pt.isel.chimp.authentication.validateEmail
-import pt.isel.chimp.authentication.validatePassword
-import pt.isel.chimp.authentication.validateUsername
-import pt.isel.chimp.ui.NavigationHandlers
-import pt.isel.chimp.ui.TopBar
+import pt.isel.chimp.components.LoadingView
+import pt.isel.chimp.profile.ErrorAlert
+import pt.isel.chimp.service.MockUserService
 import pt.isel.chimp.ui.theme.ChImpTheme
 
 const val REGISTER_SCREEN_TEST_TAG = "RegisterScreenTestTag"
@@ -43,79 +36,47 @@ private fun extractErrorMessage(input: String): String {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
-    onRegister: (String, String, String) -> Unit,
+    viewModel: RegisterScreenViewModel,
     onRegisterSuccessful: () -> Unit,
-    onNavigateBack: () -> Unit = {  },
 ){
-    /*
-    LaunchedEffect(state) {
-        if (state is Loaded && state.value.isSuccess)
-            onRegisterSuccessful()
-    }
-     */
-
-    var email by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
-    val invalidFields = (email.isEmpty() || username.isEmpty() || password.isEmpty()) ||
-            email.isNotEmpty() && !validateEmail(email) ||
-            username.isNotEmpty() && !validateUsername(username) ||
-            password.isNotEmpty() && !validatePassword(password)
-
     ChImpTheme {
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
                 .testTag(REGISTER_SCREEN_TEST_TAG),
-
-            topBar = {
-                TopBar(NavigationHandlers(onBackRequested = onNavigateBack))
-            },
         ) { innerPadding ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = "Register",
-                    modifier = Modifier.padding(innerPadding)
-                )
-                RegisterTextFields(
-                    email = email,
-                    username = username,
-                    password = password,
-                    onEmailChangeCallback = { email = it },
-                    onUsernameChangeCallback = { username = it },
-                    onPasswordChangeCallback = { password = it }
-                )
+                when(val currentState = viewModel.state){
+                    is RegisterScreenState.Idle -> {
+                        RegisterView (
+                            onSubmit = { email, username, password ->
+                                viewModel.registerUser(email, username, password)
+                            }
+                        )
+                    }
+                    is RegisterScreenState.Loading -> {
+                        LoadingView()
+                    }
+                    is RegisterScreenState.Success -> {
+                        SuccessView(
+                            message = "User registered successfully",
+                            onButtonClick = { onRegisterSuccessful() }
+                        )
+                    }
+                    is RegisterScreenState.Error -> {
+                        ErrorAlert(
+                            title = "Error",
+                            message = currentState.exception.message ?: "An error occurred",
+                            buttonText = "ok",
+                            onDismiss = { viewModel.setIdleState() }
 
-                RegisterButton(/*enabled = state !is Loading*/) {
-                    if (invalidFields)
-                        return@RegisterButton
-
-                    onRegister(username, password, email)
+                        )
+                    }
                 }
-/*
-                if (state is Loaded && state.value.isSuccess) {
-                    Text(text = "Login successful", style = TextStyle(fontSize = 24.sp))
-                }
-
-                if (state is Loaded && state.value.isFailure) {
-                    Text(text = "Register failed. Please try again", style = TextStyle(fontSize = 24.sp))
-                    Spacer(modifier = Modifier.padding(6.dp))
-                    val errorMsg = extractErrorMessage(state.value.toString())
-                    Text(text = errorMsg, style = TextStyle(fontSize = 24.sp))
-                    Spacer(modifier = Modifier.padding(10.dp))
-                }
-            }
-
-
-        }
-    }
-
- */
-
             }
 
         }
@@ -142,8 +103,7 @@ fun SimpleTextField(label: String, example: String) {
 @Composable
 private fun RegisterView() {
     RegisterScreen(
-        onRegister = { _, _, _ -> },
-        onRegisterSuccessful = { },
-        onNavigateBack = { }
+        viewModel = RegisterScreenViewModel(MockUserService()),
+        onRegisterSuccessful = {}
     )
 }

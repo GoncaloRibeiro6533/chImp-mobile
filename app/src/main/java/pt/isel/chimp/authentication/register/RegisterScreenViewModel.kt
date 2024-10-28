@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.UserService
-import pt.isel.chimp.utils.Success
 
 sealed interface RegisterScreenState {
     data object Idle : RegisterScreenState
@@ -24,7 +23,7 @@ class RegisterScreenViewModel(private val userServices: UserService) : ViewModel
     var state: RegisterScreenState by mutableStateOf(RegisterScreenState.Idle)
         private set
 
-    fun fetchRegister(username: String, password: String, email: String) {
+    fun registerUser(username: String, password: String, email: String) {
         if (state != RegisterScreenState.Loading) {
             viewModelScope.launch {
                 state = RegisterScreenState.Loading
@@ -36,6 +35,10 @@ class RegisterScreenViewModel(private val userServices: UserService) : ViewModel
                 }
             }
         }
+    }
+
+    fun setIdleState() {
+        state = RegisterScreenState.Idle
     }
 }
 
