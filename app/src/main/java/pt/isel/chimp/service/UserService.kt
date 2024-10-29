@@ -18,6 +18,7 @@ interface UserService {
     suspend fun updateUsername(newUsername: String, token: String): User
     suspend fun login(username: String, password: String): AuthenticatedUser
     suspend fun register(username: String, password: String, email: String): AuthenticatedUser
+    suspend fun findUserById(id: Int): User
     suspend fun logout(token: String): Unit
 }
 
@@ -119,5 +120,10 @@ class MockUserService : UserService {
     override suspend fun logout(token: String) {
         val session = sessions.find { it.token == token } ?: throw UnauthorizedUserException("Unauthorized")
         sessions.removeIf { it.token == session.token }
+    }
+
+    override suspend fun findUserById(id: Int): User {
+        delay(500)
+        return users.find { it.id == id } ?: throw UserNotFoundException("User not found")
     }
 }

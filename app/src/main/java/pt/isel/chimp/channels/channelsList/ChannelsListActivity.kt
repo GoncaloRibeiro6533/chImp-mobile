@@ -1,6 +1,5 @@
 package pt.isel.chimp.channels.channelsList
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,16 +17,12 @@ class ChannelsListActivity : ComponentActivity() {
         }
     )
 
-    private val navigateToMenu: Intent by lazy {
-        Intent(this, MenuActivity::class.java)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ChannelsListScreen(
                 viewModel = viewModel,
-                onMenuRequested = { startActivity(navigateToMenu) },
+                onMenuRequested = { navigateTo(this, MenuActivity::class.java) },
                 onChannelSelected = { channel -> /* Handle channel selection */ }, //todo navigate to chose channel
                 onNavigateToCreateChannel = { navigateTo(this, CreateChannelActivity::class.java) }
             )

@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import pt.isel.chimp.DependenciesContainer
+import pt.isel.chimp.channels.channelsList.ChannelsListActivity
+import pt.isel.chimp.utils.navigateTo
 
 
 class CreateChannelActivity : ComponentActivity() {
@@ -19,8 +21,8 @@ class CreateChannelActivity : ComponentActivity() {
         setContent {
             CreateChannelScreen(
                 viewModel = viewModel,
-                onNavigateBack = { finish()},
-                onChannelCreated = { /* Handle channel creation */ }
+                onNavigateBack = { finish() },
+                onChannelCreated = { navigateTo(this, ChannelsListActivity::class.java) } //todo move to all channels or directly to channel?
             )
         }
     }

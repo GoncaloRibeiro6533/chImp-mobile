@@ -14,15 +14,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.ui.theme.ChImpTheme
 import pt.isel.chimp.utils.DropdownMenuCustom
 
 @Composable
-fun CreateChannelView() {
+fun CreateChannelView(
+    onSubmit: (String, String, Int) -> Unit
+) {
+    val creatorId = 1
     var channelName by remember { mutableStateOf("") }
     var visibility by remember { mutableStateOf("PUBLIC") }
     val visibilityOptions = listOf("PUBLIC", "PRIVATE")
@@ -39,7 +44,8 @@ fun CreateChannelView() {
 
         Text(
             text = "Channel Name",
-            fontSize = 16.sp,
+            fontSize = 20.sp,
+            style = TextStyle(fontWeight = FontWeight.Bold),
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -59,7 +65,7 @@ fun CreateChannelView() {
 
         Button(
             onClick = {
-
+                onSubmit(channelName, visibility, creatorId)
             },
             modifier = Modifier.fillMaxWidth(0.8f)
         ) {
@@ -72,6 +78,6 @@ fun CreateChannelView() {
 @Composable
 fun CreateChannelViewPreview() {
     ChImpTheme {
-        CreateChannelView()
+        CreateChannelView( onSubmit = { _, _, _ -> } )
     }
 }
