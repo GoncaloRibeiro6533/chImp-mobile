@@ -2,12 +2,13 @@ package pt.isel.chimp.service.repo
 
 interface RepoMock {
     val userRepoMock: UserRepoMock
-    //val channelRepoMock: ChannelRepoMock TODO
-    //val messageRepoMock: MessageRepoMock TODO
+    val channelRepoMock: ChannelRepoMock
+    val messageRepoMock: MessageRepoMock
+    //val invitatioRepoMock : InvitationRepoMock TODO
 }
 
 class RepoMockImpl : RepoMock {
     override val userRepoMock: UserRepoMock = UserRepoMock()
-    //override val channelRepoMock: ChannelRepoMock = ChannelRepoMock TODO
-    //override val messageRepoMock: MessageRepoMock = MessageRepoMock TODO
+    override val channelRepoMock: ChannelRepoMock = ChannelRepoMock()
+    override val messageRepoMock: MessageRepoMock = MessageRepoMock()
 }
