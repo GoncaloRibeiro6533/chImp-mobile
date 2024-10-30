@@ -37,7 +37,7 @@ fun RegisterView(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(60.dp).fillMaxWidth()
+        modifier = Modifier.padding(16.dp).fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.padding(bottom = 16.dp),

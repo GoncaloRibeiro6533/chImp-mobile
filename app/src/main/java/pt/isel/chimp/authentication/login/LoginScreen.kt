@@ -58,7 +58,6 @@ fun LoginScreen(
             topBar = { TopBar(NavigationHandlers(onBackRequested = onBackRequested)) },
         ) { innerPadding ->
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
             ) {
                 when (val currentState = viewModel.state) {

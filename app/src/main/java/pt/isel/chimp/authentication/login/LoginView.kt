@@ -40,7 +40,7 @@ fun LoginView(
             password.isNotEmpty() && !validatePassword(password)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(60.dp).fillMaxWidth()
+        modifier = Modifier.padding(16.dp).fillMaxWidth()
     ) {
 
         Row(
@@ -68,7 +68,7 @@ fun LoginView(
             }
         }
         Row (
-            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ){
             Text(text = "Don't have an account? ", style = TextStyle(fontSize = 18.sp))
             ClickableText(

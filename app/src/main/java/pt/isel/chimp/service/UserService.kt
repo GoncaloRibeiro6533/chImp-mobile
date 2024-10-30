@@ -74,7 +74,7 @@ class MockUserService(private val repoMock: RepoMock) : UserService {
     }
 
     override suspend fun login(username: String, password: String): AuthenticatedUser {
-        delay(1000)
+        delay(2000)
         val user = repoMock.userRepoMock.findUserByUsername(username).firstOrNull() ?: throw UserNotFoundException("User not found")
         repoMock.userRepoMock.findUserByPassword(user.id, password) ?: throw InvalidPasswordException("Invalid password")
         val token = repoMock.userRepoMock.createSession(user.id).token

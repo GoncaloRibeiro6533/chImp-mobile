@@ -9,7 +9,7 @@ import pt.isel.chimp.R
 import pt.isel.chimp.authentication.components.IconButton
 
 
-private const val BUTTON_PADDING = 8
+private const val BUTTON_PADDING = 16
 
 /**
  * Button for login operation.
