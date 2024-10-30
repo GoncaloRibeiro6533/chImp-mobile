@@ -56,58 +56,62 @@ fun ChannelsListScreen(
             }
             }
         ) { innerPadding ->
-            when (state) {
-                is ChannelsListScreenState.Idle -> {
-                    viewModel.getChannels(user)
-                }
-                is ChannelsListScreenState.Loading -> {
-                    LoadingView()
-                }
-                is ChannelsListScreenState.Success -> {
-                    val channels = state.channels
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    ) {
-
-                        Text(
-                            text = "Your Channels",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                        LazyColumn(
-                            contentPadding = PaddingValues(
-                                top = 0.dp,
-                                bottom = innerPadding.calculateBottomPadding(),
-                                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr)
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxSize()
+            Column(
+                modifier = Modifier.fillMaxSize().padding(innerPadding)
+            ) {
+                Text(
+                    text = "Your Channels",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+                when (state) {
+                    is ChannelsListScreenState.Idle -> {
+                        viewModel.getChannels(user)
+                    }
+                    is ChannelsListScreenState.Loading -> {
+                        LoadingView()
+                    }
+                    is ChannelsListScreenState.Success -> {
+                        val channels = state.channels
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
                         ) {
-                            items(channels) { channel ->
-                                ChannelItem(
-                                    channel = channel,
-                                    onClick = { onChannelSelected(channel) })
-                            }
-                            if (channels.isEmpty()) {
-                                item {
-                                    Text(
-                                        text = "You don't have any channels yet",
-                                        modifier = Modifier.padding(16.dp)
-                                    )
+                            LazyColumn(
+                                contentPadding = PaddingValues(
+                                    top = 0.dp,
+                                    bottom = innerPadding.calculateBottomPadding(),
+                                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr)
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                items(channels) { channel ->
+                                    ChannelItem(
+                                        channel = channel,
+                                        onClick = { onChannelSelected(channel) })
+                                }
+                                if (channels.isEmpty()) {
+                                    item {
+                                        Text(
+                                            text = "You don't have any channels yet",
+                                            modifier = Modifier.padding(16.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                is ChannelsListScreenState.Error -> {
-                    Text(text = state.exception.message, modifier = Modifier.padding(innerPadding))
+                    is ChannelsListScreenState.Error -> {
+                        Text(text = state.exception.message, modifier = Modifier.padding(innerPadding))
+                    }
                 }
             }
         }
+
     }
 }
 

@@ -18,7 +18,7 @@ import pt.isel.chimp.utils.Success
 sealed interface CreateChannelScreenState {
     data object Idle : CreateChannelScreenState
     data object Loading : CreateChannelScreenState
-    data class Success(val channels: Channel) : CreateChannelScreenState
+    data class Success(val channel: Channel) : CreateChannelScreenState
     data class Error(val exception: ChannelError) : CreateChannelScreenState
 }
 
