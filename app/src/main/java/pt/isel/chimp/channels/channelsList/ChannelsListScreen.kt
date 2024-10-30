@@ -27,6 +27,7 @@ import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.service.MockChannelService
+import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -114,7 +115,7 @@ fun ChannelsListScreen(
 @Composable
 fun PreviewChannelsListScreen() {
     ChannelsListScreen(
-        viewModel = ChannelsListViewModel(MockChannelService()),
+        viewModel = ChannelsListViewModel(MockChannelService(RepoMockImpl())),
         onMenuRequested = { },
         onChannelSelected = { }
     )

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.MockChannelService
+import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -73,7 +74,7 @@ fun CreateChannelScreen(
 @Composable
 fun CreateChannelScreenPreview() {
     CreateChannelScreen(
-        viewModel = CreateChannelViewModel(MockChannelService()),
+        viewModel = CreateChannelViewModel(MockChannelService(RepoMockImpl())),
         onNavigateBack = { },
         onChannelCreated = { }
     )

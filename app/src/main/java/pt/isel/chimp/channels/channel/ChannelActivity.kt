@@ -6,6 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import pt.isel.chimp.DependenciesContainer
+import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.domain.channel.Visibility
+import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.menu.MenuActivity
 import pt.isel.chimp.utils.navigateTo
 
@@ -22,6 +25,8 @@ class ChannelActivity : ComponentActivity() {
         setContent{
             ChannelScreen(
                 viewModel = viewModel,
+                channel = Channel(1, "Channel 1",
+                    creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC), //TODO: get channel from intent
                 onNavigationBack = { finish() },
                 onMenuRequested = { navigateTo(this, MenuActivity::class.java) }
             )

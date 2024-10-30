@@ -17,6 +17,7 @@ import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.MockUserService
+import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -82,7 +83,7 @@ fun LoginScreen(
 @Composable
 private fun LoginScreenPreview() {
     LoginScreen(
-        viewModel = LoginScreenViewModel(MockUserService()),
+        viewModel = LoginScreenViewModel(MockUserService(RepoMockImpl())),
         onLoginSuccessful = { },
         onBackRequested = { },
     )

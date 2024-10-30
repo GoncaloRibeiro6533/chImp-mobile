@@ -5,6 +5,8 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.service.repo.RepoMock
+import pt.isel.chimp.service.repo.UserRepoMock
 import pt.isel.chimp.utils.Either
 import pt.isel.chimp.utils.failure
 import pt.isel.chimp.utils.success
@@ -31,7 +33,7 @@ sealed class ChannelError(val message: String) {
 
 
 
-class MockChannelService : ChannelService {
+class MockChannelService(private val repoMock: RepoMock) : ChannelService {
 
     private val channels =
         mutableListOf<Channel>(
@@ -74,8 +76,8 @@ class MockChannelService : ChannelService {
         if (channels.any { it.name == name }) {
             return failure(ChannelError.ChannelNameAlreadyExists)
         }
-        val creatorID = MockUserService().findUserById(creatorId)
-        val channel = Channel(currentId++, name, creatorID, Visibility.valueOf(visibility))
+        val creator = repoMock.userRepoMock.findUserById(creatorId) ?: return failure(ChannelError.UserNotFoundException)
+        val channel = Channel(currentId++, name, creator, Visibility.valueOf(visibility))
         channels.add(channel)
         addUserToChannel(creatorId, channel, Role.READ_WRITE)
         return success(channel)

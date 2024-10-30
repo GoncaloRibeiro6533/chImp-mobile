@@ -1,9 +1,6 @@
 package pt.isel.chimp.channels.channel
 
-import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -28,8 +24,13 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isel.chimp.components.LoadingView
+import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.domain.channel.Visibility
+import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.MockChannelService
+import pt.isel.chimp.service.repo.RepoMockImpl
+import pt.isel.chimp.service.repo.UserRepoMock
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -37,9 +38,9 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 @Composable
 fun ChannelScreen(
     viewModel: ChannelViewModel,
+    channel: Channel,
     onNavigationBack: () -> Unit = { },
     onMenuRequested : () -> Unit = { },
-
 ) {
 
     ChImpTheme {
@@ -112,7 +113,9 @@ fun ChatBox(
 @Composable
 fun ChannelScreenPreview() {
     ChannelScreen(
-        viewModel = ChannelViewModel(MockChannelService()),
+        viewModel = ChannelViewModel(MockChannelService(RepoMockImpl())),
+        channel = Channel(1, "Channel 1",
+            creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
         onNavigationBack = { },
         onMenuRequested = { }
     )

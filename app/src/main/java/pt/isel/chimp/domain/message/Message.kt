@@ -20,7 +20,7 @@ data class Message(
         require(content.isNotBlank()) { "A message can't be blank" }
         require(content.length <= MAX_MESSAGE_LENGTH) {
             "Content must be less than $MAX_MESSAGE_LENGTH characters"
+        require(timestamp <= LocalDateTime.now()) { "Invalid timestamp" }
         }
-        // TODO require(timestamp <= LocalDateTime.now()) { "Invalid timestamp" }
     }
 }

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.MockUserService
+import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.theme.ChImpTheme
 
 const val REGISTER_SCREEN_TEST_TAG = "RegisterScreenTestTag"
@@ -103,7 +104,7 @@ fun SimpleTextField(label: String, example: String) {
 @Composable
 private fun RegisterView() {
     RegisterScreen(
-        viewModel = RegisterScreenViewModel(MockUserService()),
+        viewModel = RegisterScreenViewModel(MockUserService(RepoMockImpl())),
         onRegisterSuccessful = {}
     )
 }

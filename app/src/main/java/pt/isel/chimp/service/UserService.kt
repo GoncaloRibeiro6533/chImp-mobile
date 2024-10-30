@@ -3,6 +3,8 @@ package pt.isel.chimp.service
 import kotlinx.coroutines.delay
 import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.service.repo.RepoMock
+import pt.isel.chimp.service.repo.UserRepoMock
 
 /**
  * Contract of the service that provides the user profile.
@@ -17,7 +19,7 @@ interface UserService {
     suspend fun fetchUser(token: String): User
     suspend fun updateUsername(newUsername: String, token: String): User
     suspend fun login(username: String, password: String): AuthenticatedUser
-    suspend fun register(username: String, password: String, email: String): AuthenticatedUser
+    suspend fun register(username: String, password: String, email: String): User
     suspend fun findUserById(id: Int): User
     suspend fun logout(token: String): Unit
 }
@@ -51,52 +53,31 @@ class EmailAlreadyRegisteredException(message: String, cause: Throwable? = null)
  * Fake implementation of the [ProfileService] that returns a fixed profile.
  */
 
-class MockUserService : UserService {
+class MockUserService(private val repoMock: RepoMock) : UserService {
 
-    private val users =
-        mutableListOf<User>(
-            User(1, "Bob", "bob@example.com"),
-            User(2, "Alice", "alice@example.com"),
-            User(3, "John", "john@example.com"),
-        )
-    private val passwords = mutableMapOf(
-        1 to "A1234ab",
-        2 to "1234VDd",
-        3 to "1234SADfs",
-    )
-    private var currentId = 4
-    private data class Token(val token: String, val userId: Int)
-    private val sessions = mutableListOf<Token>(
-        Token("token1", 1),
-    )
 
     override suspend fun fetchUser(token: String): User {
         delay(1000)
-        val session = sessions.find { it.token == token }
-        if (session == null) throw FetchUserException("Unauthorized")
-        val user = users.find { it.id == session.userId} ?: throw FetchUserException("User not found")
+        val session = repoMock.userRepoMock.findSessionByToken(token) ?: throw FetchUserException("Unauthorized")
+        val user = repoMock.userRepoMock.findUserById(session.userId) ?: throw FetchUserException("User not found")
         return user
     }
 
 
     override suspend fun updateUsername(newUsername: String, token: String): User {
         delay(1000)
-        val session = sessions.find { it.token == token }
-        if (session == null) throw UnauthorizedUserException("Unauthorized")
-        val user = users.find { it.id == session.userId } ?: throw UserNotFoundException("User not found")
-        if(users.any { it.username == newUsername }) throw UsernameAlreadyExistsException("Username already exists")
-        val newUser = user.copy(username = newUsername)
-        users.remove(user)
-        users.add(newUser)
+        val session = repoMock.userRepoMock.findSessionByToken(token) ?: throw FetchUserException("Unauthorized")
+        val user = repoMock.userRepoMock.findUserById(session.userId) ?: throw FetchUserException("User not found")
+        if(repoMock.userRepoMock.findUserByUsername(newUsername).any { it.username == newUsername }) throw UsernameAlreadyExistsException("Username already exists")
+        val newUser = repoMock.userRepoMock.updateUser(user.id, newUsername)
         return newUser
     }
 
     override suspend fun login(username: String, password: String): AuthenticatedUser {
         delay(1000)
-        val user = users.find { it.username == username } ?: throw FetchUserException("No user corresponding to $username")
-        if(passwords[user.id] != password) throw InvalidPasswordException("Invalid password")
-        val token = "token${user.id}"
-        sessions.add(Token(token, user.id))
+        val user = repoMock.userRepoMock.findUserByUsername(username).firstOrNull() ?: throw UserNotFoundException("User not found")
+        repoMock.userRepoMock.findUserByPassword(user.id, password) ?: throw InvalidPasswordException("Invalid password")
+        val token = repoMock.userRepoMock.createSession(user.id).token
         return AuthenticatedUser(user, token)
     }
 
@@ -104,26 +85,24 @@ class MockUserService : UserService {
         username: String,
         password: String,
         email: String
-    ): AuthenticatedUser {
+    ): User {
         delay(1000)
-        val nameTaken = users.find { it.username == username } != null
-        if (nameTaken) throw UsernameAlreadyExistsException("Username already exists")
-        val emailTaken = users.find { it.email == email } != null
-        if (emailTaken) throw EmailAlreadyRegisteredException("This email is already registered")
-        val user = User(currentId, username, email)
-        val token = "token${currentId++}"
-        users.add(user)
-        passwords[user.id] = password
-        return AuthenticatedUser(user, token)
+        val nameTaken = repoMock.userRepoMock.findUserByUsername(username).any { it.username == username }
+        if (nameTaken) throw UsernameAlreadyExistsException("This username is already taken")
+        val emailTaken =repoMock.userRepoMock.findByEmail(email)
+        if (emailTaken != null) throw EmailAlreadyRegisteredException("This email is already registered")
+        val user = repoMock.userRepoMock.createUser(username, email, password)
+        return user
     }
 
     override suspend fun logout(token: String) {
-        val session = sessions.find { it.token == token } ?: throw UnauthorizedUserException("Unauthorized")
-        sessions.removeIf { it.token == session.token }
+        delay(1000)
+        val session = repoMock.userRepoMock.findSessionByToken(token) ?: throw FetchUserException("Unauthorized")
+        repoMock.userRepoMock.deleteSession(session)
     }
 
     override suspend fun findUserById(id: Int): User {
         delay(500)
-        return users.find { it.id == id } ?: throw UserNotFoundException("User not found")
+        return repoMock.userRepoMock.findUserById(id) ?: throw UserNotFoundException("User not found")
     }
 }

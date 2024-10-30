@@ -8,13 +8,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.user.AuthenticatedUser
+import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.UserService
 
 sealed interface RegisterScreenState {
     data object Idle : RegisterScreenState
     data object Loading : RegisterScreenState
-    data class Success(val user: AuthenticatedUser) : RegisterScreenState
+    data class Success(val user: User) : RegisterScreenState
     data class Error(val exception: Throwable): RegisterScreenState
 }
 

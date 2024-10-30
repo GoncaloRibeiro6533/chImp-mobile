@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isel.chimp.R
 import pt.isel.chimp.service.MockUserService
+import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -73,6 +74,6 @@ fun HomeScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(HomeScreenViewModel(MockUserService()), onAboutRequested = {},
+    HomeScreen(HomeScreenViewModel(MockUserService(RepoMockImpl())), onAboutRequested = {},
     )
 }

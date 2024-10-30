@@ -10,6 +10,7 @@ import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.ChannelError
 import pt.isel.chimp.service.ChannelService
 import pt.isel.chimp.service.MessageService
+import pt.isel.chimp.service.repo.RepoMockImpl
 
 sealed interface ChannelScreenState {
     data object Idle : ChannelScreenState
@@ -19,10 +20,7 @@ sealed interface ChannelScreenState {
 
 }
 
-class ChannelViewModel(
-    private val channelService: ChannelService,
-    //private val messageService: MessageService
-) : ViewModel() {
+class ChannelViewModel(private val channelService: ChannelService) : ViewModel() {
 
     var state: ChannelScreenState by mutableStateOf(ChannelScreenState.Idle)
         private set
