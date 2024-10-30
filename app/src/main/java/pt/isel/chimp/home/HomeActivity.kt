@@ -12,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import pt.isel.chimp.about.AboutActivity
 import pt.isel.chimp.authentication.login.LoginActivity
+import pt.isel.chimp.authentication.register.RegisterActivity
 import pt.isel.chimp.ui.theme.ChImpTheme
 import pt.isel.chimp.utils.navigateTo
 
@@ -39,6 +40,7 @@ class HomeActivity : ComponentActivity() {
                         viewModel = viewModel,
                         onAboutRequested = { navigateTo(this, AboutActivity::class.java) },
                         onLoginRequested = { navigateTo(this, LoginActivity::class.java) },
+                        onRegisterRequested = { navigateTo(this, RegisterActivity::class.java) }
                         )
                 }
             }

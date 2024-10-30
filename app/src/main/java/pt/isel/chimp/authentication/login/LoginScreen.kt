@@ -1,17 +1,21 @@
 package pt.isel.chimp.authentication.login
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.user.AuthenticatedUser
@@ -21,6 +25,12 @@ import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.withStyle
+
+
 
 const val LOGIN_SCREEN_TEST_TAG = "LoginScreenTestTag"
 
@@ -31,11 +41,14 @@ private fun extractErrorMessage(input: String): String {
     return matchResult?.groups?.get(2)?.value ?: "Unknown Error"
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     viewModel: LoginScreenViewModel,
     onLoginSuccessful: (AuthenticatedUser) -> Unit,
-    onBackRequested: () -> Unit
+    onBackRequested: () -> Unit,
+    onRegisterRequested: () -> Unit = { }
+
 ){
     ChImpTheme {
         Scaffold(
@@ -45,9 +58,9 @@ fun LoginScreen(
             topBar = { TopBar(NavigationHandlers(onBackRequested = onBackRequested)) },
         ) { innerPadding ->
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+                //horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
-                verticalArrangement = Arrangement.Center
+                //verticalArrangement = Arrangement.Center
             ) {
                 when (val currentState = viewModel.state) {
                     is LoginScreenState.Idle ->
@@ -70,6 +83,17 @@ fun LoginScreen(
                            onDismiss = { viewModel.setIdleState() }
                        )
                     }
+                }
+                val annotatedString = buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                        append("Sign Up")
+                    }
+                }
+                Row (
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ){
+                    Text(text = "Don't have an account? ", style = TextStyle(fontSize = 24.sp))
+                    ClickableText(text = annotatedString, onClick = {onRegisterRequested()}, style = TextStyle(fontSize = 24.sp))
                 }
             }
         }

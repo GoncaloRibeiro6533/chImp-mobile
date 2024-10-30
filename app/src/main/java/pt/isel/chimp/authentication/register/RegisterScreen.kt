@@ -47,9 +47,7 @@ fun RegisterScreen(
                 .testTag(REGISTER_SCREEN_TEST_TAG),
         ) { innerPadding ->
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
-                verticalArrangement = Arrangement.Center
             ) {
                 when(val currentState = viewModel.state){
                     is RegisterScreenState.Idle -> {

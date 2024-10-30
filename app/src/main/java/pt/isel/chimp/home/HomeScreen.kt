@@ -30,6 +30,7 @@ fun HomeScreen(
     viewModel: HomeScreenViewModel,
     onAboutRequested : () -> Unit,
     onLoginRequested : () -> Unit = { },
+    onRegisterRequested : () -> Unit = { },
 ) {
 
     ChImpTheme {
@@ -63,6 +64,9 @@ fun HomeScreen(
                     text ="Welcome to ChIMP",
                     style = MaterialTheme.typography.titleLarge
                 )
+                Button(onClick = onRegisterRequested) {
+                    Text(text = "Register")
+                }
                 Button(onClick = onLoginRequested) {
                     Text(text = "Log In")
                 }

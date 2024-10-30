@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pt.isel.chimp.authentication.login.LoginScreenState
 import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.ChannelError
 import pt.isel.chimp.service.ChannelService
@@ -32,7 +32,7 @@ class CreateChannelViewModel (private val channelService: ChannelService) : View
         if (state != CreateChannelScreenState.Loading) {
             state = CreateChannelScreenState.Loading
             viewModelScope.launch {
-                val channel = channelService.createChannel(name, visibility, creatorId)
+                val channel = channelService.createChannel(name, Visibility.valueOf(visibility), creatorId)
                 state = when (channel) {
                     is Success -> CreateChannelScreenState.Success(channel.value)
                     is Failure -> CreateChannelScreenState.Error(channel.value)
