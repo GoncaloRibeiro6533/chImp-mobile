@@ -23,6 +23,8 @@ import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.MockUserService
 import pt.isel.chimp.service.repo.RepoMockImpl
+import pt.isel.chimp.ui.NavigationHandlers
+import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
 
 const val REGISTER_SCREEN_TEST_TAG = "RegisterScreenTestTag"
@@ -39,12 +41,16 @@ private fun extractErrorMessage(input: String): String {
 fun RegisterScreen(
     viewModel: RegisterScreenViewModel,
     onRegisterSuccessful: () -> Unit,
+    onNavigateBack: () -> Unit = { }
 ){
     ChImpTheme {
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
                 .testTag(REGISTER_SCREEN_TEST_TAG),
+            topBar = {
+                TopBar(NavigationHandlers(onBackRequested = onNavigateBack))
+            }
         ) { innerPadding ->
             Column(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),

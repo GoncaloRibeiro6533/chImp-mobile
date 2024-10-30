@@ -58,42 +58,31 @@ fun LoginScreen(
             topBar = { TopBar(NavigationHandlers(onBackRequested = onBackRequested)) },
         ) { innerPadding ->
             Column(
-                //horizontalAlignment = Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
-                //verticalArrangement = Arrangement.Center
             ) {
                 when (val currentState = viewModel.state) {
                     is LoginScreenState.Idle ->
                         LoginView(
                             onSubmit = { username, password ->
-                                viewModel.fetchLogin(username, password) }
+                                viewModel.fetchLogin(username, password) },
+                            onRegisterRequested = onRegisterRequested
                         )
                     is LoginScreenState.Loading -> {
                         LoadingView()
                     }
                     is LoginScreenState.Success -> {
-                        Text(text = "Login successful", style = TextStyle(fontSize = 24.sp))
+                        //Text(text = "Login successful", style = TextStyle(fontSize = 24.sp))
                         onLoginSuccessful(currentState.user)
                     }
                     is LoginScreenState.Error -> {
-                       ErrorAlert(
-                           title = "Login Error",
-                           message = currentState.exception.message ?: "",
-                           buttonText = "Ok",
-                           onDismiss = { viewModel.setIdleState() }
-                       )
+                        ErrorAlert(
+                            title = "Login Error",
+                            message = currentState.exception.message ?: "",
+                            buttonText = "Ok",
+                            onDismiss = { viewModel.setIdleState() }
+                        )
                     }
-                }
-                val annotatedString = buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                        append("Sign Up")
-                    }
-                }
-                Row (
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ){
-                    Text(text = "Don't have an account? ", style = TextStyle(fontSize = 24.sp))
-                    ClickableText(text = annotatedString, onClick = {onRegisterRequested()}, style = TextStyle(fontSize = 24.sp))
                 }
             }
         }

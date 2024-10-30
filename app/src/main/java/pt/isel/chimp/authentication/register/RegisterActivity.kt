@@ -23,7 +23,10 @@ class RegisterActivity: ComponentActivity() {
             ChImpTheme {
                 RegisterScreen(
                     viewModel = viewModel,
-                    onRegisterSuccessful = { navigateTo(this, LoginActivity::class.java) }
+                    onRegisterSuccessful = {
+                        finish()
+                        navigateTo(this, LoginActivity::class.java) },
+                    onNavigateBack = { finish() }
                 )
             }
         }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -64,11 +65,11 @@ fun HomeScreen(
                     text ="Welcome to ChIMP",
                     style = MaterialTheme.typography.titleLarge
                 )
-                Button(onClick = onRegisterRequested) {
-                    Text(text = "Register")
-                }
-                Button(onClick = onLoginRequested) {
+                Button(onClick = onLoginRequested, modifier = Modifier.width(150.dp)) {
                     Text(text = "Log In")
+                }
+                Button(onClick = onRegisterRequested, modifier = Modifier.width(150.dp)) {
+                    Text(text = "Register")
                 }
             }
         }

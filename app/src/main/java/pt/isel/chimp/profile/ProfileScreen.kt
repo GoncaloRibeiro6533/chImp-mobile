@@ -40,18 +40,15 @@ fun ProfileScreen(
                     is ProfileScreenState.Idle -> {
                             viewModel.fetchProfile(token)
                     }
-
                     is ProfileScreenState.Loading -> {
                         LoadingView()
                     }
-
                     is ProfileScreenState.Success -> {
                         ProfileView(
                             profile = currentState.profile,
                             onEditUsernameClick = { viewModel.setEditState(currentState.profile) },
                         )
                     }
-
                     is ProfileScreenState.EditingUsername -> {
                         EditingUsernameView(
                             username = currentState.profile.username,
