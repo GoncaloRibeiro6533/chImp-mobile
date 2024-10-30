@@ -55,6 +55,12 @@
             android:label="ChannelDetailsActivity"
             android:theme="@style/Theme.ChImp"
             />
+        <activity
+            android:name=".channels.channel.ChannelActivity"
+            android:exported="true"
+            android:label="ChannelActivity"
+            android:theme="@style/Theme.ChImp"
+            />
     </application>
 
 </manifest>
