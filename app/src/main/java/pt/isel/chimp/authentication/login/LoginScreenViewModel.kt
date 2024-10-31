@@ -9,14 +9,17 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.service.ChImpService
+import pt.isel.chimp.service.UserError
 import pt.isel.chimp.service.UserService
+import pt.isel.chimp.utils.Failure
+import pt.isel.chimp.utils.Success
 
 
 sealed interface LoginScreenState {
     data object Idle : LoginScreenState
     data object Loading : LoginScreenState
     data class Success(val user: AuthenticatedUser) : LoginScreenState
-    data class Error(val exception: Throwable) : LoginScreenState
+    data class Error(val exception: UserError) : LoginScreenState
 }
 
 class LoginScreenViewModel(private val userService: UserService ) : ViewModel() {
@@ -26,14 +29,22 @@ class LoginScreenViewModel(private val userService: UserService ) : ViewModel() 
 
     fun fetchLogin(username: String, password: String) {
             if (state != LoginScreenState.Loading) {
+                state = LoginScreenState.Loading
                 viewModelScope.launch {
-                    state = LoginScreenState.Loading
+                    val authUser = userService.login(username, password)
+                    state = when (authUser) {
+                        is Success -> LoginScreenState.Success(authUser.value)
+                        is Failure -> LoginScreenState.Error(authUser.value)
+                    }
+                    /**
                     state = try {
                         val user = userService.login(username, password)
                         LoginScreenState.Success(user)
                     } catch (e: Throwable) {
                         LoginScreenState.Error(e)
                     }
+
+                     */
                 }
             }
     }

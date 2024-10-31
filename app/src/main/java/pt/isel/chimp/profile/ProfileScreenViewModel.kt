@@ -10,7 +10,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.profile.Profile
 import pt.isel.chimp.service.ChImpService
+import pt.isel.chimp.service.UserError
 import pt.isel.chimp.service.UserService
+import pt.isel.chimp.utils.Failure
+import pt.isel.chimp.utils.Success
 
 
 sealed interface ProfileScreenState {
@@ -19,7 +22,7 @@ sealed interface ProfileScreenState {
     data object Loading : ProfileScreenState
     data class Success(val profile: Profile) : ProfileScreenState
     data class EditingUsername(val profile: Profile) : ProfileScreenState
-    data class Error(val exception: Throwable) : ProfileScreenState
+    data class Error(val exception: UserError) : ProfileScreenState
 
 }
 
@@ -32,6 +35,13 @@ class ProfileScreenViewModel(private val userServices: UserService) : ViewModel(
         if (state != ProfileScreenState.Loading) {
                 state = ProfileScreenState.Loading
             viewModelScope.launch {
+                val user = userServices.fetchUser(token)
+                state = when (user) {
+                    is Success -> ProfileScreenState
+                        .Success(Profile(user.value.username, user.value.email))
+                    is Failure -> ProfileScreenState.Error(user.value)
+                }
+                /**
                 state = try {
                     val user = userServices.fetchUser(token)
                     val state = state is ProfileScreenState.Loading
@@ -40,6 +50,7 @@ class ProfileScreenViewModel(private val userServices: UserService) : ViewModel(
                 } catch (e: Throwable) {
                     ProfileScreenState.Error(e)
                 }
+                 */
             }
         }
     }
@@ -48,12 +59,20 @@ class ProfileScreenViewModel(private val userServices: UserService) : ViewModel(
         if (state != ProfileScreenState.Loading) {
             state = ProfileScreenState.Loading
             viewModelScope.launch {
+                val user = userServices.updateUsername(newUsername, token)
+                state = when (user) {
+                    is Success -> ProfileScreenState
+                        .Success(Profile(user.value.username, user.value.email))
+                    is Failure -> ProfileScreenState.Error(user.value)
+                }
+                /**
                 state = try {
                     val user = userServices.updateUsername(newUsername, token)
                     ProfileScreenState.Success(Profile(user.username, user.email))
                 } catch (e: Throwable) {
                     ProfileScreenState.Error(e)
                 }
+                */
             }
         }
     }
