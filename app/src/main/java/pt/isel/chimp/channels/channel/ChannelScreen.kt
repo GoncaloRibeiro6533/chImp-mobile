@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isel.chimp.channels.channelsList.components.ChannelDetailsView
 import pt.isel.chimp.channels.generalComponents.ChannelLogo
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
@@ -66,20 +67,7 @@ fun ChannelScreen(
                     onBackRequested = onNavigationBack,
                     onMenuRequested = onMenuRequested),
                     content = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 5.dp, vertical = 4.dp).background(Color.Transparent),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            ChannelLogo(initial = channel.name.first())
-                            Text(
-                                text = channel.name,
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
-                        }
+                            ChannelDetailsView(channel)
                     }
                 )
             },
@@ -216,7 +204,7 @@ fun ChatBox(
 fun ChannelScreenPreview() {
     ChannelScreen(
         viewModel = ChannelViewModel(MockChannelService(RepoMockImpl()), MockMessageService(RepoMockImpl())),
-        channel = Channel(1, "Channel 1",
+        channel = Channel(1, "Channel 1 long",
             creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
         onNavigationBack = { },
         onMenuRequested = { }

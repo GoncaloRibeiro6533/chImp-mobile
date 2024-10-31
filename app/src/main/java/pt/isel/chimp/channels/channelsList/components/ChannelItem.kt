@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,36 +38,41 @@ fun ChannelItem(channel: Channel, onClick: () -> Unit) {
             .padding(horizontal = 16.dp)
             .clickable { onClick() },
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        ChannelDetailsView(channel)
+    }
+}
+
+@Composable
+fun ChannelDetailsView(channel: Channel) {
+    Row(
+        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        ChannelLogo(
+            initial = channel.name.first()
+        )
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier.widthIn(min = 0.dp, max = 150.dp)
         ) {
-            ChannelLogo(
-                initial = channel.name.first()
+            Text(
+                text = channel.name, fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 8.dp)
             )
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier.width(100.dp)
-            ) {
-                Text(
-                    text = channel.name, fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start
+        )
+        {
+            RoundedRectangleWithText(
+                text = channel.visibility.name,
+                backgroundColor = Color.DarkGray
             )
-            {
-                RoundedRectangleWithText(
-                    text = channel.visibility.name,
-                    backgroundColor = Color.DarkGray
-                )
-            }
         }
     }
 }
@@ -80,7 +86,7 @@ private fun RoundedRectangleWithText(text: String, backgroundColor: Color) {
     ) {
         Text(
             text = text,
-            color = Color.White, // Text color
+            color = Color.White,
             fontWeight = FontWeight.Bold,
             fontSize = 12.sp,
             textAlign = TextAlign.Center,
@@ -101,7 +107,7 @@ fun RoundedRectangleWithTextPreview(){
 @Composable
 fun ChannelItemPreview() {
     ChannelItem(
-        channel = Channel(1, "Channel 1",
+        channel = Channel(1, "Channel 1 long name",
             User(1, "Bob", "bob@mexample.com"),
             Visibility.PUBLIC
         ),

@@ -12,7 +12,7 @@ class ChannelRepoMock {
             mutableListOf<Channel>(
                 Channel(1, "DAW", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
                 Channel(2, "PDM", User(2, "Alice", "alice@example.com"), Visibility.PRIVATE),
-                Channel(3, "TVS", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
+                Channel(3, "TVS long long  name", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
                 /*Channel(4, "SegIngf", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
                 Channel(5, "IPW", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
                 Channel(6, "PG", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
