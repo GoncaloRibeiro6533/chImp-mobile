@@ -12,7 +12,7 @@ import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.menu.MenuActivity
 import pt.isel.chimp.utils.navigateTo
 
-class ChannelActivity : ComponentActivity() {
+class ChannelActivity(private val channel: Channel) : ComponentActivity() {
 
     private val viewModel by viewModels<ChannelViewModel>(
         factoryProducer = {
@@ -25,8 +25,12 @@ class ChannelActivity : ComponentActivity() {
         setContent{
             ChannelScreen(
                 viewModel = viewModel,
+                //channel = channel,
+
                 channel = Channel(1, "Channel 1",
                     creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC), //TODO: get channel from intent
+
+
                 onNavigationBack = { finish() },
                 onMenuRequested = { navigateTo(this, MenuActivity::class.java) }
             )

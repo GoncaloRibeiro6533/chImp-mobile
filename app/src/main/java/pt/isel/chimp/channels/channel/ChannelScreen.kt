@@ -1,11 +1,17 @@
 package pt.isel.chimp.channels.channel
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Icon
@@ -20,15 +26,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.MockChannelService
+import pt.isel.chimp.service.MockMessageService
 import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.service.repo.UserRepoMock
 import pt.isel.chimp.ui.NavigationHandlers
@@ -43,6 +53,8 @@ fun ChannelScreen(
     onMenuRequested : () -> Unit = { },
 ) {
 
+    val state = viewModel.state
+
     ChImpTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -52,26 +64,99 @@ fun ChannelScreen(
                     onMenuRequested = onMenuRequested))
             },
         ) { innerPadding ->
-            Box(
+
+            Column(
                 modifier = Modifier
-                    .padding(innerPadding)
                     .fillMaxSize()
-
+                    .padding(innerPadding)
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                        .align(Alignment.TopStart)
-                ) {
-
-                }
-                ChatBox(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(16.dp)
+                Text(
+                    text = channel.name,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 16.dp)
                 )
+
+                when (state) {
+                    is ChannelScreenState.Idle -> {
+                        viewModel.getMessages(channel.id, 10, 10)
+                    }
+                    is ChannelScreenState.Loading -> {
+                        LoadingView()
+                    }
+                    is ChannelScreenState.Success -> {
+
+                        val messages = state.messages
+                        Box(
+                            modifier = Modifier
+                                .padding(innerPadding)
+                                .fillMaxSize()
+
+                        ) {
+                            LazyColumn(
+                                contentPadding = PaddingValues(
+                                    top = 0.dp,
+                                    bottom = innerPadding.calculateBottomPadding(),
+                                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr)
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                items(messages) { message ->
+                                    MessageView(
+                                        user = message.sender,
+                                        message = message.content,
+
+                                    )
+
+                                }
+
+                            }
+                            var chatBoxValue by remember { mutableStateOf(TextFieldValue("")) }
+                            Box (
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(16.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    TextField(
+                                        value = chatBoxValue,
+                                        onValueChange = { newText ->
+                                            chatBoxValue = newText
+                                        },
+                                        placeholder = {
+                                            Text(text = "Type something")
+                                        }
+                                    )
+                                    IconButton(
+                                        onClick = {
+                                            viewModel.sendMessage(channel.creator, channel, chatBoxValue.text)
+                                        },
+
+                                        ) {
+                                        Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Send Message")
+
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+                    is ChannelScreenState.Error -> {
+                        Text(
+                            text = state.exception.message,
+                            modifier = Modifier.padding(innerPadding))
+                    }
+                }
             }
+
+
 
         }
     }
@@ -80,7 +165,8 @@ fun ChannelScreen(
 
 @Composable
 fun ChatBox(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSendRequest: (String) -> Unit = { }
 ) {
     var chatBoxValue by remember { mutableStateOf(TextFieldValue("")) }
     Row(
@@ -99,7 +185,6 @@ fun ChatBox(
         )
         IconButton(
             onClick = {
-                // TODO: send the message
             },
 
         ) {
@@ -113,7 +198,7 @@ fun ChatBox(
 @Composable
 fun ChannelScreenPreview() {
     ChannelScreen(
-        viewModel = ChannelViewModel(MockChannelService(RepoMockImpl())),
+        viewModel = ChannelViewModel(MockChannelService(RepoMockImpl()), MockMessageService(RepoMockImpl())),
         channel = Channel(1, "Channel 1",
             creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
         onNavigationBack = { },

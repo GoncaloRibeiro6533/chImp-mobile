@@ -6,6 +6,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import pt.isel.chimp.DependenciesContainer
+import pt.isel.chimp.channels.channel.ChannelActivity
 import pt.isel.chimp.channels.createChannel.CreateChannelActivity
 import pt.isel.chimp.menu.MenuActivity
 import pt.isel.chimp.utils.navigateTo
@@ -24,7 +25,7 @@ class ChannelsListActivity : ComponentActivity() {
             ChannelsListScreen(
                 viewModel = viewModel,
                 onMenuRequested = { navigateTo(this, MenuActivity::class.java) },
-                onChannelSelected = { channel -> /* Handle channel selection */ }, //todo navigate to chose channel
+                onChannelSelected = { channel -> navigateTo(this, ChannelActivity(channel)::class.java) }, //todo navigate to chose channel
                 onNavigateToCreateChannel = { navigateTo(this, CreateChannelActivity::class.java) }
             )
         }

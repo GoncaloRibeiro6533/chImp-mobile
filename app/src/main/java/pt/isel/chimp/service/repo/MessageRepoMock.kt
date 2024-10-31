@@ -46,8 +46,8 @@ class MessageRepoMock {
         private var currentId = 4
     }
 
-    fun createMessage(cretor: User, channel: Channel, content: String, time: LocalDateTime): Message {
-        val message = Message(currentId++, cretor, channel, content, time)
+    fun createMessage(creator: User, channel: Channel, content: String, time: LocalDateTime): Message {
+        val message = Message(currentId++, creator, channel, content, time)
         messages.add(message)
         return message
     }
