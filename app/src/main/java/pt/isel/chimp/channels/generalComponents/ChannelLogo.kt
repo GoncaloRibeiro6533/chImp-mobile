@@ -1,4 +1,4 @@
-package pt.isel.chimp.channels.channelsList.components
+package pt.isel.chimp.channels.generalComponents
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

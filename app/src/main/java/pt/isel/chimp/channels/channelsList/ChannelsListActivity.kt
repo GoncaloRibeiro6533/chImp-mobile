@@ -25,7 +25,7 @@ class ChannelsListActivity : ComponentActivity() {
             ChannelsListScreen(
                 viewModel = viewModel,
                 onMenuRequested = { navigateTo(this, MenuActivity::class.java) },
-                onChannelSelected = { channel -> navigateTo(this, ChannelActivity(channel)::class.java) }, //todo navigate to chose channel
+                onChannelSelected = { navigateTo(this, ChannelActivity::class.java) }, //todo navigate to chose channel
                 onNavigateToCreateChannel = { navigateTo(this, CreateChannelActivity::class.java) }
             )
         }

@@ -15,7 +15,6 @@ import pt.isel.chimp.service.ChannelError
 import pt.isel.chimp.service.ChannelService
 import pt.isel.chimp.service.MessageError
 import pt.isel.chimp.service.MessageService
-import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
 
@@ -23,8 +22,8 @@ sealed interface ChannelScreenState {
     data object Idle : ChannelScreenState
     data object Loading : ChannelScreenState
     data class Success(val messages: List<Message>) : ChannelScreenState
-    data class Error(val exception: MessageError) : ChannelScreenState
-
+    data class MsgError(val exception: MessageError) : ChannelScreenState
+    data class ChError(val exception: ChannelError) : ChannelScreenState
 }
 
 class ChannelViewModel(
@@ -35,6 +34,20 @@ class ChannelViewModel(
     var state: ChannelScreenState by mutableStateOf(ChannelScreenState.Idle)
         private set
 
+    fun findChannelById(id: Int, user: User) {
+        if (state != ChannelScreenState.Loading) {
+            state = ChannelScreenState.Loading
+            viewModelScope.launch {
+                val channel = channelService.getChannelById(id, user)
+                state = when (channel) {
+                    is Success -> ChannelScreenState.Success(listOf())
+                    is Failure -> ChannelScreenState.ChError(channel.value)
+                }
+            }
+        }
+    }
+
+
     fun sendMessage(user: User, channel: Channel, content: String) {
         if (state != ChannelScreenState.Loading) {
             state = ChannelScreenState.Loading
@@ -42,24 +55,23 @@ class ChannelViewModel(
                 val messages = messageService.createMessage(user.id, channel.id, content)
                 state = when (messages) {
                     is Success -> ChannelScreenState.Success(listOf(messages.value))
-                    is Failure -> ChannelScreenState.Error(messages.value)
+                    is Failure -> ChannelScreenState.MsgError(messages.value)
                 }
             }
         }
     }
-    fun getMessages(channelId: Int, limit: Int, skip: Int) {
 
+    fun getMessages(channelId: Int, limit: Int, skip: Int) {
         if (state != ChannelScreenState.Loading) {
             state = ChannelScreenState.Loading
             viewModelScope.launch {
                 val messages = messageService.getMessagesByChannel(channelId, limit, skip)
                 state = when (messages) {
                     is Success -> ChannelScreenState.Success(messages.value)
-                    is Failure -> ChannelScreenState.Error(messages.value)
+                    is Failure -> ChannelScreenState.MsgError(messages.value)
                 }
             }
         }
-
     }
 }
 

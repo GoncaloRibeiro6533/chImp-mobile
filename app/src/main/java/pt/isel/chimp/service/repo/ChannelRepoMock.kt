@@ -28,19 +28,20 @@ class ChannelRepoMock {
         private val userInChannel = mutableListOf<UserInChannel>(
             UserInChannel(1, 1, Role.READ_WRITE),
             UserInChannel(2, 1, Role.READ_WRITE),
-            UserInChannel(2, 2, Role.READ_WRITE),
+            UserInChannel(2, 2, Role.READ_ONLY),
             UserInChannel(1, 2, Role.READ_WRITE),
             UserInChannel(1, 3, Role.READ_WRITE),
-            /*UserInChannel(1, 4),
-            UserInChannel(1, 5),
-            UserInChannel(1, 6),
-            UserInChannel(1, 7),
-            UserInChannel(1, 8),
-            UserInChannel(1, 9),
-            UserInChannel(1, 10),
-            UserInChannel(1, 11),
+            /*UserInChannel(1, 4, Role.READ_WRITE),
+            UserInChannel(1, 5, Role.READ_WRITE),
+            UserInChannel(1, 6, Role.READ_ONLY),
+            UserInChannel(1, 7, Role.READ_WRITE),
+            UserInChannel(1, 8, Role.READ_WRITE),
+            UserInChannel(1, 9, Role.READ_WRITE),
+            UserInChannel(1, 10, Role.READ_WRITE),
+            UserInChannel(1, 11, Role.READ_WRITE),
+            */
 
-             */
+
         )
 
         private var currentId = 50

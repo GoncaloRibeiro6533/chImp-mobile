@@ -12,7 +12,7 @@ import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.menu.MenuActivity
 import pt.isel.chimp.utils.navigateTo
 
-class ChannelActivity(private val channel: Channel) : ComponentActivity() {
+class ChannelActivity : ComponentActivity() {
 
     private val viewModel by viewModels<ChannelViewModel>(
         factoryProducer = {

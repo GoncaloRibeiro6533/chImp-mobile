@@ -1,4 +1,4 @@
-package pt.isel.chimp.channels.channel
+package pt.isel.chimp.message
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

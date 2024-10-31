@@ -25,6 +25,7 @@ import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.style.TextAlign
+import pt.isel.chimp.channels.generalComponents.ChannelLogo
 import pt.isel.chimp.ui.theme.ChImpTheme
 
 

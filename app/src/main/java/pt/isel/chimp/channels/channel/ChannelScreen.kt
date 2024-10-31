@@ -32,15 +32,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isel.chimp.channels.generalComponents.ChannelLogo
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.profile.ErrorAlert
+import pt.isel.chimp.message.MessageView
 import pt.isel.chimp.service.MockChannelService
 import pt.isel.chimp.service.MockMessageService
 import pt.isel.chimp.service.repo.RepoMockImpl
-import pt.isel.chimp.service.repo.UserRepoMock
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -70,15 +70,24 @@ fun ChannelScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                Text(
-                    text = channel.name,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ChannelLogo(initial = channel.name.first())
+                    Text(
+                        text = channel.name,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
 
                 when (state) {
                     is ChannelScreenState.Idle -> {
+                        //viewModel.findChannelById(channel.id, channel.creator)
                         viewModel.getMessages(channel.id, 10, 10)
                     }
                     is ChannelScreenState.Loading -> {
@@ -107,9 +116,7 @@ fun ChannelScreen(
                                     MessageView(
                                         user = message.sender,
                                         message = message.content,
-
                                     )
-
                                 }
 
                             }
@@ -144,23 +151,27 @@ fun ChannelScreen(
                                     }
                                 }
                             }
-
                         }
                     }
 
-                    is ChannelScreenState.Error -> {
+                    is ChannelScreenState.MsgError -> {
                         Text(
                             text = state.exception.message,
                             modifier = Modifier.padding(innerPadding))
                     }
+
+                    is ChannelScreenState.ChError -> {
+                        Text(
+                            text = state.exception.message,
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    }
+
+
                 }
             }
-
-
-
         }
     }
-
 }
 
 @Composable
