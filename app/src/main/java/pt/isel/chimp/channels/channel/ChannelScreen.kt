@@ -1,5 +1,6 @@
 package pt.isel.chimp.channels.channel
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -26,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,7 +64,24 @@ fun ChannelScreen(
             topBar = {
                 TopBar(NavigationHandlers(
                     onBackRequested = onNavigationBack,
-                    onMenuRequested = onMenuRequested))
+                    onMenuRequested = onMenuRequested),
+                    content = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 5.dp, vertical = 4.dp).background(Color.Transparent),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            ChannelLogo(initial = channel.name.first())
+                            Text(
+                                text = channel.name,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
+                        }
+                    }
+                )
             },
         ) { innerPadding ->
 
@@ -70,21 +90,7 @@ fun ChannelScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ChannelLogo(initial = channel.name.first())
-                    Text(
-                        text = channel.name,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 16.dp)
-                    )
-                }
-
+                HorizontalDivider()
                 when (state) {
                     is ChannelScreenState.Idle -> {
                         //viewModel.findChannelById(channel.id, channel.creator)
