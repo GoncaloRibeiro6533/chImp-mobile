@@ -1,5 +1,6 @@
 package pt.isel.chimp.channels.channelInfo
 
+import android.provider.CalendarContract
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,15 +20,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.simulateHotReload
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isel.chimp.domain.Role
-import pt.isel.chimp.domain.channel.Channel
-import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.domain.user.UserInChannel
-import pt.isel.chimp.message.MessageView
+import pt.isel.chimp.home.RoundedRectangleWithText
 import pt.isel.chimp.ui.theme.ChImpTheme
 
 @Composable
@@ -69,13 +68,12 @@ fun MemberView(
             }
 
             Column {
-                (if (role == Role.ADMIN) "Admin" else null)?.let {
-                    Text(
-                        text = it,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier
-                    )
-                }
+                val roleLabel = if(role == Role.READ_ONLY) "Reader" else "Editor"
+                val roleColor = if(role == Role.READ_ONLY) Color.DarkGray else Color.Green
+                RoundedRectangleWithText(
+                    text = roleLabel,
+                    backgroundColor = roleColor
+                )
             }
         }
 
