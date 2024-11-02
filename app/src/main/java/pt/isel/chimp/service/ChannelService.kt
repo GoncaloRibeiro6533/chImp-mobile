@@ -5,6 +5,7 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.domain.user.UserInChannel
 import pt.isel.chimp.service.repo.RepoMock
 import pt.isel.chimp.utils.Either
 import pt.isel.chimp.utils.failure
@@ -20,6 +21,7 @@ interface ChannelService {
     suspend fun getChannelById(id: Int, user: User): Either<ChannelError, Channel>
     suspend fun getChannelsByUser(user: User, limit: Int = 10, skip: Int = 0): Either<ChannelError, List<Channel>>
     suspend fun addUserToChannel(userToAdd: Int, channelId: Int, role: Role): Either<ChannelError, Channel>
+    suspend fun getChannelMembers(channel: Channel): Either<ChannelError, List<Pair<User, UserInChannel>>>
 }
 
 sealed class ChannelError(val message: String) {
@@ -72,5 +74,15 @@ class MockChannelService(private val repoMock: RepoMock) : ChannelService {
         }
         repoMock.channelRepoMock.addUserToChannel(userToAdd, channel, role)
         return success(channel)
+    }
+
+    override suspend fun getChannelMembers(channel: Channel): Either<ChannelError, List<Pair<User, UserInChannel>>> {
+        val usersInChannel = repoMock.channelRepoMock.getChannelMembers(channel)
+        val users = mutableListOf<Pair<User, UserInChannel>>()
+        usersInChannel.forEach {
+            val user = repoMock.userRepoMock.findUserById(it.userId) ?: return failure(ChannelError.UserNotFoundException)
+            users.add(Pair(user, it))
+        }
+        return success(users)
     }
 }

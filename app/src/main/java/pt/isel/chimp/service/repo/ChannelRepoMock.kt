@@ -4,6 +4,7 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.domain.user.UserInChannel
 
 class ChannelRepoMock {
 
@@ -24,7 +25,7 @@ class ChannelRepoMock {
 
                  */
             )
-        private data class UserInChannel(val userId: Int, val channelId: Int, val role: Role)
+
         private val userInChannel = mutableListOf<UserInChannel>(
             UserInChannel(1, 1, Role.READ_WRITE),
             UserInChannel(2, 1, Role.READ_WRITE),
@@ -70,5 +71,9 @@ class ChannelRepoMock {
 
     fun findChannelByName(name: String, limit: Int = 10, skip: Int = 0 ): List<Channel> {
         return channels.filter { it.name.contains(name) }.drop(skip).take(limit)
+    }
+
+    fun getChannelMembers(channel: Channel): List<UserInChannel> {
+        return  userInChannel.filter { it.channelId == channel.id }
     }
 }
