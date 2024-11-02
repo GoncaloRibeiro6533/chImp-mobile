@@ -1,8 +1,7 @@
 package pt.isel.chimp.service
 
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import kotlinx.coroutines.delay
 import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.service.repo.RepoMock
 import pt.isel.chimp.utils.Either
@@ -27,7 +26,6 @@ sealed class MessageError(val message: String) {
 class MockMessageService(private val repoMock: RepoMock) : MessageService {
         //TODO add token on operations
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun createMessage(senderId: Int, channelId: Int, content: String): Either<MessageError, Message> {
         val user = repoMock.userRepoMock.findUserById(senderId) ?: return failure(MessageError.UserNotFoundException)
         val channel = repoMock.channelRepoMock.findChannelById(channelId) ?: return failure(MessageError.ChannelNotFoundException)
@@ -39,6 +37,7 @@ class MockMessageService(private val repoMock: RepoMock) : MessageService {
             return failure(MessageError.InvalidSkipOrLimitException)
         }
         val channel = repoMock.channelRepoMock.findChannelById(channelId) ?: return failure(MessageError.ChannelNotFoundException)
+        delay(2000)
         return success(repoMock.messageRepoMock.findMessagesByChannel(channel, limit, skip))
 
     }

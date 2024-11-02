@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.message.Message
+import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.ChannelError
@@ -48,11 +49,11 @@ class ChannelViewModel(
     }
 
 
-    fun sendMessage(user: User, channel: Channel, content: String) {
+    fun sendMessage(channel: Channel, user: AuthenticatedUser, content: String) {
         if (state != ChannelScreenState.Loading) {
             state = ChannelScreenState.Loading
             viewModelScope.launch {
-                val messages = messageService.createMessage(user.id, channel.id, content)
+                val messages = messageService.createMessage(user.user.id, channel.id, content)
                 state = when (messages) {
                     is Success -> ChannelScreenState.Success(listOf(messages.value))
                     is Failure -> ChannelScreenState.MsgError(messages.value)
