@@ -41,7 +41,7 @@ class ProfileScreenViewModel(private val userServices: UserService) : ViewModel(
                         .Success(Profile(user.value.username, user.value.email))
                     is Failure -> ProfileScreenState.Error(user.value)
                 }
-                /**
+                /*
                 state = try {
                     val user = userServices.fetchUser(token)
                     val state = state is ProfileScreenState.Loading

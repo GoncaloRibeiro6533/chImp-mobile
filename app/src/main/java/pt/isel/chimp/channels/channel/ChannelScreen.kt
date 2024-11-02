@@ -1,6 +1,5 @@
 package pt.isel.chimp.channels.channel
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,15 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import pt.isel.chimp.channels.channelsList.components.ChannelDetailsView
-import pt.isel.chimp.channels.generalComponents.ChannelLogo
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
@@ -54,7 +49,6 @@ fun ChannelScreen(
     viewModel: ChannelViewModel,
     channel: Channel,
     onNavigationBack: () -> Unit = { },
-    onMenuRequested : () -> Unit = { },
 ) {
 
     val state = viewModel.state
@@ -64,10 +58,10 @@ fun ChannelScreen(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 TopBar(NavigationHandlers(
-                    onBackRequested = onNavigationBack,
-                    onMenuRequested = onMenuRequested),
+                    onBackRequested = onNavigationBack
+                ),
                     content = {
-                            ChannelDetailsView(channel)
+                        ChannelDetailsView(channel)
                     }
                 )
             },
@@ -81,7 +75,7 @@ fun ChannelScreen(
                 HorizontalDivider()
                 when (state) {
                     is ChannelScreenState.Idle -> {
-                        //viewModel.findChannelById(channel.id, channel.creator)
+                        viewModel.findChannelById(channel.id, channel.creator)
                         viewModel.getMessages(channel.id, 10, 10)
                     }
                     is ChannelScreenState.Loading -> {
@@ -137,6 +131,7 @@ fun ChannelScreen(
                                     IconButton(
                                         onClick = {
                                             viewModel.sendMessage(channel.creator, channel, chatBoxValue.text)
+                                            chatBoxValue = TextFieldValue("")
                                         },
 
                                         ) {
@@ -192,7 +187,7 @@ fun ChatBox(
             onClick = {
             },
 
-        ) {
+            ) {
             Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Send Message")
 
         }
@@ -207,6 +202,5 @@ fun ChannelScreenPreview() {
         channel = Channel(1, "Channel 1 long",
             creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
         onNavigationBack = { },
-        onMenuRequested = { }
     )
 }
