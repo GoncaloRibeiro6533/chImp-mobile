@@ -73,7 +73,7 @@ fun ProfileView(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun ProfileViewPreview() {
     ChImpTheme {
