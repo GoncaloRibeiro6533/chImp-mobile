@@ -1,13 +1,10 @@
 package pt.isel.chimp.home
 
 import android.content.res.Configuration
-import android.provider.CalendarContract.Colors
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,11 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -77,15 +70,15 @@ fun HomeScreen(
                     text = "Welcome to ChIMP",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight(500),
-                    modifier = Modifier.padding(bottom = 15.dp),
+                    modifier = Modifier.padding(bottom = 30.dp),
                     fontSize = 30.sp
                 )
                 Button(
                     onClick = onLoginRequested,
                     modifier = Modifier.width(150.dp).padding(5.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFF5B84E),
-                        contentColor = Color(0xff181d26)
+                   colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isSystemInDarkTheme()) Color.White
+                        else Color.Black,
                     )
                 ) {
                     Text(text = "Log In")
@@ -94,8 +87,8 @@ fun HomeScreen(
                     onClick = onRegisterRequested,
                     modifier = Modifier.width(150.dp).padding(5.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFF5B84E),
-                        contentColor = Color(0xff181d26)
+                        containerColor = if (isSystemInDarkTheme()) Color.White
+                        else Color.Black,
                     )
                 ) {
                     Text(text = "Register")
