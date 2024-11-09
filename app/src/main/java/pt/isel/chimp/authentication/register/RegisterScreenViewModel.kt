@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService
-import pt.isel.chimp.service.UserError
 import pt.isel.chimp.service.UserService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
@@ -18,7 +18,7 @@ sealed interface RegisterScreenState {
     data object Idle : RegisterScreenState
     data object Loading : RegisterScreenState
     data class Success(val user: User) : RegisterScreenState
-    data class Error(val exception: UserError): RegisterScreenState
+    data class Error(val error: ApiError): RegisterScreenState
 }
 
 class RegisterScreenViewModel(private val userServices: UserService) : ViewModel() {
@@ -30,20 +30,15 @@ class RegisterScreenViewModel(private val userServices: UserService) : ViewModel
         if (state != RegisterScreenState.Loading) {
             state = RegisterScreenState.Loading
             viewModelScope.launch {
-                val user = userServices.register(username, password, email)
-                state = when (user) {
-                    is Success -> RegisterScreenState.Success(user.value)
-                    is Failure -> RegisterScreenState.Error(user.value)
-                }
-                /**
                 state = try {
                     val user = userServices.register(username, password, email)
-                    RegisterScreenState.Success(user)
+                    when (user) {
+                        is Success -> RegisterScreenState.Success(user.value)
+                        is Failure -> RegisterScreenState.Error(user.value)
+                    }
                 } catch (e: Throwable) {
-                    RegisterScreenState.Error(e)
+                    RegisterScreenState.Error(ApiError("Error registering user"))
                 }
-
-                 */
             }
         }
     }

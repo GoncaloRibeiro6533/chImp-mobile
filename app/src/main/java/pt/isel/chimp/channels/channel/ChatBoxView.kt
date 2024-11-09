@@ -42,7 +42,7 @@ fun ChatBoxView(
                     chatBoxValue = newText
                 },
                 placeholder = {
-                    Text(text = "Type something")
+                    Text(text = "Send message to channel") // TODO add channel name as bold
                 },
                 modifier = Modifier
                     .weight(1f)
@@ -59,7 +59,7 @@ fun ChatBoxView(
                 },
                 modifier = Modifier.align(Alignment.Bottom)
                 ) {
-                Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Send Message")
+                Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Send Message to Channel")
 
             }
         }

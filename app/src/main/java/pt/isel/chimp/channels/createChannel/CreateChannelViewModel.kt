@@ -9,8 +9,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
+import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService
-import pt.isel.chimp.service.ChannelError
 import pt.isel.chimp.service.ChannelService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
@@ -19,7 +19,7 @@ sealed interface CreateChannelScreenState {
     data object Idle : CreateChannelScreenState
     data object Loading : CreateChannelScreenState
     data class Success(val channel: Channel) : CreateChannelScreenState
-    data class Error(val exception: ChannelError) : CreateChannelScreenState
+    data class Error(val error: ApiError) : CreateChannelScreenState
 }
 
 class CreateChannelViewModel (private val channelService: ChannelService) : ViewModel(){
@@ -28,14 +28,18 @@ class CreateChannelViewModel (private val channelService: ChannelService) : View
         private set
 
 
-    fun createChannel(name: String, visibility: String, creatorId: Int) {
+    fun createChannel(token: String, name: String, visibility: String) {
         if (state != CreateChannelScreenState.Loading) {
             state = CreateChannelScreenState.Loading
             viewModelScope.launch {
-                val channel = channelService.createChannel(name, Visibility.valueOf(visibility), creatorId)
-                state = when (channel) {
-                    is Success -> CreateChannelScreenState.Success(channel.value)
-                    is Failure -> CreateChannelScreenState.Error(channel.value)
+                state = try {
+                    val channel = channelService.createChannel(token, name, Visibility.valueOf(visibility))
+                    when (channel) {
+                        is Success -> CreateChannelScreenState.Success(channel.value)
+                        is Failure -> CreateChannelScreenState.Error(channel.value)
+                    }
+                } catch (e: Throwable) {
+                    CreateChannelScreenState.Error(ApiError("Error creating channel"))
                 }
             }
 

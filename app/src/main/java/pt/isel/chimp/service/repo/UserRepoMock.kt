@@ -73,4 +73,8 @@ class UserRepoMock {
     fun deleteSession(session: Token) {
         sessions.remove(session)
     }
+
+    fun deleteAllSessions() {
+        sessions.clear()
+    }
 }

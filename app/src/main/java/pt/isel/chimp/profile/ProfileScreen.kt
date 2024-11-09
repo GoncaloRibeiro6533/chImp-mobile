@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.chimp.about.ABOUT_SCREEN_TEST_TAG
 import pt.isel.chimp.components.LoadingView
-import pt.isel.chimp.service.ChImpServiceMock
+import pt.isel.chimp.service.mock.ChImpServiceMock
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -62,7 +62,7 @@ fun ProfileScreen(
                     is ProfileScreenState.Error -> {
                         ErrorAlert(
                             title = "Error",
-                            message = currentState.exception.message ?: "An error occurred",
+                            message = currentState.error.message,
                             buttonText = "Ok",
                             onDismiss = { viewModel.fetchProfile(token) }
 

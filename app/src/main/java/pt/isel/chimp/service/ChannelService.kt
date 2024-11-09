@@ -1,88 +1,72 @@
 package pt.isel.chimp.service
 
-import kotlinx.coroutines.delay
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.domain.user.UserInChannel
-import pt.isel.chimp.service.repo.RepoMock
+import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.utils.Either
-import pt.isel.chimp.utils.failure
-import pt.isel.chimp.utils.success
 
 
 /**
  * Contract of the service that provides channels.
-
- */
+*/
 interface ChannelService {
-    suspend fun createChannel(name: String, visibility: Visibility, creatorId: Int): Either<ChannelError, Channel>
-    suspend fun getChannelById(id: Int, user: User): Either<ChannelError, Channel>
-    suspend fun getChannelsByUser(user: User, limit: Int = 10, skip: Int = 0): Either<ChannelError, List<Channel>>
-    suspend fun addUserToChannel(userToAdd: Int, channelId: Int, role: Role): Either<ChannelError, Channel>
-    suspend fun getChannelMembers(channel: Channel): Either<ChannelError, List<Pair<User, UserInChannel>>>
+
+    /**
+     * Creates a channel.
+     * @param token the user token.
+     * @param name the channel name.
+     * @param visibility the channel visibility.
+     * @return the created channel.
+     * @return ApiError if an error occurs.
+     * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
+     */
+    suspend fun createChannel(token: String, name: String, visibility: Visibility): Either<ApiError, Channel>
+
+    /**
+     * Gets a channel by its id.
+     * @param id the channel id.
+     * @param token the user token.
+     * @return the channel.
+     * @return ApiError if an error occurs.
+     * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
+     */
+    suspend fun getChannelById(id: Int, token: String): Either<ApiError, Channel>
+
+    /**
+     * Gets the channels of a user.
+     * @param token the user token.
+     * @param limit the maximum number of channels to return.
+     * @param skip the number of channels to skip.
+     * @return the channels.
+     * @return ApiError if an error occurs.
+     * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
+     */
+    suspend fun getChannelsByUser(token: String, limit: Int = 10, skip: Int = 0): Either<ApiError, List<Channel>>
+
+    /**
+     * Adds a user to a channel.
+     * @param token the user token.
+     * @param userToAdd the user to add.
+     * @param channelId the channel id.
+     * @param role the role of the user in the channel.
+     * @return the channel.
+     * @return ApiError if an error occurs.
+     * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
+     */
+    suspend fun addUserToChannel(token: String, userToAdd: Int, channelId: Int, role: Role): Either<ApiError, Channel>
+
+    /**
+     * Gets the members of a channel.
+     * @param token the user token.
+     * @param channel the channel.
+     * @return the members of the channel.
+     * @return ApiError if an error occurs.
+     * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
+     */
+    suspend fun getChannelMembers(token: String, channel: Channel): Either<ApiError, List<Pair<User, UserInChannel>>>
 }
 
-sealed class ChannelError(val message: String) {
-    data object ChannelNotFoundException : ChannelError("Channel not found")
-    data object UserNotFoundException : ChannelError("User not found")
-    data object InvalidVisibility : ChannelError("Invalid visibility")
-    data object ChannelNameAlreadyExists : ChannelError("Channel name already exists")
-    data object UserAlreadyInChannel : ChannelError("User already in channel")
-}
 
-
-
-class MockChannelService(private val repoMock: RepoMock) : ChannelService {
-
-
-    override suspend fun createChannel(name: String, visibility: Visibility, creatorId: Int): Either<ChannelError, Channel> {
-        if (repoMock.channelRepoMock.findChannelByName(name, 1, 0).isNotEmpty()) {
-            return failure(ChannelError.ChannelNameAlreadyExists)
-        }
-        val creator = repoMock.userRepoMock.findUserById(creatorId) ?: return failure(ChannelError.UserNotFoundException)
-        val channel = repoMock.channelRepoMock.createChannel(name, visibility, creator)
-        return success(channel)
-    }
-
-    override suspend fun getChannelById(id: Int, user: User): Either<ChannelError, Channel> {
-        val channel = repoMock.channelRepoMock.findChannelById(id) ?: return failure(ChannelError.ChannelNotFoundException)
-        val userInChannel = repoMock.channelRepoMock.findChannelsOfUser(user)
-        if (channel !in userInChannel) {
-            return failure(ChannelError.ChannelNotFoundException)
-        }
-        return success(channel)
-    }
-
-    override suspend fun getChannelsByUser(user: User, limit: Int, skip: Int): Either<ChannelError, List<Channel>> {
-        val userChannels = repoMock.channelRepoMock.findChannelsOfUser(user)
-        delay(500)
-        return success(userChannels)
-    }
-
-    override suspend fun addUserToChannel(
-        userToAdd: Int,
-        channelId: Int,
-        role: Role
-    ): Either<ChannelError, Channel> {
-        val user = repoMock.userRepoMock.findUserById(userToAdd) ?: return failure(ChannelError.UserNotFoundException)
-        val channel = repoMock.channelRepoMock.findChannelById(channelId) ?: return failure(ChannelError.ChannelNotFoundException)
-        val channelOfUser = repoMock.channelRepoMock.findChannelsOfUser(user)
-        if (channel in channelOfUser) {
-            return failure(ChannelError.UserAlreadyInChannel)
-        }
-        repoMock.channelRepoMock.addUserToChannel(userToAdd, channel, role)
-        return success(channel)
-    }
-
-    override suspend fun getChannelMembers(channel: Channel): Either<ChannelError, List<Pair<User, UserInChannel>>> {
-        val usersInChannel = repoMock.channelRepoMock.getChannelMembers(channel)
-        val users = mutableListOf<Pair<User, UserInChannel>>()
-        usersInChannel.forEach {
-            val user = repoMock.userRepoMock.findUserById(it.userId) ?: return failure(ChannelError.UserNotFoundException)
-            users.add(Pair(user, it))
-        }
-        return success(users)
-    }
-}

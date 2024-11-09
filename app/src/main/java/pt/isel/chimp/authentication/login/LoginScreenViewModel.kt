@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.user.AuthenticatedUser
+import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService
-import pt.isel.chimp.service.UserError
 import pt.isel.chimp.service.UserService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
@@ -19,7 +19,7 @@ sealed interface LoginScreenState {
     data object Idle : LoginScreenState
     data object Loading : LoginScreenState
     data class Success(val user: AuthenticatedUser) : LoginScreenState
-    data class Error(val exception: UserError) : LoginScreenState
+    data class Error(val error: ApiError) : LoginScreenState
 }
 
 class LoginScreenViewModel(private val userService: UserService ) : ViewModel() {
@@ -31,20 +31,16 @@ class LoginScreenViewModel(private val userService: UserService ) : ViewModel() 
             if (state != LoginScreenState.Loading) {
                 state = LoginScreenState.Loading
                 viewModelScope.launch {
-                    val authUser = userService.login(username, password)
-                    state = when (authUser) {
-                        is Success -> LoginScreenState.Success(authUser.value)
-                        is Failure -> LoginScreenState.Error(authUser.value)
-                    }
-                    /**
-                    state = try {
-                        val user = userService.login(username, password)
-                        LoginScreenState.Success(user)
+                    state =
+                    try {
+                        val authUser = userService.login(username, password)
+                        when (authUser) {
+                            is Success -> LoginScreenState.Success(authUser.value)
+                            is Failure -> LoginScreenState.Error(authUser.value)
+                        }
                     } catch (e: Throwable) {
-                        LoginScreenState.Error(e)
+                        LoginScreenState.Error(ApiError("Error logging in"))
                     }
-
-                     */
                 }
             }
     }

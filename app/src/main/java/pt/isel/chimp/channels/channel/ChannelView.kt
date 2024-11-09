@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +27,9 @@ fun ChannelView(
                 .fillMaxWidth()
                 .weight(1f),
         ) {
-            MessagesView(messages)
+            MessagesView(
+                messages,
+                )
         }
         Row(
             modifier = Modifier

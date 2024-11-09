@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -41,13 +42,11 @@ fun ChannelItem(channel: Channel, onClick: () -> Unit) {
 @Composable
 fun ChannelDetailsView(channel: Channel) {
     Row(
-        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+        modifier = Modifier.padding(10.dp).fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        ChannelLogo(
-            initial = channel.name.first()
-        )
+        ChannelLogo(name = channel.name)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start,

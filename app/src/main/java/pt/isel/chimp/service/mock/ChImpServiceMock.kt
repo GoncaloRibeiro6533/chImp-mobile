@@ -1,5 +1,9 @@
-package pt.isel.chimp.service
+package pt.isel.chimp.service.mock
 
+import pt.isel.chimp.service.ChImpService
+import pt.isel.chimp.service.ChannelService
+import pt.isel.chimp.service.MessageService
+import pt.isel.chimp.service.UserService
 import pt.isel.chimp.service.repo.RepoMockImpl
 
 class ChImpServiceMock : ChImpService {

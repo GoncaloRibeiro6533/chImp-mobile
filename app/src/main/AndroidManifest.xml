@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:name=".ChImpApplication"
         android:allowBackup="true"
@@ -62,6 +63,14 @@
             android:label="ChannelActivity"
             android:theme="@style/Theme.ChImp"
             />
+        <activity
+            android:name=".channels.channelInfo.ChannelInfoActivity"
+            android:exported="true"
+            android:label="ChannelInfoActivity"
+            android:theme="@style/Theme.ChImp"
+            />
+
+
     </application>
 
 </manifest>

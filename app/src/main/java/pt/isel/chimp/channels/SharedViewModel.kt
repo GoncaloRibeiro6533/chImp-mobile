@@ -6,6 +6,8 @@ import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.ChannelService
 
+
+/*
 class SharedViewModel (private val channelService: ChannelService)  : ViewModel() {
     var selectedChannel: Channel? = null
 }
@@ -15,4 +17,4 @@ class SharedViewModelFactory(private val service: ChImpService) : ViewModelProvi
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return SharedViewModel(service.channelService) as T
     }
-}
+}*/

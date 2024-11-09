@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.profile.ErrorAlert
-import pt.isel.chimp.service.MockUserService
+import pt.isel.chimp.service.mock.MockUserService
 import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
@@ -64,7 +64,7 @@ fun LoginScreen(
                     is LoginScreenState.Error -> {
                         ErrorAlert(
                             title = "Login Error",
-                            message = currentState.exception.message ?: "",
+                            message = currentState.error.message,
                             buttonText = "Ok",
                             onDismiss = { viewModel.setIdleState() }
                         )

@@ -30,8 +30,8 @@ import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.profile.ErrorAlert
-import pt.isel.chimp.service.MockChannelService
-import pt.isel.chimp.service.MockMessageService
+import pt.isel.chimp.service.mock.MockChannelService
+import pt.isel.chimp.service.mock.MockMessageService
 import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
@@ -43,10 +43,8 @@ fun ChannelScreen(
     channel: Channel,
     onNavigationBack: () -> Unit = { },
 ) {
-
-    val state = viewModel.state
     val user = User (1, "Bob", "bob@email.com")
-    val authenticatedUser = AuthenticatedUser(user, "token")
+    val authenticatedUser = AuthenticatedUser(user, "token1")
     ChImpTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -55,7 +53,7 @@ fun ChannelScreen(
                     onBackRequested = onNavigationBack
                 ),
                     content = {
-                        ChannelDetailsView(channel)
+                        ChannelDetailsView(channel) //TODO add on channel detail click
                     }
                 )
             },
@@ -67,43 +65,32 @@ fun ChannelScreen(
                     .padding(innerPadding)
             ) {
                 HorizontalDivider()
-                when (state) {
+                when (val state = viewModel.state) {
                     is ChannelScreenState.Idle -> {
-                        viewModel.findChannelById(channel.id, channel.creator) //TODO why this calling?
-                        viewModel.getMessages(channel.id, 10, 0)
+                        //viewModel.findChannelById(channel.id, authenticatedUser.token) //TODO why this calling?
+                        viewModel.getMessages(channel.id, 10, 0, authenticatedUser.token)
                     }
                     is ChannelScreenState.Loading -> {
                         LoadingView()
                     }
                     is ChannelScreenState.Success -> {
                         ChannelView(state.messages) { content ->
-                            viewModel.sendMessage(channel, authenticatedUser, content)
+                            viewModel.sendMessage(channel, authenticatedUser, content, authenticatedUser.token)
                         }
                     }
-
-                    is ChannelScreenState.MsgError -> {
+                    is ChannelScreenState.Error ->
                         ErrorAlert(
                             title = "Error",
-                            message = state.exception.message,
+                            message = state.error.message,
                             buttonText = "Ok",
-                            onDismiss = { TODO() }
-
+                            onDismiss = { viewModel.findChannelById(channel.id, authenticatedUser.token) }
                         )
-                    }
-
-                    is ChannelScreenState.ChError -> {
-                        Text(
-                            text = state.exception.message,
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                    }
-
-
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun ChatBox(

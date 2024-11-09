@@ -42,6 +42,49 @@ class MessageRepoMock {
                     "I'm fine, thank you!",
                     LocalDateTime.of(2024, 10, 29, 12, 3)
                 ),
+                Message(
+                    5,
+                    senderBob,
+                    channel,
+                    "I'm glad to hear that!",
+                    LocalDateTime.of(2024, 10, 29, 12, 4)
+                ),
+                Message(
+                    6,
+                    senderAlice,
+                    channel,
+                    "What are you doing?",
+                    LocalDateTime.of(2024, 10, 29, 12, 5)
+                ),
+                Message(
+                    7,
+                    senderBob,
+                    channel,
+                    "I'm working on the project",
+                    LocalDateTime.of(2024, 10, 29, 12, 6)
+                ),
+                Message(
+                    8,
+                    senderAlice,
+                    channel,
+                    "I'm doing the same",
+                    LocalDateTime.of(2024, 10, 29, 12, 7)
+                ),
+                Message(
+                    9,
+                    senderBob,
+                    channel,
+                    "We should meet to discuss it",
+                    LocalDateTime.of(2024, 10, 29, 12, 8)
+                ),
+                Message(
+                    10,
+                    senderAlice,
+                    channel,
+                    "I agree",
+                    LocalDateTime.of(2024, 10, 29, 12, 9)
+                ),
+
             )
         private var currentId = 4
     }

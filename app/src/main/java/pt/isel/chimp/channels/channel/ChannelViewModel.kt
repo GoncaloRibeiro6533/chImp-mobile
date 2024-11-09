@@ -10,11 +10,9 @@ import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.domain.user.AuthenticatedUser
-import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService
-import pt.isel.chimp.service.ChannelError
 import pt.isel.chimp.service.ChannelService
-import pt.isel.chimp.service.MessageError
 import pt.isel.chimp.service.MessageService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
@@ -23,8 +21,7 @@ sealed interface ChannelScreenState {
     data object Idle : ChannelScreenState
     data object Loading : ChannelScreenState
     data class Success(val messages: List<Message>) : ChannelScreenState
-    data class MsgError(val exception: MessageError) : ChannelScreenState
-    data class ChError(val exception: ChannelError) : ChannelScreenState
+    data class Error(val error: ApiError) : ChannelScreenState
 }
 
 class ChannelViewModel(
@@ -35,45 +32,59 @@ class ChannelViewModel(
     var state: ChannelScreenState by mutableStateOf(ChannelScreenState.Idle)
         private set
 
-    fun findChannelById(id: Int, user: User) {
+    fun findChannelById(id: Int, token: String) {
         if (state != ChannelScreenState.Loading) {
             state = ChannelScreenState.Loading
             viewModelScope.launch {
-                val channel = channelService.getChannelById(id, user)
-                state = when (channel) {
-                    is Success -> ChannelScreenState.Success(listOf())
-                    is Failure -> ChannelScreenState.ChError(channel.value)
+                state = try {
+                    val channel = channelService.getChannelById(id, token)
+                    when (channel) {
+                        is Success -> ChannelScreenState.Success(listOf())
+                        is Failure -> ChannelScreenState.Error(channel.value)
+                    }
+                } catch (e: Throwable) {
+                    ChannelScreenState.Error(ApiError("Error finding channel"))
                 }
             }
         }
     }
 
 
-    fun sendMessage(channel: Channel, user: AuthenticatedUser, content: String) {
+    fun sendMessage(channel: Channel, user: AuthenticatedUser, content: String, token: String)  {
         if (state != ChannelScreenState.Loading) {
             state = ChannelScreenState.Loading
             viewModelScope.launch {
-                val messages = messageService.createMessage(user.user.id, channel.id, content)
-                state = when (messages) {
-                    is Success -> ChannelScreenState.Success(listOf(messages.value))
-                    is Failure -> ChannelScreenState.MsgError(messages.value)
+                state = try {
+                    val messages = messageService.createMessage(token, user.user.id, channel.id, content)
+                    when (messages) {
+                        is Success -> ChannelScreenState.Success(listOf(messages.value))
+                        is Failure -> ChannelScreenState.Error(messages.value)
+                    }
+                } catch (e: Throwable) {
+                    ChannelScreenState.Error(ApiError("Error sending message"))
                 }
             }
         }
     }
 
-    fun getMessages(channelId: Int, limit: Int, skip: Int) {
+
+    fun getMessages(channelId: Int, limit: Int, skip: Int, token: String) {
         if (state != ChannelScreenState.Loading) {
             state = ChannelScreenState.Loading
             viewModelScope.launch {
-                val messages = messageService.getMessagesByChannel(channelId, limit, skip)
-                state = when (messages) {
-                    is Success -> ChannelScreenState.Success(messages.value)
-                    is Failure -> ChannelScreenState.MsgError(messages.value)
+                state = try {
+                    val messages = messageService.getMessagesByChannel(token, channelId, limit, skip)
+                    when (messages) {
+                        is Success -> ChannelScreenState.Success(messages.value)
+                        is Failure -> ChannelScreenState.Error(messages.value)
+                    }
+                } catch (e: Throwable) {
+                    ChannelScreenState.Error(ApiError("Error getting messages"))
                 }
             }
         }
     }
+
 }
 
 @Suppress("UNCHECKED_CAST")

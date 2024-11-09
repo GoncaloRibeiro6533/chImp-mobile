@@ -27,7 +27,8 @@ import pt.isel.chimp.channels.channelsList.components.ChannelItem
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.service.MockChannelService
+import pt.isel.chimp.profile.ErrorAlert
+import pt.isel.chimp.service.mock.MockChannelService
 import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
@@ -40,9 +41,9 @@ fun ChannelsListScreen(
     onChannelSelected: (Channel) -> Unit = { },
     onNavigateToCreateChannel: () -> Unit = { }
 ) {
-    val state = viewModel.state
     val user = User(1, "Bob", "bob@example.com")
     ChImpTheme {
+        val state = viewModel.state
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -52,7 +53,7 @@ fun ChannelsListScreen(
                 FloatingActionButton(
                     onClick = { onNavigateToCreateChannel() },
                 ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "Adicionar Canal")
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Add channel")
                 }
             }
             }
@@ -68,13 +69,13 @@ fun ChannelsListScreen(
                 )
                 when (state) {
                     is ChannelsListScreenState.Idle -> {
-                        viewModel.getChannels(user)
+                        viewModel.getChannels("token1",user) //TODO
                     }
                     is ChannelsListScreenState.Loading -> {
                         LoadingView()
                     }
                     is ChannelsListScreenState.Success -> {
-                        val channels = state.channels
+                        val channels = state.channels //TODO move to view file
                         Spacer(modifier = Modifier.padding(8.dp))
                         LazyColumn(
                             contentPadding = PaddingValues(
@@ -91,8 +92,6 @@ fun ChannelsListScreen(
                                     channel = channel,
                                     onClick = { onChannelSelected(channel) })
                             }
-
-
                             if (channels.isEmpty()) {
                                 item {
                                     Text(
@@ -104,7 +103,12 @@ fun ChannelsListScreen(
                         }
                     }
                     is ChannelsListScreenState.Error -> {
-                        Text(text = state.exception.message, modifier = Modifier.padding(innerPadding))
+                        ErrorAlert(
+                            title = "Error",
+                            message = state.error.message,
+                            buttonText = "Ok",
+                            onDismiss = { viewModel.getChannels("token1",user) } //TODO
+                        )
                     }
                 }
             }

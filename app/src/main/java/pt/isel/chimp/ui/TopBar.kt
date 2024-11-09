@@ -7,13 +7,16 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import pt.isel.chimp.R
 import pt.isel.chimp.ui.theme.ChImpTheme
 
@@ -38,7 +41,14 @@ const val AboutButtonTestTag = "AboutButton"
 @Composable
 fun TopBar(
     navigation: NavigationHandlers = NavigationHandlers(),
-    content : @Composable () -> Unit = { Text("Instant Messages") }
+    content : @Composable () -> Unit = {
+        Text(
+            text = "ChIMP",
+            modifier = Modifier,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight(500),
+            )
+    }
 ) {
     TopAppBar(
         title = { content() },

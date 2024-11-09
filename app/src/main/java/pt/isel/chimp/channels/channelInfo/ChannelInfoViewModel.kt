@@ -7,12 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pt.isel.chimp.channels.channelsList.ChannelsListScreenState
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.domain.user.UserInChannel
+import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService
-import pt.isel.chimp.service.ChannelError
 import pt.isel.chimp.service.ChannelService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
@@ -21,7 +20,7 @@ sealed interface ChannelInfoScreenState {
     data object Idle: ChannelInfoScreenState
     data object Loading: ChannelInfoScreenState
     data class Success(val members: List<Pair<User, UserInChannel>>): ChannelInfoScreenState
-    data class Error(val exception: ChannelError): ChannelInfoScreenState
+    data class Error(val error: ApiError): ChannelInfoScreenState
 }
 
 class ChannelInfoViewModel(private val channelService: ChannelService) : ViewModel() {
@@ -30,14 +29,18 @@ class ChannelInfoViewModel(private val channelService: ChannelService) : ViewMod
         private set
 
 
-    fun getChannelMembers(channel: Channel) {
+    fun getChannelMembers(token: String, channel: Channel) {
         if (state != ChannelInfoScreenState.Loading) {
             state = ChannelInfoScreenState.Loading
             viewModelScope.launch {
-                val members = channelService.getChannelMembers(channel)
-                state = when (members) {
-                    is Success -> ChannelInfoScreenState.Success(members.value)
-                    is Failure -> ChannelInfoScreenState.Error(members.value)
+                state = try {
+                    val members = channelService.getChannelMembers(token, channel)
+                    when (members) {
+                        is Success -> ChannelInfoScreenState.Success(members.value)
+                        is Failure -> ChannelInfoScreenState.Error(members.value)
+                    }
+                } catch (e: Throwable) {
+                    ChannelInfoScreenState.Error(ApiError("Error fetching channel members"))
                 }
             }
         }

@@ -4,4 +4,5 @@ interface ChImpService {
     val userService: UserService
     val channelService: ChannelService
     val messageService : MessageService
+    //TODO invitationService
 }

@@ -1,6 +1,5 @@
 package pt.isel.chimp.authentication.register
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.TextFieldValue
@@ -21,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.profile.ErrorAlert
-import pt.isel.chimp.service.MockUserService
+import pt.isel.chimp.service.mock.MockUserService
 import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
@@ -75,8 +73,8 @@ fun RegisterScreen(
                     is RegisterScreenState.Error -> {
                         ErrorAlert(
                             title = "Error",
-                            message = currentState.exception.message ?: "An error occurred",
-                            buttonText = "ok",
+                            message = currentState.error.message,
+                            buttonText = "Ok",
                             onDismiss = { viewModel.setIdleState() }
 
                         )

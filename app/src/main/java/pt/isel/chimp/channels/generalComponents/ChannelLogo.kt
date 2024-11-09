@@ -12,35 +12,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.abs
 import kotlin.random.Random
 
 @Composable
-fun ChannelLogo(initial: Char) {
+fun ChannelLogo(name: String) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(40.dp)
-            .background(color = getRandomColor(), shape = CircleShape)
+            .background(color = calculateLogoColor(name), shape = CircleShape)
     ) {
         Text(
-            text = initial.toString(),
+            text = name[0].toString(),
             color = Color.White,
             fontSize = 20.sp
         )
     }
 }
 
-private fun getRandomColor(): Color {
-    return Color(
-        red = Random.nextFloat(),
-        green = Random.nextFloat(),
-        blue = Random.nextFloat(),
-        alpha = 1f
-    )
+private fun calculateLogoColor(string: String): Color {
+    val hash = abs(string.hashCode())
+    val red = hash % 256
+    val green = (hash / 256) % 256
+    val blue = (hash / 256 / 256) % 256
+
+    return Color(red, green, blue)
 }
 
 @Preview
 @Composable
 fun ChannelLogoPreview() {
-    ChannelLogo('A')
+    ChannelLogo("Channel 1")
 }

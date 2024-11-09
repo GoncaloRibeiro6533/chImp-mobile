@@ -3,7 +3,7 @@ package pt.isel.chimp.domain.message
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.user.User
 import java.time.LocalDateTime
-
+//TODO maybe a property sended or sending, or a list in a repository
 data class Message(
     val id: Int,
     val sender: User,

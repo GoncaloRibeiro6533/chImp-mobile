@@ -1,10 +1,10 @@
 package pt.isel.chimp.channels.channel
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,24 +19,24 @@ import java.time.LocalDateTime
 
 
 @Composable
-fun MessagesView(messages: List<Message>) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-
+fun MessagesView(messages: List<Message>, modifier: Modifier = Modifier) {
+    val messages = messages.sortedByDescending { it.timestamp }
+    val listState = rememberLazyListState(
+        initialFirstVisibleItemIndex = 0
+    )
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        state = listState,
+        reverseLayout = true,
+        modifier = modifier.fillMaxSize()
     ) {
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(messages) { message ->
-                MessageView(
-                    user = message.sender,
-                    message = message.content,
-                )
-            }
-
+        items(messages) { message ->
+            MessageView(
+                user = message.sender,
+                message = message,
+            )
         }
+
     }
 }
 

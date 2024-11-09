@@ -6,15 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService
-import pt.isel.chimp.service.ChannelError
 import pt.isel.chimp.service.UserService
 
 
 sealed interface HomeScreenState {
     data object Idle : HomeScreenState
     data object Loading : HomeScreenState
-    data class Error(val exception: ChannelError) : HomeScreenState
+    data class Error(val error: ApiError) : HomeScreenState
     data class Success(val channels: List<Channel>) : HomeScreenState
 }
 
@@ -24,6 +24,7 @@ class HomeScreenViewModel(private val userService: UserService) : ViewModel() {
     var state: HomeScreenState by mutableStateOf<HomeScreenState>(HomeScreenState.Idle)
         private set
 
+    //TODO check if there is a session and try to . If not, navigate to login screen
 
 
 }

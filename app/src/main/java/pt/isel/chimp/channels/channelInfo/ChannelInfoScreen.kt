@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,9 +20,8 @@ import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.message.MessageView
-import pt.isel.chimp.service.MockChannelService
-import pt.isel.chimp.service.repo.RepoMock
+import pt.isel.chimp.profile.ErrorAlert
+import pt.isel.chimp.service.mock.MockChannelService
 import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
@@ -37,7 +35,7 @@ fun ChannelInfoScreen(
 ) {
 
     val state = viewModel.state
-
+    val token = "token1"
     ChImpTheme {
 
         Scaffold(
@@ -58,7 +56,7 @@ fun ChannelInfoScreen(
             ) {
                 when (state) {
                     is ChannelInfoScreenState.Idle -> {
-                        viewModel.getChannelMembers(channel)
+                        viewModel.getChannelMembers(token, channel)
                     }
                     is ChannelInfoScreenState.Loading -> {
                         LoadingView()
@@ -83,9 +81,11 @@ fun ChannelInfoScreen(
                         }
                     }
                     is ChannelInfoScreenState.Error -> {
-                        Text(
-                            text = state.exception.message,
-                            modifier = Modifier.padding(innerPadding)
+                        ErrorAlert(
+                            title = "Error",
+                            message = state.error.message,
+                            buttonText = "Ok",
+                            onDismiss = { viewModel.getChannelMembers(token, channel) }
                         )
                     }
                 }
