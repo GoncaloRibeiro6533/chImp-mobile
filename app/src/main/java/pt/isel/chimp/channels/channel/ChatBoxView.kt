@@ -25,8 +25,12 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 
 @Composable
 fun ChatBoxView(
-    onMessageSend: (String) -> Unit
+    onMessageSend: (String) -> Unit = {},
+    enabled: Boolean = true
 ) {
+    if(!enabled) {
+        return
+    }
     var chatBoxValue by remember { mutableStateOf(TextFieldValue("")) }
     Box (
         modifier = Modifier
@@ -71,6 +75,6 @@ fun ChatBoxView(
 @Composable
 fun ChatBoxViewPreview() {
     ChImpTheme {
-         ChatBoxView({})
+         ChatBoxView({}, true)
     }
 }

@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 
 @Composable
 fun MessagesView(messages: List<Message>, modifier: Modifier = Modifier) {
-    val messages = messages.sortedByDescending { it.timestamp }
+    val messagesList = messages.sortedByDescending { it.timestamp }
     val listState = rememberLazyListState(
         initialFirstVisibleItemIndex = 0
     )
@@ -30,7 +30,7 @@ fun MessagesView(messages: List<Message>, modifier: Modifier = Modifier) {
         reverseLayout = true,
         modifier = modifier.fillMaxSize()
     ) {
-        items(messages) { message ->
+        items(messagesList) { message ->
             MessageView(
                 user = message.sender,
                 message = message,

@@ -19,7 +19,7 @@ import pt.isel.chimp.utils.Success
 sealed interface ChannelInfoScreenState {
     data object Idle: ChannelInfoScreenState
     data object Loading: ChannelInfoScreenState
-    data class Success(val members: List<Pair<User, UserInChannel>>): ChannelInfoScreenState
+    data class Success(val channelMembers: List<Pair<User, UserInChannel>>): ChannelInfoScreenState
     data class Error(val error: ApiError): ChannelInfoScreenState
 }
 
@@ -34,8 +34,7 @@ class ChannelInfoViewModel(private val channelService: ChannelService) : ViewMod
             state = ChannelInfoScreenState.Loading
             viewModelScope.launch {
                 state = try {
-                    val members = channelService.getChannelMembers(token, channel)
-                    when (members) {
+                    when (val members = channelService.getChannelMembers(token, channel)) {
                         is Success -> ChannelInfoScreenState.Success(members.value)
                         is Failure -> ChannelInfoScreenState.Error(members.value)
                     }

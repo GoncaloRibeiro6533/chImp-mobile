@@ -66,7 +66,11 @@ fun MemberView(
             }
 
             Column {
-                val roleLabel = if(role == Role.READ_ONLY) "Reader" else "Editor"
+                /*todo add tag creator to the user that created the channel
+                 *  (user.id == channel.creatorId)
+                 */
+                //val creatorLabel
+                val roleLabel = if(role == Role.READ_ONLY) "Read-Only" else "Read-Write"
                 val roleColor = if(role == Role.READ_ONLY) Color.DarkGray else Color.Green
                 RoundedRectangleWithText(
                     text = roleLabel,
@@ -88,17 +92,12 @@ fun MemberViewPreview() {
         Column {
             MemberView(
                 user = User(1, "Bob", "bob@example.com"),
-                role = Role.ADMIN
-            )
-            MemberView(
-                user = User(1, "Bob", "bob@example.com"),
-                role = Role.ADMIN
+                role = Role.READ_WRITE
             )
             MemberView(
                 user = User(1, "Bob", "bob@example.com"),
                 role = Role.READ_ONLY
             )
         }
-
     }
 }

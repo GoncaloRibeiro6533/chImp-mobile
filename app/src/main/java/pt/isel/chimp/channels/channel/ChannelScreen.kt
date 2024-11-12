@@ -2,33 +2,21 @@ package pt.isel.chimp.channels.channel
 
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.chimp.channels.channelsList.components.ChannelDetailsView
 import pt.isel.chimp.components.LoadingView
+import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.domain.user.UserInChannel
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.mock.MockChannelService
 import pt.isel.chimp.service.mock.MockMessageService
@@ -44,6 +32,7 @@ fun ChannelScreen(
     onNavigationBack: () -> Unit = { },
 ) {
     val user = User (1, "Bob", "bob@email.com")
+    val userRole = UserInChannel(user.id, channel.id, Role.READ_WRITE)
     val authenticatedUser = AuthenticatedUser(user, "token1")
     ChImpTheme {
         Scaffold(
@@ -53,7 +42,7 @@ fun ChannelScreen(
                     onBackRequested = onNavigationBack
                 ),
                     content = {
-                        ChannelDetailsView(channel) //TODO add on channel detail click
+                        ChannelDetailsView(channel) //TODO add on channel detail click or press the image/name to navigate to the channel
                     }
                 )
             },
@@ -74,9 +63,9 @@ fun ChannelScreen(
                         LoadingView()
                     }
                     is ChannelScreenState.Success -> {
-                        ChannelView(state.messages) { content ->
+                        ChannelView(state.messages, { content ->
                             viewModel.sendMessage(channel, authenticatedUser, content, authenticatedUser.token)
-                        }
+                        }, userRole)
                     }
                     is ChannelScreenState.Error ->
                         ErrorAlert(
@@ -91,38 +80,6 @@ fun ChannelScreen(
     }
 }
 
-
-@Composable
-fun ChatBox(
-    modifier: Modifier = Modifier,
-    onSendRequest: (String) -> Unit = { }
-) {
-    var chatBoxValue by remember { mutableStateOf(TextFieldValue("")) }
-    Row(
-        modifier = modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        TextField(
-            value = chatBoxValue,
-            onValueChange = { newText ->
-                chatBoxValue = newText
-            },
-            placeholder = {
-                Text(text = "Type something")
-            }
-        )
-        IconButton(
-            onClick = {
-            },
-
-            ) {
-            Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Send Message")
-
-        }
-    }
-}
-
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ChannelScreenPreview() {
@@ -133,3 +90,4 @@ fun ChannelScreenPreview() {
         onNavigationBack = { },
     )
 }
+

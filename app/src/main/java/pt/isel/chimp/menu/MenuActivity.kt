@@ -2,7 +2,6 @@ package pt.isel.chimp.menu
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,7 +10,7 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import pt.isel.chimp.about.AboutActivity
@@ -45,7 +44,8 @@ class MenuActivity : ComponentActivity() {
         MenuItem("Search channel", "search channel screen", Icons.Default.Search, { }),
         MenuItem("Create channel", "create channel screen", Icons.Default.Add, { navigateTo(this, CreateChannelActivity::class.java) }),
         MenuItem("Create Channel invitation", "create channel invitation screen", Icons.Default.Add, { }),
-        MenuItem("Create Registration invitation", "create registration invitation screen", Icons.Default.Add, { }),
+        //MenuItem("Create Registration invitation", "create registration invitation screen", Icons.Default.Add, { }),
+        MenuItem("My Channel Invitations", "my channel invitations screen", Icons.Default.Notifications, { }),
         MenuItem("Logout", "logout screen", Icons.AutoMirrored.Filled.ExitToApp, {
             //todo
             startActivity(logOutIntent)
