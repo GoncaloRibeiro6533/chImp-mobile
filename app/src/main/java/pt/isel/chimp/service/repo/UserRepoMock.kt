@@ -7,14 +7,14 @@ import pt.isel.chimp.domain.user.User
 class UserRepoMock {
 
     companion object {
-        private val users =
+        val users =
             mutableListOf<User>(
                 User(1, "Bob", "bob@example.com"),
                 User(2, "Alice", "alice@example.com"),
                 User(3, "John", "john@example.com"),
             )
 
-        private val passwords = mutableMapOf(
+        val passwords = mutableMapOf(
             1 to "A1234ab",
             2 to "1234VDd",
             3 to "1234SADfs",

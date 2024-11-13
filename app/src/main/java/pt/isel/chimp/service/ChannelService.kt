@@ -16,14 +16,14 @@ interface ChannelService {
 
     /**
      * Creates a channel.
-     * @param token the user token.
+     * @param creatorToken the user token.
      * @param name the channel name.
      * @param visibility the channel visibility.
      * @return the created channel.
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun createChannel(token: String, name: String, visibility: Visibility): Either<ApiError, Channel>
+    suspend fun createChannel(creatorToken: String, name: String, visibility: Visibility): Either<ApiError, Channel>
 
     /**
      * Gets a channel by its id.

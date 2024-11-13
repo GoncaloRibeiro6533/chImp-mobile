@@ -12,7 +12,7 @@ import pt.isel.chimp.utils.Either
 
 class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
     override suspend fun createChannel(
-        token: String,
+        creatorToken: String,
         name: String,
         visibility: Visibility
     ): Either<ApiError, Channel> {

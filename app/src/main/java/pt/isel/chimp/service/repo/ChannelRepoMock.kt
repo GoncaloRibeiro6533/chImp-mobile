@@ -5,11 +5,12 @@ import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.domain.user.UserInChannel
+import pt.isel.chimp.service.repo.UserRepoMock.Companion.users
 
 class ChannelRepoMock {
 
     companion object {
-        private val channels =
+        val channels =
             mutableListOf<Channel>(
                 Channel(1, "DAW", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
                 Channel(2, "PDM", User(2, "Alice", "alice@example.com"), Visibility.PRIVATE),
@@ -24,9 +25,10 @@ class ChannelRepoMock {
                 Channel(11, "AED", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
 
                  */
+                Channel(12, "teste", users[1], Visibility.PRIVATE),
             )
 
-        private val userInChannel = mutableListOf<UserInChannel>(
+        val userInChannel = mutableListOf<UserInChannel>(
             UserInChannel(1, 1, Role.READ_WRITE),
             UserInChannel(2, 1, Role.READ_WRITE),
             UserInChannel(2, 2, Role.READ_ONLY),

@@ -1,7 +1,6 @@
 package pt.isel.chimp.service.mock
 
 import kotlinx.coroutines.delay
-import org.jetbrains.annotations.Blocking
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
@@ -24,14 +23,14 @@ class MockChannelService(private val repoMock: RepoMock) : ChannelService {
         return block(user)
     }
 
-    override suspend fun createChannel(token: String, name: String, visibility: Visibility): Either<ApiError, Channel> =
-        interceptRequest<Channel>(token) { user ->
+    override suspend fun createChannel(creatorToken: String, name: String, visibility: Visibility): Either<ApiError, Channel> =
+        interceptRequest<Channel>(creatorToken) { userCreator ->
             delay(1000)
             if (visibility !in Visibility.entries.toTypedArray()) return@interceptRequest failure(ApiError("Invalid visibility"))
             if (repoMock.channelRepoMock.findChannelByName(name, 1, 0).isNotEmpty()) {
                 return@interceptRequest failure(ApiError("Channel name already exists"))
             }
-            val channel = repoMock.channelRepoMock.createChannel(name, visibility, user)
+            val channel = repoMock.channelRepoMock.createChannel(name, visibility, userCreator)
             return@interceptRequest success(channel)
         }
 
