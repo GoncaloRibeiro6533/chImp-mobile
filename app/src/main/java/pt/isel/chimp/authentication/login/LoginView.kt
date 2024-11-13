@@ -1,11 +1,11 @@
 package pt.isel.chimp.authentication.login
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,8 +56,8 @@ fun LoginView(
         LoginTextFields(
             username = username,
             password = password,
-            onUsernameChangeCallback = { username = it },
-            onPasswordChangeCallback = { password = it }
+            onUsernameChangeCallback = { username = it.trim() },
+            onPasswordChangeCallback = { password = it.trim() }
         )
         LoginButton(enabled = !invalidFields) {
             onSubmit(username, password)
@@ -71,10 +71,10 @@ fun LoginView(
             horizontalArrangement = Arrangement.Center
         ){
             Text(text = "Don't have an account? ", style = TextStyle(fontSize = 18.sp))
-            ClickableText(
+            Text(
                 text = annotatedString,
-                onClick = {onRegisterRequested()},
-                style = TextStyle(fontSize = 18.sp)
+                style = TextStyle(fontSize = 18.sp, color = MaterialTheme.colorScheme.primary),
+                modifier = Modifier.clickable { onRegisterRequested() }
             )
         }
     }

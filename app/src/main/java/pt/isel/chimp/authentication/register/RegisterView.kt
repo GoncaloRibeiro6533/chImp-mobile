@@ -52,9 +52,9 @@ fun RegisterView(
             email = email,
             username = username,
             password = password,
-            onEmailChangeCallback = { email = it },
-            onUsernameChangeCallback = { username = it },
-            onPasswordChangeCallback = { password = it }
+            onEmailChangeCallback = { email = it.trim() },
+            onUsernameChangeCallback = { username = it.trim() },
+            onPasswordChangeCallback = { password = it.trim() }
         )
 
         RegisterButton(enabled = !invalidFields) {

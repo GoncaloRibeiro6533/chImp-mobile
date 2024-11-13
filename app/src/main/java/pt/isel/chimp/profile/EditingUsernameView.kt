@@ -36,7 +36,7 @@ fun EditingUsernameView(
         var currentUsername by remember { mutableStateOf(username) }
         TextField(
             value = currentUsername,
-            onValueChange = { currentUsername = it },
+            onValueChange = { currentUsername = it.trim() },
             singleLine = true,
         )
         Row(
