@@ -78,4 +78,8 @@ class ChannelRepoMock {
     fun getChannelMembers(channel: Channel): List<UserInChannel> {
         return  userInChannel.filter { it.channelId == channel.id }
     }
+
+    fun removeUser(userId: Int, channelId: Int) {
+        userInChannel.removeIf { it.channelId == channelId && it.userId == userId }
+    }
 }

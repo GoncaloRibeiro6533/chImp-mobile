@@ -50,4 +50,12 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         TODO("Not yet implemented")
     }
 
+    override suspend fun removeUserFromChannel(
+        token: String,
+        channelId: Int,
+        userID: Int
+    ): Either<ApiError, Channel> {
+        TODO("Not yet implemented")
+    }
+
 }

@@ -16,17 +16,20 @@ import kotlin.math.abs
 import kotlin.random.Random
 
 @Composable
-fun ChannelLogo(name: String) {
+fun ChannelLogo(name: String, size: Int = 40) {
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
+            .size(size.dp)
+            .background(color = calculateLogoColor(name), shape = CircleShape)
             .size(40.dp)
             .background(color = calculateLogoColor(name), shape = CircleShape)
     ) {
         Text(
             text = name[0].toString(),
             color = Color.White,
-            fontSize = 20.sp
+            fontSize = (size/2).sp
         )
     }
 }

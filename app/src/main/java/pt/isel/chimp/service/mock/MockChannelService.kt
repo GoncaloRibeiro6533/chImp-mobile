@@ -89,4 +89,23 @@ class MockChannelService(private val repoMock: RepoMock) : ChannelService {
             }
             return@interceptRequest success(users)
         }
+
+    override suspend fun removeUserFromChannel(
+        token: String,
+        channelId: Int,
+        userID: Int
+    ): Either<ApiError, Channel> =
+        interceptRequest<Channel>(token) {
+
+            val user = repoMock.userRepoMock.findUserById(userID) ?: return@interceptRequest failure(ApiError("User to remove not found"))
+            val channel = repoMock.channelRepoMock.findChannelById(channelId) ?: return@interceptRequest failure(
+                ApiError("Channel not found")
+            )
+            val channelOfUser = repoMock.channelRepoMock.findChannelsOfUser(user)
+            if (channel !in channelOfUser) {
+                return@interceptRequest failure(ApiError("User already not in channel"))
+            }
+            repoMock.channelRepoMock.removeUser(userID, channelId)
+            return@interceptRequest success(channel)
+        }
 }

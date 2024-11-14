@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import pt.isel.chimp.channels.channelsList.ChannelsListScreenState
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.domain.user.UserInChannel
@@ -20,6 +21,7 @@ sealed interface ChannelInfoScreenState {
     data object Idle: ChannelInfoScreenState
     data object Loading: ChannelInfoScreenState
     data class Success(val channelMembers: List<Pair<User, UserInChannel>>): ChannelInfoScreenState
+    data class SuccessOnLeave(val channel: Channel): ChannelInfoScreenState
     data class Error(val error: ApiError): ChannelInfoScreenState
 }
 
@@ -49,13 +51,22 @@ class ChannelInfoViewModel(private val channelService: ChannelService) : ViewMod
         TODO()
     }
 
-    fun leaveChannel(){
-        TODO()
+    fun leaveChannel(token: String, channel: Channel, user: User){
+        if(state != ChannelInfoScreenState.Loading) {
+            state = ChannelInfoScreenState.Loading
+            viewModelScope.launch {
+                state = try {
+                    when (val serviceChannel = channelService.removeUserFromChannel(token, channel.id, user.id)) {
+                        is Success -> ChannelInfoScreenState.SuccessOnLeave(serviceChannel.value)
+                        is Failure -> ChannelInfoScreenState.Error(serviceChannel.value)
+                    }
+                } catch (e: Throwable) {
+                    ChannelInfoScreenState.Error(ApiError("Error leaving Channel"))
+                }
+            }
+        }
     }
 
-    fun deleteChannel() {
-        TODO()
-    }
 }
 
 @Suppress("UNCHECKED_CAST")

@@ -1,5 +1,6 @@
 package pt.isel.chimp.service
 
+import kotlinx.coroutines.delay
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
@@ -7,6 +8,8 @@ import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.domain.user.UserInChannel
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.utils.Either
+import pt.isel.chimp.utils.failure
+import pt.isel.chimp.utils.success
 
 
 /**
@@ -67,6 +70,17 @@ interface ChannelService {
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
     suspend fun getChannelMembers(token: String, channel: Channel): Either<ApiError, List<Pair<User, UserInChannel>>>
+
+    /**
+     * Creates a channel.
+     * @param token the user token.
+     * @param channelId the channel id.
+     * @param userId the user id.
+     * @return the created channel.
+     * @return ApiError if an error occurs.
+     * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
+     */
+    suspend fun removeUserFromChannel(token: String, channelId: Int, userID: Int): Either<ApiError, Channel>
 }
 
 
