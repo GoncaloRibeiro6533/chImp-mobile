@@ -20,8 +20,8 @@ class InvitationRepoMock {
         private var currentInvId = 50
     }
 
-    fun createChannelInvitation(sender: User, receiverId: User, channelId: Channel, role: Role) :Invitation {
-        val invitation = Invitation(currentInvId++, sender, receiverId, channelId, role, false, java.time.LocalDateTime.now())
+    fun createChannelInvitation(sender: User, receiver: User, channel: Channel, role: Role) :Invitation {
+        val invitation = Invitation(currentInvId++, sender, receiver, channel, role, false, java.time.LocalDateTime.now())
         invitations.add(invitation)
         return invitation
     }
@@ -43,4 +43,10 @@ class InvitationRepoMock {
         invitations.remove(invitation)
         return true
     }
+
+    fun findInvitationById(invitationId: Int): Invitation? {
+        return invitations.find { it.invitationId == invitationId }
+    }
+
+    //todo implement findInvitationByChannelId here?
 }

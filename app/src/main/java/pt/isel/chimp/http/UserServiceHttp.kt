@@ -21,6 +21,7 @@ import pt.isel.chimp.utils.failure
 import pt.isel.chimp.utils.success
 
 class UserServiceHttp(private val client: HttpClient) : UserService {
+    val token = "DfmMD7TH09TTsR88_Cs6IO-TivmrCJEMNOzM1Isy4u4="
 
     override suspend fun fetchUser(token: String): Either<ApiError, User> {
         TODO()
@@ -65,7 +66,7 @@ class UserServiceHttp(private val client: HttpClient) : UserService {
 
 
     override suspend fun findUserById(token: String, id: Int): Either<ApiError, User> {
-        return when(val response = client.get< UserIdentifiersDTO>("/user/$id", "DfmMD7TH09TTsR88_Cs6IO-TivmrCJEMNOzM1Isy4u4=")) {
+        return when(val response = client.get<UserIdentifiersDTO>("/user/$id", token)) {
             is  Success -> success(response.value.toUser())
             is  Failure -> failure(response.value)
         }

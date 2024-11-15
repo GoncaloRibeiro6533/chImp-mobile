@@ -3,6 +3,7 @@ package pt.isel.chimp.http
 import io.ktor.client.HttpClient
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.ChannelService
+import pt.isel.chimp.service.InvitationService
 import pt.isel.chimp.service.MessageService
 import pt.isel.chimp.service.UserService
 
@@ -17,6 +18,10 @@ class ChImpServiceHttp(private val client: HttpClient): ChImpService {
     }
 
     override val messageService: MessageService by lazy {
+        TODO()
+    }
+
+    override val invitationService: InvitationService by lazy {
         TODO()
     }
 }
