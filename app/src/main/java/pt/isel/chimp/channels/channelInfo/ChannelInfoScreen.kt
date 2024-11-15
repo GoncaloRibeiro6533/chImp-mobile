@@ -39,7 +39,8 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 fun ChannelInfoScreen(
     viewModel: ChannelInfoViewModel,
     channel: Channel,
-    onNavigationBack: () -> Unit = { }
+    onNavigationBack: () -> Unit,
+    onChannelLeave: () -> Unit
 ) {
 
     val user = User(1, "Bob", "bob@example.com")
@@ -148,13 +149,17 @@ fun ChannelInfoScreen(
                         }
 
                     }
-                    else -> {
+                    is ChannelInfoScreenState.Error -> {
                         ErrorAlert(
                             title = "Error",
                             message = " ",
                             buttonText = "Ok",
                             onDismiss = { viewModel.getChannelMembers(token, channel) }
                         )
+                    }
+
+                    is ChannelInfoScreenState.SuccessOnLeave -> {
+                        onChannelLeave()
                     }
                 }
 
@@ -171,6 +176,7 @@ fun ChannelScreenPreview() {
         viewModel = ChannelInfoViewModel(MockChannelService(RepoMockImpl())),
         Channel(1, "Channel 1 long",
             creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
-        onNavigationBack = { }
+        onNavigationBack = { },
+        onChannelLeave = { }
     )
 }

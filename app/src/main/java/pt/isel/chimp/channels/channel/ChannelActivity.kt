@@ -5,9 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import pt.isel.chimp.DependenciesContainer
+import pt.isel.chimp.channels.channelInfo.ChannelInfoActivity
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.utils.navigateTo
 
 class ChannelActivity : ComponentActivity() {
 
@@ -26,6 +28,9 @@ class ChannelActivity : ComponentActivity() {
                //TODO: get channel from intent
                 channel =  Channel(1, "DAW", creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
                 onNavigationBack = { finish() },
+                onNavigationChannelInfo = {
+                    navigateTo(this, ChannelInfoActivity::class.java)
+                }
             )
         }
     }

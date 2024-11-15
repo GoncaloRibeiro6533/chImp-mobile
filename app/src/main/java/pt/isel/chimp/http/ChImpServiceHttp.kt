@@ -6,6 +6,8 @@ import pt.isel.chimp.service.ChannelService
 import pt.isel.chimp.service.InvitationService
 import pt.isel.chimp.service.MessageService
 import pt.isel.chimp.service.UserService
+import pt.isel.chimp.service.mock.MockChannelService
+import pt.isel.chimp.service.repo.RepoMockImpl
 
 class ChImpServiceHttp(private val client: HttpClient): ChImpService {
 
@@ -14,7 +16,7 @@ class ChImpServiceHttp(private val client: HttpClient): ChImpService {
     }
 
     override val channelService: ChannelService by lazy {
-        TODO()
+        MockChannelService(RepoMockImpl())
     }
 
     override val messageService: MessageService by lazy {

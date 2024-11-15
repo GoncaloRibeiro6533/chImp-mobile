@@ -42,7 +42,7 @@ class MockUserService(private val repoMock: RepoMock) : UserService {
         return failure(ApiError("User not found"))
         repoMock.userRepoMock.findUserByPassword(user.id, password) ?:
         return failure(ApiError("Invalid password"))
-        repoMock.userRepoMock.deleteAllSessions()
+        //repoMock.userRepoMock.deleteAllSessions()
         val token = repoMock.userRepoMock.createSession(user.id).token
         return success(AuthenticatedUser(user, token))
     }

@@ -29,7 +29,8 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 fun ChannelScreen(
     viewModel: ChannelViewModel,
     channel: Channel,
-    onNavigationBack: () -> Unit = { },
+    onNavigationBack: () -> Unit,
+    onNavigationChannelInfo: () -> Unit
 ) {
     val user = User (1, "Bob", "bob@email.com")
     val userRole = UserInChannel(user.id, channel.id, Role.READ_WRITE)
@@ -42,7 +43,11 @@ fun ChannelScreen(
                     onBackRequested = onNavigationBack
                 ),
                     content = {
-                        ChannelDetailsView(channel) //TODO add on channel detail click or press the image/name to navigate to the channel
+                        ChannelDetailsView(
+                        channel = channel,
+                        onClick = onNavigationChannelInfo,
+                        enabled = true
+                        )
                     }
                 )
             },
@@ -62,10 +67,18 @@ fun ChannelScreen(
                     is ChannelScreenState.Loading -> {
                         LoadingView()
                     }
-                    is ChannelScreenState.Success -> {
-                        ChannelView(state.messages, { content ->
-                            viewModel.sendMessage(channel, authenticatedUser, content, authenticatedUser.token)
-                        }, userRole)
+                    is ChannelScreenState.SuccessOnFindChannel -> {
+                        viewModel.getMessages(channel.id, 30, 0, authenticatedUser.token)
+                    }
+                    is ChannelScreenState.SuccessOnSendMessage -> {
+                        viewModel.getMessages(channel.id, 30, 0, authenticatedUser.token)
+                    }
+                    is ChannelScreenState.Success -> { //TODO
+                        ChannelView(
+                            messages = state.messages,
+                            onMessageSend = { content -> viewModel.sendMessage(channel, authenticatedUser, content, authenticatedUser.token) },
+                            userRole = userRole
+                        )
                     }
                     is ChannelScreenState.Error ->
                         ErrorAlert(
@@ -88,6 +101,7 @@ fun ChannelScreenPreview() {
         channel = Channel(1, "Channel 1 long",
             creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
         onNavigationBack = { },
+        onNavigationChannelInfo = { },
     )
 }
 

@@ -20,6 +20,8 @@ import pt.isel.chimp.utils.Success
 sealed interface ChannelScreenState {
     data object Idle : ChannelScreenState
     data object Loading : ChannelScreenState
+    data class SuccessOnFindChannel(val channel: Channel) : ChannelScreenState
+    data class SuccessOnSendMessage(val messages: Message) : ChannelScreenState
     data class Success(val messages: List<Message>) : ChannelScreenState
     data class Error(val error: ApiError) : ChannelScreenState
 }
@@ -39,7 +41,7 @@ class ChannelViewModel(
                 state = try {
                     val channel = channelService.getChannelById(id, token)
                     when (channel) {
-                        is Success -> ChannelScreenState.Success(listOf())
+                        is Success -> ChannelScreenState.SuccessOnFindChannel(channel.value)
                         is Failure -> ChannelScreenState.Error(channel.value)
                     }
                 } catch (e: Throwable) {
@@ -57,7 +59,7 @@ class ChannelViewModel(
                 state = try {
                     val messages = messageService.createMessage(token, user.user.id, channel.id, content)
                     when (messages) {
-                        is Success -> ChannelScreenState.Success(listOf(messages.value))
+                        is Success -> ChannelScreenState.SuccessOnSendMessage(messages.value)
                         is Failure -> ChannelScreenState.Error(messages.value)
                     }
                 } catch (e: Throwable) {

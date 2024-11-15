@@ -12,7 +12,7 @@ class InvitationRepoMock {
     companion object{
         private val invitations =
             mutableListOf<Invitation>(
-                Invitation(1, users[1], users[0],channels[11],
+                Invitation(1, users[1], users[0],channels[1],
                     Role.READ_WRITE, false, java.time.LocalDateTime.now()),
                 Invitation(2, users[0], users[1], channels[2],
                     Role.READ_ONLY,false, java.time.LocalDateTime.now()),

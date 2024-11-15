@@ -1,10 +1,12 @@
 package pt.isel.chimp.authentication.components
 
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 
 /**
@@ -37,7 +39,7 @@ fun AuthenticationTextField(
         label = {
             Text(
                 text = "$label${if (required) " *" else ""}" +
-                    if (errorMessage != null) " - $errorMessage" else ""
+                        if (errorMessage != null) " - $errorMessage" else ""
             )
         },
         value = value,
@@ -56,6 +58,16 @@ fun AuthenticationTextField(
         singleLine = true,
         modifier = modifier,
         isError = errorMessage != null,
-        visualTransformation = visualTransformation
+        visualTransformation = visualTransformation,
+        keyboardOptions =
+        if (label == "Password") {
+            KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                autoCorrect = false,
+            ) } else {
+            KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+            )
+        }
     )
 }

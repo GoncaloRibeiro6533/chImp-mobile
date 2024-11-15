@@ -5,6 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import pt.isel.chimp.DependenciesContainer
+import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.domain.channel.Visibility
+import pt.isel.chimp.domain.user.User
 
 class ChannelInfoActivity: ComponentActivity() {
 
@@ -17,8 +20,13 @@ class ChannelInfoActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent{
+            ChannelInfoScreen(
+                viewModel = viewModel,
+                channel = Channel(1, "DAW", creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
+                onNavigationBack = { finish() },
+                onChannelLeave = { finish() },
+            )
 
         }
-
     }
 }

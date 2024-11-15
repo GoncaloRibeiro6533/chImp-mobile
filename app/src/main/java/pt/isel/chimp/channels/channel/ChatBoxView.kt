@@ -57,7 +57,7 @@ fun ChatBoxView(
             IconButton(
                 onClick = {
                     if (chatBoxValue.text.isNotBlank()) {
-                        onMessageSend(chatBoxValue.text)
+                        onMessageSend(chatBoxValue.text.trimEnd())
                         chatBoxValue = TextFieldValue("")
                     }
                 },
