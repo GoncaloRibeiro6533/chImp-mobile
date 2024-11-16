@@ -16,7 +16,8 @@ import pt.isel.chimp.authentication.validatePassword
 @Composable
 fun PasswordTextField(
     password: String,
-    onPasswordChangeCallback: (String) -> Unit
+    onPasswordChangeCallback: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val invalidPasswordMessage = "Password should have at least 8 characters."
     val invalidPassword = password.isNotEmpty() && !validatePassword(password)
@@ -26,7 +27,7 @@ fun PasswordTextField(
         value = password,
         onValueChange = onPasswordChangeCallback,
         visualTransformation = PasswordVisualTransformation(),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         required = true,
         maxLength = MAX_PASSWORD_LENGTH,
         errorMessage = if (invalidPassword) invalidPasswordMessage else null

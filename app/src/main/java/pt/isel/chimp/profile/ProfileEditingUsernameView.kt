@@ -18,26 +18,38 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.chimp.ui.theme.ChImpTheme
+import pt.isel.chimp.R
+import pt.isel.chimp.domain.profile.Profile
 
+const val EDIT_USERNAME_VIEW_TAG = "EditingUsernameView"
+const val SAVE_BUTTON_TAG = "SaveButton"
+const val CANCEL_BUTTON_TAG = "CancelButton"
 
 @Composable
 fun EditingUsernameView(
-    username: String,
+    state : ProfileScreenState.EditingUsername,
     onSaveIntent: (String) -> Unit,
-    onCancelIntent: () -> Unit
+    onCancelIntent: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = modifier.fillMaxSize().padding(16.dp).testTag(EDIT_USERNAME_VIEW_TAG),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        var currentUsername by remember { mutableStateOf(username) }
+        var currentUsername by remember { mutableStateOf(state.profile.username) }
         TextField(
             value = currentUsername,
             onValueChange = { currentUsername = it.trim() },
             singleLine = true,
+            supportingText = {
+                    Text(text = stringResource(R.string.username_label))
+            },
+            modifier = Modifier.testTag(USERNAME_TEXT_TAG)
         )
         Row(
             modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
@@ -45,17 +57,20 @@ fun EditingUsernameView(
         ) {
             Spacer(modifier = Modifier.padding(horizontal = 8.dp))
             Button(
+                modifier = modifier.testTag(CANCEL_BUTTON_TAG),
                 onClick = {
                     onCancelIntent() },
             ) {
-                Text(text = "cancel")
+            Text(text = stringResource(R.string.editing_username_cancel_button))
             }
             Spacer(modifier = Modifier.padding(horizontal = 8.dp))
             Button(
+                modifier = modifier.testTag(SAVE_BUTTON_TAG),
                 onClick = { onSaveIntent(currentUsername) },
-                enabled = currentUsername != username
+                enabled = currentUsername != state.profile.username
+
             ) {
-                Text(text = "save")
+                Text(text = stringResource(R.string.editing_username_save_button))
             }
         }
     }
@@ -67,7 +82,7 @@ fun EditingUsernameView(
 fun ConfigurationViewPreview() {
     ChImpTheme {
         EditingUsernameView (
-            username = "username",
+            state = ProfileScreenState.EditingUsername(Profile("Bob", "bob@example.com")),
             onSaveIntent = {},
             onCancelIntent = {}
         )

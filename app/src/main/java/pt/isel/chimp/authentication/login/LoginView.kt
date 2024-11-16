@@ -15,6 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -26,6 +28,12 @@ import pt.isel.chimp.authentication.login.components.LoginButton
 import pt.isel.chimp.authentication.login.components.LoginTextFields
 import pt.isel.chimp.authentication.validatePassword
 import pt.isel.chimp.authentication.validateUsername
+import pt.isel.chimp.R
+
+const val LOGIN_VIEW = "login_view"
+const val LOGIN_TEXT_FIELDS = "login_text_fields"
+const val LOGIN_BUTTON = "login_button"
+const val REGISTER_ANCHOR = "register_anchor"
 
 @Composable
 fun LoginView(
@@ -40,7 +48,7 @@ fun LoginView(
             password.isNotEmpty() && !validatePassword(password)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(16.dp).fillMaxWidth()
+        modifier = Modifier.padding(16.dp).fillMaxWidth().testTag(LOGIN_VIEW)
     ) {
 
         Row(
@@ -49,32 +57,37 @@ fun LoginView(
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Login",
+                text = stringResource(id = R.string.login_title),
                 style = MaterialTheme.typography.titleLarge
             )
         }
         LoginTextFields(
             username = username,
             password = password,
-            onUsernameChangeCallback = { username = it.trim() },
-            onPasswordChangeCallback = { password = it.trim() }
+            onUsernameChangeCallback = { username = it },
+            onPasswordChangeCallback = { password = it },
+            modifier = Modifier.testTag(LOGIN_TEXT_FIELDS)
         )
-        LoginButton(enabled = !invalidFields) {
+        LoginButton(
+            enabled = !invalidFields,
+            modifier = Modifier.testTag(LOGIN_BUTTON),
+            onLoginClickCallback = {
             onSubmit(username, password)
-        }
+        })
         val annotatedString = buildAnnotatedString {
             withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                append("Sign Up")
+                append(stringResource(id = R.string.sign_up_annotated_string))
             }
         }
         Row (
             horizontalArrangement = Arrangement.Center
         ){
-            Text(text = "Don't have an account? ", style = TextStyle(fontSize = 18.sp))
+            Text(text = stringResource(id = R.string.dont_have_account_text)
+                , style = TextStyle(fontSize = 18.sp))
             Text(
                 text = annotatedString,
                 style = TextStyle(fontSize = 18.sp, color = MaterialTheme.colorScheme.primary),
-                modifier = Modifier.clickable { onRegisterRequested() }
+                modifier = Modifier.clickable { onRegisterRequested() }.testTag(REGISTER_ANCHOR)
             )
         }
     }

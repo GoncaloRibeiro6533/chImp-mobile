@@ -1,11 +1,6 @@
 package pt.isel.chimp.profile
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
@@ -13,70 +8,54 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pt.isel.chimp.R
 import pt.isel.chimp.ui.theme.ChImpTheme
 
-@Composable
-fun ErrorView(onDismissRequested: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = 16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        ErrorAlert(
-            title = "Error",
-            message = "An error occurred",
-            buttonText = "ok",
-            onDismiss = onDismissRequested
-        )
-    }
-}
+
+const val ERROR_ALERT = "error_alert"
+const val ERROR_ALERT_TITLE = "error_title"
+const val ERROR_ALERT_MESSAGE = "error_message"
+const val ERROR_DISMISS_BUTTON = "error_dismiss_button"
 
 @Composable
 fun ErrorAlert(
     title: String,
     message: String,
     buttonText: String,
-    onDismiss: () -> Unit = { }
-) {
-    ErrorAlertImpl(
-        title = title,
-        message =  message,
-        buttonText = buttonText,
-        onDismiss = onDismiss
-    )
-}
-
-@Composable
-private fun ErrorAlertImpl(
-    title: String,
-    message: String,
-    buttonText: String,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
+        modifier = Modifier.testTag(ERROR_ALERT),
         onDismissRequest = { },
         confirmButton = {
             OutlinedButton(
                 border = BorderStroke(0.dp, Color.Unspecified),
                 onClick = onDismiss,
+                modifier = Modifier.testTag(ERROR_DISMISS_BUTTON)
             ) {
-                Text(text = buttonText)
+                Text(
+                    text = buttonText
+                )
             }
         },
-        title = { Text(text = title) },
-        text = { Text(text = message) },
+        title = { Text(
+            text = title,
+            modifier = Modifier.testTag(ERROR_ALERT_TITLE)
+        ) },
+        text = { Text(
+            text = message,
+            modifier = Modifier.testTag(ERROR_ALERT_MESSAGE)
+        ) },
         icon = {
             Icon(
                 imageVector = Icons.Default.Warning,
-                contentDescription = "Warning"
+                contentDescription = stringResource(id = R.string.error_icon_description)
             )
         },
     )
@@ -86,6 +65,11 @@ private fun ErrorAlertImpl(
 @Composable
 fun ErrorAlertPreview() {
     ChImpTheme {
-        ErrorView {  }
+        ErrorAlert(
+            title = "Error",
+            message = "An error occurred",
+            buttonText = "OK",
+            onDismiss = { }
+        )
     }
 }

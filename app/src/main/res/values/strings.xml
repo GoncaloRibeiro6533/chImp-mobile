@@ -4,4 +4,18 @@
     <string name="top_bar_navigate_to_about">About\n</string>
     <string name="top_bar_open_menu">Menu</string>
     <string name="activity_info_no_suitable_app">Could not find a suitable application</string>
+    <string name="editing_username_cancel_button">Cancel</string>
+    <string name="editing_username_save_button">Save</string>
+    <string name= "label_separator">:</string>
+    <string name="username_label">Username</string>
+    <string name="email_label">Email</string>
+    <string name="edit_icon_description">edit</string>
+    <string name="profile_icon_description">profile icon</string>
+    <string name="loading_label">Loading…</string>
+    <string name="error_icon_description">Warning</string>
+    <string name="login_button_text">Login\n</string>
+    <string name="login_button_content_description">LoginButton</string>
+    <string name="login_title">Login</string>
+    <string name="sign_up_annotated_string">Sign Up</string>
+    <string name="dont_have_account_text">Don\'t have an account?</string>
 </resources>

@@ -31,7 +31,7 @@ fun AuthenticationTextField(
     modifier: Modifier = Modifier,
     required: Boolean = false,
     maxLength: Int? = null,
-    forbiddenCharacters: List<Char> = emptyList(),
+    forbiddenCharacters: List<Char> = listOf<Char>(' ', '\n', '\t'),
     errorMessage: String? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
@@ -44,16 +44,11 @@ fun AuthenticationTextField(
         },
         value = value,
         onValueChange = {
-            var newValue = it
+            var filteredValue = it.filter { c -> c !in forbiddenCharacters }
+            if (maxLength != null && filteredValue.length > maxLength)
+                filteredValue = filteredValue.substring(0 until maxLength)
 
-            forbiddenCharacters.forEach { forbiddenChar ->
-                newValue = newValue.replace(forbiddenChar.toString(), "")
-            }
-
-            if (maxLength != null && newValue.length > maxLength)
-                newValue = newValue.substring(0 until maxLength)
-
-            onValueChange(newValue)
+            onValueChange(filteredValue)
         },
         singleLine = true,
         modifier = modifier,

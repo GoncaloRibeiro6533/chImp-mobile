@@ -16,6 +16,7 @@ import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
 
 
+
 @Composable
 fun ProfileScreen(
     viewModel: ProfileScreenViewModel,
@@ -45,13 +46,13 @@ fun ProfileScreen(
                     }
                     is ProfileScreenState.Success -> {
                         ProfileView(
-                            profile = currentState.profile,
+                            state = currentState,
                             onEditUsernameClick = { viewModel.setEditState(currentState.profile) },
                         )
                     }
                     is ProfileScreenState.EditingUsername -> {
                         EditingUsernameView(
-                            username = currentState.profile.username,
+                            state = currentState,
                             onSaveIntent = { newUsername ->
                                 viewModel.editUsername(newUsername, token)
                             },

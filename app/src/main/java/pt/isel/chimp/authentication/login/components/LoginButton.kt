@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import pt.isel.chimp.R
 import pt.isel.chimp.authentication.components.IconButton
@@ -20,14 +21,15 @@ private const val BUTTON_PADDING = 16
 @Composable
 fun LoginButton(
     enabled: Boolean = true,
-    onLoginClickCallback: () -> Unit
+    onLoginClickCallback: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     IconButton(
         onClick = onLoginClickCallback,
         enabled = enabled,
-        modifier = Modifier.padding(BUTTON_PADDING.dp),
-        text = "Login",
+        modifier = modifier.padding(BUTTON_PADDING.dp),
+        text = stringResource(id = R.string.login_button_text),
         painter = painterResource(id = R.drawable.ic_round_login_24),
-        contentDescription = "Button to login"
+        contentDescription = stringResource(id = R.string.login_button_content_description)
     )
 }
