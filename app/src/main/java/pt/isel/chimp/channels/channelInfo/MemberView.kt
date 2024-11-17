@@ -1,19 +1,16 @@
 package pt.isel.chimp.channels.channelInfo
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,17 +32,14 @@ fun MemberView(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 2.dp)
-            .background(MaterialTheme.colorScheme.primary)
-            .height(60.dp),
-        shape = RoundedCornerShape(8.dp)
-
+            .padding(horizontal = 16.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(10.dp)
+                .fillMaxHeight(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
@@ -65,29 +59,29 @@ fun MemberView(
                 }
             }
 
-            Column {
+            Column(
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
                 /*todo add tag creator to the user that created the channel
                  *  (user.id == channel.creatorId)
                  */
                 //val creatorLabel
+                val darkGreen = Color(0xFF006400)
                 val roleLabel = if(role == Role.READ_ONLY) "Read-Only" else "Read-Write"
-                val roleColor = if(role == Role.READ_ONLY) Color.DarkGray else Color.Green
+                val roleColor = if(role == Role.READ_ONLY) Color.DarkGray else darkGreen
                 RoundedRectangleWithText(
                     text = roleLabel,
                     backgroundColor = roleColor
                 )
             }
         }
-
     }
-
-
 }
 
 @Preview(showBackground = false)
 @Composable
 fun MemberViewPreview() {
-
     ChImpTheme {
         Column {
             MemberView(

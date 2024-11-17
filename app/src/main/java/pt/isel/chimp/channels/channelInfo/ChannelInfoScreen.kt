@@ -11,14 +11,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -86,18 +84,14 @@ fun ChannelInfoScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             ChannelLogo(channel.name, 135)
-
                             Text(
                                 text = channel.name,
-                                modifier = Modifier
-                                    .padding(10.dp),
+                                modifier = Modifier.padding(10.dp),
                                 fontSize = 30.sp
-
                             )
                             Text(
                                 text = "Group - $num members",
-                                modifier = Modifier
-                                    .padding(6.dp)
+                                modifier = Modifier.padding(6.dp)
                             )
                             Button(
                                 onClick = {
@@ -117,18 +111,11 @@ fun ChannelInfoScreen(
                                     end = innerPadding.calculateEndPadding(LayoutDirection.Ltr)
                                 ),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = Modifier
-                                    .fillMaxSize()
+                                modifier = Modifier.fillMaxSize()
                             ) {
-
-
-
                                 items(members) { member ->
-
-                                MemberView(member.first, member.second.role)
-
+                                    MemberView(member.first, member.second.role)
                                 }
-
                                 item {
                                     Button(
                                         onClick = {
@@ -145,9 +132,7 @@ fun ChannelInfoScreen(
                                     }
                                 }
                             }
-
                         }
-
                     }
                     is ChannelInfoScreenState.Error -> {
                         ErrorAlert(
@@ -162,8 +147,6 @@ fun ChannelInfoScreen(
                         onChannelLeave()
                     }
                 }
-
-
             }
         }
     }
