@@ -3,6 +3,7 @@ package pt.isel.chimp.channels.channelInfo
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -93,16 +94,26 @@ fun ChannelInfoScreen(
                                 text = "Group - $num members",
                                 modifier = Modifier.padding(6.dp)
                             )
-                            Button(
-                                onClick = {
-                                    TODO()
-                                },
-                                modifier = Modifier.padding(8.dp),
-                                colors = ButtonColors(Color.Green, Color.Black, Color.Green, Color.Green)
+
+                            Row (
+                                horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally),
+
                             ) {
-                                Text("Invite Member +")
+
+                                ChannelDialog(
+                                    "Invite Member +",
+                                    "Enter user email:",
+                                    "Invite", "email",
+                                    Color(0xFF32cd32)) { TODO() }
+
+                                ChannelDialog(
+                                    "Edit Channel Name",
+                                    "Enter new channel name:",
+                                    "OK",
+                                    channel.name, Color.LightGray) { viewModel.editChannelName() }
 
                             }
+
                             LazyColumn(
                                 contentPadding = PaddingValues(
                                     top = 0.dp,
