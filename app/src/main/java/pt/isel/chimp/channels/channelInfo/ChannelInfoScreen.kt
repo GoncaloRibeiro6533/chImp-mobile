@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -91,7 +93,7 @@ fun ChannelInfoScreen(
                                 fontSize = 30.sp
                             )
                             Text(
-                                text = "Group - $num members",
+                                text = "Channel - $num members",
                                 modifier = Modifier.padding(6.dp)
                             )
 
@@ -102,17 +104,23 @@ fun ChannelInfoScreen(
 
                                 ChannelDialog(
                                     "Invite Member +",
-                                    "Enter user email:",
-                                    "Invite", "email",
-                                    Color(0xFF32cd32)) { TODO() }
+                                    "Enter Member Username:",
+                                    "Invite",
+                                    "username",
+                                    Color(0xFF32cd32),
+                                    Color.Black) { TODO() }
 
                                 ChannelDialog(
                                     "Edit Channel Name",
                                     "Enter new channel name:",
                                     "OK",
-                                    channel.name, Color.LightGray) { viewModel.editChannelName() }
+                                    channel.name,
+                                    Color.LightGray,
+                                    Color.Black) { viewModel.editChannelName() }
 
                             }
+
+                            Spacer(modifier = Modifier.height(16.dp))
 
                             LazyColumn(
                                 contentPadding = PaddingValues(
@@ -122,12 +130,23 @@ fun ChannelInfoScreen(
                                     end = innerPadding.calculateEndPadding(LayoutDirection.Ltr)
                                 ),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.fillMaxSize()
                             ) {
                                 items(members) { member ->
                                     MemberView(member.first, member.second.role)
                                 }
                                 item {
+
+                                    ChannelDialog(
+                                        "Leave Channel",
+                                        "Do you want to leave this Channel?",
+                                        "Leave", "",
+                                        Color.Red,
+                                        Color.White) { viewModel.leaveChannel(token, channel, user) }
+
+
+                                    /*
                                     Button(
                                         onClick = {
                                             viewModel.leaveChannel(token, channel, user)
@@ -140,7 +159,8 @@ fun ChannelInfoScreen(
                                     ) {
                                         Text("Leave Group")
 
-                                    }
+
+                                    }*/
                                 }
                             }
                         }

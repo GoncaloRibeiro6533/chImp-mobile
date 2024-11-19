@@ -12,12 +12,15 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -28,11 +31,14 @@ fun ChannelDialog(
     confirmMessage: String,
     placeHolderText: String,
     buttonColor: Color,
+    buttonTextColor: Color,
     onConfirm : () -> Unit,
 
 ) {
     var openDialog by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOption by remember { mutableStateOf("Select Role") }
 
     if (openDialog) {
         AlertDialog(
@@ -42,12 +48,54 @@ fun ChannelDialog(
                     },
             text = {
                 Column {
-                    TextField(
-                        value = text,
-                        onValueChange = { text = it },
-                        placeholder = { Text(placeHolderText) }
-                    )
+
+                    if(buttonName != "Leave Channel") {
+                        TextField(
+                            value = text,
+                            onValueChange = { text = it },
+                            placeholder = { Text(placeHolderText) }
+                        )
+
+
+                        if (buttonName == "Invite Member +") {
+                            Box(
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            ) {
+                                Button(
+                                    onClick = { expanded = true },
+                                    colors = ButtonColors(Color(0xFF1e90ff), Color.White, Color.Green, Color.Green)
+                                ) {
+                                    Text(selectedOption)
+                                }
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Read Only") },
+                                        onClick = {
+                                            selectedOption = "Read Only"
+                                            expanded = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Read Write") },
+                                        onClick = {
+                                            selectedOption = "Read Write"
+                                            expanded = false
+                                        }
+                                    )
+
+                                }
+                            }
+                        }
+                    }
+
+
+
                 }
+
+
             },
             confirmButton = {
                 Box(modifier = Modifier.fillMaxWidth()) {
@@ -83,12 +131,17 @@ fun ChannelDialog(
     }
 
     // Button to trigger dialog
+
     Button(
+
         onClick = { openDialog = true },
-        colors = ButtonColors(buttonColor, Color.Black, Color.Green, Color.Green)
+        colors = ButtonColors(buttonColor, buttonTextColor, Color.Green, Color.Green)
     ) {
         Text(buttonName)
     }
+
+
+
 }
 
 
@@ -96,5 +149,7 @@ fun ChannelDialog(
 @Composable
 fun PreviewTextFieldDialogExample() {
 
-    ChannelDialog("Edit Channel Name", "Enter new channel name:", "OK", "ChannelName", Color(0xFF32cd32)) {}
+    ChannelDialog("Edit Channel Name", "Enter new channel name:", "OK", "ChannelName",
+        Color(0xFF32cd32),
+        Color.Black) {}
 }
