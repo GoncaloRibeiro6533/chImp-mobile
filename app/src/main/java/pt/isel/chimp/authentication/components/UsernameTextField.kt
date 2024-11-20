@@ -29,7 +29,7 @@ fun UsernameTextField(
         modifier = Modifier.fillMaxWidth().then(modifier),
         required = true,
         maxLength = MAX_USERNAME_LENGTH,
-        forbiddenCharacters = listOf('\n'),
+        forbiddenCharacters = listOf(' ','\n', '\t'),
         errorMessage = if (invalidUsername) invalidUsernameMessage else null
     )
 }

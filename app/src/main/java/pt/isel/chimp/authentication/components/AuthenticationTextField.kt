@@ -44,7 +44,10 @@ fun AuthenticationTextField(
         },
         value = value,
         onValueChange = {
-            var filteredValue = it.filter { c -> c !in forbiddenCharacters }
+            var filteredValue = it.filter {
+                c ->
+                c !in forbiddenCharacters
+            }
             if (maxLength != null && filteredValue.length > maxLength)
                 filteredValue = filteredValue.substring(0 until maxLength)
 
