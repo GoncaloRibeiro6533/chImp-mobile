@@ -132,7 +132,7 @@ fun ChannelInfoScreen(
                                 modifier = Modifier.fillMaxSize()
                             ) {
                                 items(members) { member ->
-                                    MemberView(member.first, member.second)
+                                    MemberView(member.first, member.second, channel.creator)
                                 }
                                 item {
 

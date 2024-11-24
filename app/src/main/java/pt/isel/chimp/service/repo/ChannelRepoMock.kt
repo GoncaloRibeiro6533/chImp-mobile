@@ -31,6 +31,8 @@ class ChannelRepoMock {
             Channel(1, "DAW", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC) to mutableListOf(
                 User(1, "Bob", "bob@example.com") to Role.READ_WRITE,
                 User(2, "Alice", "alice@example.com") to Role.READ_WRITE,
+                User(3, "Charlie", "char@emple.com") to Role.READ_ONLY,
+                User(4, "David", "david@emxaple.com") to Role.READ_ONLY,
             ),
             Channel(2, "PDM", User(2, "Alice", "alice@example.com"), Visibility.PRIVATE) to mutableListOf(
                 User(2, "Alice", "alice@example.com") to Role.READ_WRITE,

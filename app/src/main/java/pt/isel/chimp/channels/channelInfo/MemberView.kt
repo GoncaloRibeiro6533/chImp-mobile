@@ -27,7 +27,8 @@ import pt.isel.chimp.utils.RoundedRectangleWithText
 @Composable
 fun MemberView(
     user: User,
-    role: Role
+    role: Role,
+    channelCreator: User
 ) {
     Card(
         modifier = Modifier
@@ -66,10 +67,21 @@ fun MemberView(
                 /*todo add tag creator to the user that created the channel
                  *  (user.id == channel.creatorId)
                  */
-                //val creatorLabel
                 val darkGreen = Color(0xFF006400)
-                val roleLabel = if(role == Role.READ_ONLY) "Read-Only" else "Read-Write"
-                val roleColor = if(role == Role.READ_ONLY) Color.DarkGray else darkGreen
+                val redColor = Color.Red
+                val roleLabel: String
+                val roleColor: Color
+
+                if (user.id == channelCreator.id) {
+                    roleLabel = "Creator"
+                    roleColor = redColor
+                } else {
+                    roleLabel = when (role) {
+                        Role.READ_ONLY -> "Read Only"
+                        Role.READ_WRITE -> "Read Write"
+                    }
+                    roleColor = if (role == Role.READ_ONLY) Color.DarkGray else darkGreen
+                }
                 RoundedRectangleWithText(
                     text = roleLabel,
                     backgroundColor = roleColor
@@ -86,11 +98,18 @@ fun MemberViewPreview() {
         Column {
             MemberView(
                 user = User(1, "Bob", "bob@example.com"),
-                role = Role.READ_WRITE
+                role = Role.READ_WRITE,
+                channelCreator = User(1, "Bob", "bob@example.com")
             )
             MemberView(
-                user = User(1, "Bob", "bob@example.com"),
-                role = Role.READ_ONLY
+                user = User(1, "joao", "joao@example.com"),
+                role = Role.READ_ONLY,
+                channelCreator = User(2, "Alice", "alice@example.com")
+            )
+            MemberView(
+                user = User(2, "Alice", "alice@example.com"),
+                role = Role.READ_WRITE,
+                channelCreator = User(2, "Alice", "alice@example.com")
             )
         }
     }
