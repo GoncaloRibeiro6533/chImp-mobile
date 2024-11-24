@@ -7,8 +7,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.components.PROGRESS_INDICATOR_TAG
-import pt.isel.chimp.home.LoadingView
 
 @RunWith(AndroidJUnit4::class)
 class LoadingViewTests {

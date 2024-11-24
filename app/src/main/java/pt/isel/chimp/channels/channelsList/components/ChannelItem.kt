@@ -33,23 +33,20 @@ fun ChannelItem(channel: Channel, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .clickable { onClick() },
+            .clickable {
+                onClick()
+                       },
     ) {
-        ChannelDetailsView(channel, onClick = {},  enabled = false)
+        ChannelDetailsView(channel)
     }
 }
 
 @Composable
 fun ChannelDetailsView(
-    channel: Channel,
-    onClick: () -> Unit,
-    enabled: Boolean
+    channel: Channel
 ) {
     Row(
-        modifier = Modifier.padding(10.dp).fillMaxWidth().fillMaxHeight().clickable(
-            onClick = onClick,
-            enabled = enabled
-        ),
+        modifier = Modifier.padding(10.dp).fillMaxWidth().fillMaxHeight(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {

@@ -4,10 +4,8 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.domain.user.UserInChannel
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.InvitationService
-import pt.isel.chimp.service.repo.ChannelRepoMock
 import pt.isel.chimp.service.repo.RepoMock
 import pt.isel.chimp.utils.Either
 import pt.isel.chimp.utils.failure
@@ -59,7 +57,7 @@ class MockInvitationService(private val repoMock: RepoMock) :InvitationService {
                 ?: return@interceptRequest failure(ApiError("Invitation not found"))
             if (invitation.isUsed) return@interceptRequest failure(ApiError("Invitation already used"))
             val channel = repoMock.invitationRepoMock.acceptInvitation(invitationId)
-            ChannelRepoMock.userInChannel.add(UserInChannel(user.id, channel.id, role = invitation.role))
+            repoMock.channelRepoMock.addUserToChannel(user.id, invitation.channel, invitation.role)
             return@interceptRequest success(channel)
         }
 

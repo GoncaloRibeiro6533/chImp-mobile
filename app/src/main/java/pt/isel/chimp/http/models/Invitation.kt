@@ -2,10 +2,12 @@ package pt.isel.chimp.http.models
 
 
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.serialization.Serializable
 import pt.isel.chimp.domain.Role
+import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.http.models.channel.ChannelOutputModel
-import pt.isel.chimp.http.models.user.UserIdentifiers
+import pt.isel.chimp.http.models.user.UserDTO
 
 
 @Serializable
@@ -19,29 +21,23 @@ data class InvitationInputModelChannel(
 @Serializable
 data class InvitationOutputModelChannel(
     val id: Int,
-    val sender: UserIdentifiers,
-    val receiver: UserIdentifiers,
+    val sender: UserDTO,
+    val receiver: UserDTO,
     val channel: ChannelOutputModel,
     val role: Role,
     val timestamp: LocalDateTime,
-)
+) {
+    fun toInvitation() = Invitation(
+        id,
+        sender.toUser(),
+        receiver.toUser(),
+        channel.toChannel(),
+        role,
+        isUsed = false,
+        timestamp = timestamp.toJavaLocalDateTime()
+    )
+}
 
-@Serializable
-data class InvitationInputModelRegister(
-    val email: String,
-    val channelId: Int,
-    val role: Role,
-)
-
-@Serializable
-data class InvitationOutputModelRegister(
-    val id: Int,
-    val sender: UserIdentifiers,
-    val email: String,
-    val channel: ChannelOutputModel,
-    val role: Role,
-    val timestamp: LocalDateTime,
-)
 
 @Serializable
 data class InvitationsList(

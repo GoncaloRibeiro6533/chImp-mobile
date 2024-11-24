@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.domain.user.UserInChannel
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.ChannelService
@@ -19,7 +19,7 @@ import pt.isel.chimp.utils.Success
 sealed interface ChannelInfoScreenState {
     data object Idle: ChannelInfoScreenState
     data object Loading: ChannelInfoScreenState
-    data class Success(val channelMembers: List<Pair<User, UserInChannel>>): ChannelInfoScreenState
+    data class Success(val channelMembers: List<Pair<User, Role>>): ChannelInfoScreenState
     data class SuccessOnLeave(val channel: Channel): ChannelInfoScreenState
     data class Error(val error: ApiError): ChannelInfoScreenState
 }

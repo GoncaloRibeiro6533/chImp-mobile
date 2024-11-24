@@ -5,7 +5,6 @@ import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.http.models.user.AuthenticatedUserDTO
 import pt.isel.chimp.http.models.user.UserDTO
-import pt.isel.chimp.http.models.user.UserIdentifiersDTO
 import pt.isel.chimp.http.models.user.UserLoginCredentialsInput
 import pt.isel.chimp.http.models.user.UserRegisterInput
 import pt.isel.chimp.http.models.user.UsernameUpdateInput
@@ -58,7 +57,7 @@ class UserServiceHttp(private val client: HttpClient) : UserService {
         email: String
     ): Either<ApiError, User> =
         when (val response  = client.post<UserDTO>(
-            url = "/user/register",
+            url = "/user/pdm/register",
             body = UserRegisterInput(username, email, password))) {
             is Success -> success(response.value.toUser())
             is Failure -> failure(response.value)
@@ -66,7 +65,7 @@ class UserServiceHttp(private val client: HttpClient) : UserService {
 
 
     override suspend fun findUserById(token: String, id: Int): Either<ApiError, User> {
-        return when(val response = client.get<UserIdentifiersDTO>("/user/$id", token)) {
+        return when(val response = client.get<UserDTO>("/user/$id", token)) {
             is  Success -> success(response.value.toUser())
             is  Failure -> failure(response.value)
         }

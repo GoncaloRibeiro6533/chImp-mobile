@@ -4,7 +4,6 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.domain.user.UserInChannel
 import pt.isel.chimp.service.repo.UserRepoMock.Companion.users
 
 class ChannelRepoMock {
@@ -28,30 +27,26 @@ class ChannelRepoMock {
                 Channel(12, "teste", users[1], Visibility.PRIVATE),
             )
 
-        val userInChannel = mutableListOf<UserInChannel>(
-            UserInChannel(1, 1, Role.READ_WRITE),
-            UserInChannel(2, 1, Role.READ_WRITE),
-            UserInChannel(2, 2, Role.READ_ONLY),
-            UserInChannel(1, 2, Role.READ_WRITE),
-            UserInChannel(1, 3, Role.READ_WRITE),
-            /*UserInChannel(1, 4, Role.READ_WRITE),
-            UserInChannel(1, 5, Role.READ_WRITE),
-            UserInChannel(1, 6, Role.READ_ONLY),
-            UserInChannel(1, 7, Role.READ_WRITE),
-            UserInChannel(1, 8, Role.READ_WRITE),
-            UserInChannel(1, 9, Role.READ_WRITE),
-            UserInChannel(1, 10, Role.READ_WRITE),
-            UserInChannel(1, 11, Role.READ_WRITE),
-            */
-
-
+        val userInChannel = mutableMapOf<Channel, MutableList<Pair<User, Role>>>(
+            Channel(1, "DAW", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC) to mutableListOf(
+                User(1, "Bob", "bob@example.com") to Role.READ_WRITE,
+                User(2, "Alice", "alice@example.com") to Role.READ_WRITE,
+            ),
+            Channel(2, "PDM", User(2, "Alice", "alice@example.com"), Visibility.PRIVATE) to mutableListOf(
+                User(2, "Alice", "alice@example.com") to Role.READ_WRITE,
+                User(1, "Bob", "bob@example.com") to Role.READ_ONLY,
+            ),
+            Channel(3, "TVS long long  name", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE) to mutableListOf(
+                User(1, "Bob", "bob@example.com") to Role.READ_WRITE,)
         )
 
         private var currentId = 50
     }
 
     fun addUserToChannel(userToAdd: Int, channel: Channel, role: Role) {
-        userInChannel.add(UserInChannel(userToAdd, channel.id, role))
+        val entry = userInChannel.getOrDefault(channel, mutableListOf())
+        entry.add(User(userToAdd, "name", "email") to role)
+        userInChannel[channel] = entry
     }
 
     fun createChannel(name: String, visibility: Visibility, creator: User): Channel {
@@ -67,19 +62,19 @@ class ChannelRepoMock {
 
     fun findChannelsOfUser(user: User): List<Channel> {
         return userInChannel
-            .filter { it.userId == user.id }
-            .mapNotNull { userInChannel -> channels.find { it.id == userInChannel.channelId } }
+            .filter { it.value.any { it.first.id == user.id } }
+            .map { it.key }
     }
 
     fun findChannelByName(name: String, limit: Int = 10, skip: Int = 0 ): List<Channel> {
         return channels.filter { it.name.contains(name) }.drop(skip).take(limit)
     }
 
-    fun getChannelMembers(channelId: Int): List<UserInChannel> {
-        return  userInChannel.filter { it.channelId == channelId }
+    fun getChannelMembers(channelId: Int): List<Pair<User, Role>> {
+        return userInChannel.getOrDefault(channels.find { it.id == channelId }, mutableListOf())
     }
 
     fun removeUser(userId: Int, channelId: Int) {
-        userInChannel.removeIf { it.channelId == channelId && it.userId == userId }
+        userInChannel[channels.find { it.id == channelId }]?.removeIf { it.first.id == userId }
     }
 }

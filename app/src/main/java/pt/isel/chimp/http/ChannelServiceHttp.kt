@@ -5,9 +5,9 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.domain.user.UserInChannel
-import pt.isel.chimp.http.models.channel.ChannelDTO
-import pt.isel.chimp.http.models.channel.ChannelIdsDTO
+import pt.isel.chimp.http.models.channel.ChannelList
+import pt.isel.chimp.http.models.channel.ChannelMembersList
+import pt.isel.chimp.http.models.channel.ChannelOutputModel
 import pt.isel.chimp.http.models.channel.CreateChannelInputModel
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.http.utils.get
@@ -27,7 +27,7 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         visibility: Visibility,
         creatorToken: String
     ): Either<ApiError, Channel> {
-        return when(val response = client.post<ChannelDTO>(
+        return when(val response = client.post<ChannelOutputModel>(
             url = "/channels",
             token = creatorToken,
             body = CreateChannelInputModel(name, creatorId, visibility)
@@ -43,7 +43,7 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         channelId: Int,
         role: Role
     ): Either<ApiError, Channel> {
-        return when(val response = client.put<ChannelDTO>(
+        return when(val response = client.put<ChannelOutputModel>(
             url = "/channels/$channelId/add/$role",
             token = token
         )) {
@@ -56,7 +56,7 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         id: Int,
         token: String
     ): Either<ApiError, Channel> {
-        return when(val response = client.get<ChannelIdsDTO>(
+        return when(val response = client.get<ChannelOutputModel>(
             url = "/channel/$id",
             token = token
         )) {
@@ -68,12 +68,12 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
     override suspend fun getChannelMembers(
         token: String,
         channelId: Int
-    ): Either<ApiError, List<Pair<User, UserInChannel>>> {
-        return when(val response = client.get<List<Pair<User, UserInChannel>>>( //todo fix this list type
+    ): Either<ApiError, List<Pair<User, Role>>> {
+        return when(val response = client.get<ChannelMembersList>(
             url = "/channel/${channelId}/members",
             token = token
         )) {
-            is Success -> success(response.value)
+            is Success -> success(response.value.toChannelMembers())
             is Failure -> failure(response.value)
         }
     }
@@ -84,11 +84,11 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         skip: Int,
         token: String
     ): Either<ApiError, List<Channel>> {
-        return when(val response = client.get<List<ChannelDTO>>(
+        return when(val response = client.get<ChannelList>(
             url = "/channel/user/$userId",
             token = token
         )) {
-            is Success -> success(response.value.map { it.toChannel() })
+            is Success -> success(response.value.channels.map { it.toChannel() })
             is Failure -> failure(response.value)
         }
     }
@@ -98,7 +98,7 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         channelId: Int,
         newName: String
     ): Either<ApiError, Channel> {
-        return when(val response = client.put<ChannelDTO>(
+        return when(val response = client.put<ChannelOutputModel>(
             url = "/channel/$channelId/$newName",
             token = token,
         )) {
@@ -112,7 +112,7 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         channelId: Int,
         userID: Int
     ): Either<ApiError, Channel> {
-        return when(val response = client.put<ChannelDTO>(
+        return when(val response = client.put<ChannelOutputModel>(
             url = "/channel/$channelId/leave/$userID",
             token = token
         )) {

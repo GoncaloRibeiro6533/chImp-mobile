@@ -1,7 +1,9 @@
 package pt.isel.chimp.channels.channel
 
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
@@ -43,11 +45,11 @@ fun ChannelScreen(
                     onBackRequested = onNavigationBack
                 ),
                     content = {
-                        ChannelDetailsView(
-                        channel = channel,
-                        onClick = onNavigationChannelInfo,
-                        enabled = true
-                        )
+                        Row(modifier = Modifier.clickable(onClick = onNavigationChannelInfo)) {
+                            ChannelDetailsView(
+                            channel = channel
+                            )
+                        }
                     }
                 )
             },

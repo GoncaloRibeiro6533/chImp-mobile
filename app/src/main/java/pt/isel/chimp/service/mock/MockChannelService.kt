@@ -5,7 +5,6 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.domain.user.UserInChannel
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChannelService
 import pt.isel.chimp.service.repo.RepoMock
@@ -80,20 +79,16 @@ class MockChannelService(private val repoMock: RepoMock) : ChannelService {
             return@interceptRequest success(channel)
         }
 
-    override suspend fun getChannelMembers(token: String, channelId: Int): Either<ApiError, List<Pair<User, UserInChannel>>> =
-        interceptRequest<List<Pair<User, UserInChannel>>>(token) { user ->
+    override suspend fun getChannelMembers(token: String, channelId: Int): Either<ApiError, List<Pair<User, Role>>> =
+        interceptRequest<List<Pair<User, Role>>>(token) { user ->
             delay(1000)
+            repoMock.channelRepoMock.findChannelById(channelId) ?: return@interceptRequest failure(ApiError("Channel not found"))
             val userInChannel = repoMock.channelRepoMock.findChannelsOfUser(user)
             if (userInChannel.none { it.id == channelId }) return@interceptRequest failure(ApiError("User not in channel"))
-            val usersInChannel = repoMock.channelRepoMock.getChannelMembers(channelId)
-            val users = mutableListOf<Pair<User, UserInChannel>>()
-            usersInChannel.forEach {
-                val userChannel = repoMock.userRepoMock.findUserById(it.userId) ?:
-                return@interceptRequest failure(ApiError("User not found"))
-                users.add(Pair(userChannel, it))
-            }
-            return@interceptRequest success(users)
+            val members = repoMock.channelRepoMock.getChannelMembers(channelId)
+            return@interceptRequest success(members)
         }
+
 
     override suspend fun updateChannelName(
         token: String,

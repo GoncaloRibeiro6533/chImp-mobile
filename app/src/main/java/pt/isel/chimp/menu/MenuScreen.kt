@@ -48,7 +48,7 @@ fun MenuScreen(menuItems: List<MenuItem>, onNavigateBack: () -> Unit) {
             },
         ) { innerPadding ->
             Column(
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.fillMaxSize().padding(innerPadding)
             ) {
                 HorizontalDivider()
                 LazyColumn {
