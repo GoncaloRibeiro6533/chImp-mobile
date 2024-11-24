@@ -1,4 +1,4 @@
-package pt.isel.chimp.http.models
+package pt.isel.chimp.http.models.channel
 
 import kotlinx.serialization.Serializable
 import pt.isel.chimp.domain.channel.Visibility
@@ -8,6 +8,7 @@ import pt.isel.chimp.http.models.user.UserIdentifiers
 @Serializable
 data class CreateChannelInputModel(
     val name: String,
+    val creatorId: Int,
     val visibility: Visibility,
 )
 

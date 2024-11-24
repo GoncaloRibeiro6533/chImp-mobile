@@ -36,6 +36,8 @@ interface MessageService {
      */
     suspend fun getMessagesByChannel(token: String, channelId: Int, limit: Int = 10, skip: Int = 0
     ): Either<ApiError, List<Message>>
+
+    //TODO add getMsgHistory?
 }
 
 

@@ -23,7 +23,12 @@ class MockChannelService(private val repoMock: RepoMock) : ChannelService {
         return block(user)
     }
 
-    override suspend fun createChannel(creatorToken: String, name: String, visibility: Visibility): Either<ApiError, Channel> =
+    override suspend fun createChannel(
+        name: String,
+        creatorId: Int,
+        visibility: Visibility,
+        creatorToken: String
+    ): Either<ApiError, Channel> =
         interceptRequest<Channel>(creatorToken) { userCreator ->
             delay(1000)
             if (visibility !in Visibility.entries.toTypedArray()) return@interceptRequest failure(ApiError("Invalid visibility"))
@@ -47,7 +52,7 @@ class MockChannelService(private val repoMock: RepoMock) : ChannelService {
        }
 
 
-    override suspend fun getChannelsByUser(token: String, limit: Int, skip: Int): Either<ApiError, List<Channel>> =
+    override suspend fun getChannelsOfUser(userId: Int, limit: Int, skip: Int, token: String): Either<ApiError, List<Channel>> =
         interceptRequest<List<Channel>>(token) { user ->
             delay(1000)
             if (limit < 0 || skip < 0) return@interceptRequest failure(ApiError("Invalid limit or skip"))
@@ -56,7 +61,7 @@ class MockChannelService(private val repoMock: RepoMock) : ChannelService {
             return@interceptRequest success(userChannels)
         }
 
-    override suspend fun addUserToChannel(
+    override suspend fun joinChannel(
         token: String,
         userToAdd: Int,
         channelId: Int,
@@ -75,12 +80,12 @@ class MockChannelService(private val repoMock: RepoMock) : ChannelService {
             return@interceptRequest success(channel)
         }
 
-    override suspend fun getChannelMembers(token: String, channel: Channel): Either<ApiError, List<Pair<User, UserInChannel>>> =
+    override suspend fun getChannelMembers(token: String, channelId: Int): Either<ApiError, List<Pair<User, UserInChannel>>> =
         interceptRequest<List<Pair<User, UserInChannel>>>(token) { user ->
             delay(1000)
             val userInChannel = repoMock.channelRepoMock.findChannelsOfUser(user)
-            if (channel !in userInChannel) return@interceptRequest failure(ApiError("User not in channel"))
-            val usersInChannel = repoMock.channelRepoMock.getChannelMembers(channel)
+            if (userInChannel.none { it.id == channelId }) return@interceptRequest failure(ApiError("User not in channel"))
+            val usersInChannel = repoMock.channelRepoMock.getChannelMembers(channelId)
             val users = mutableListOf<Pair<User, UserInChannel>>()
             usersInChannel.forEach {
                 val userChannel = repoMock.userRepoMock.findUserById(it.userId) ?:
@@ -89,6 +94,14 @@ class MockChannelService(private val repoMock: RepoMock) : ChannelService {
             }
             return@interceptRequest success(users)
         }
+
+    override suspend fun updateChannelName(
+        token: String,
+        channelId: Int,
+        newName: String
+    ): Either<ApiError, Channel> {
+        TODO("Not yet implemented")
+    }
 
     override suspend fun removeUserFromChannel(
         token: String,

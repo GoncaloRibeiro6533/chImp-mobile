@@ -16,14 +16,14 @@ class ChImpServiceHttp(private val client: HttpClient): ChImpService {
     }
 
     override val channelService: ChannelService by lazy {
-        MockChannelService(RepoMockImpl())
+        ChannelServiceHttp(client)
     }
 
     override val messageService: MessageService by lazy {
-        TODO()
+        MessageServiceHttp(client)
     }
 
     override val invitationService: InvitationService by lazy {
-        TODO()
+        InvitationServiceHttp(client)
     }
 }

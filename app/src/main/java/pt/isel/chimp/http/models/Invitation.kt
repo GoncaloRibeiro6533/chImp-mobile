@@ -4,11 +4,13 @@ package pt.isel.chimp.http.models
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 import pt.isel.chimp.domain.Role
+import pt.isel.chimp.http.models.channel.ChannelOutputModel
 import pt.isel.chimp.http.models.user.UserIdentifiers
 
 
 @Serializable
 data class InvitationInputModelChannel(
+    val senderId: Int,
     val receiverId: Int,
     val channelId: Int,
     val role: Role,

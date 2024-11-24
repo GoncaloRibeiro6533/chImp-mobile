@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -70,7 +68,7 @@ fun ChannelInfoScreen(
             ) {
                 when (state) {
                     is ChannelInfoScreenState.Idle -> {
-                        viewModel.getChannelMembers(token, channel)
+                        viewModel.getChannelMembers(token, channel.id)
                     }
                     is ChannelInfoScreenState.Loading -> {
                         LoadingView()
@@ -116,7 +114,7 @@ fun ChannelInfoScreen(
                                     "OK",
                                     channel.name,
                                     Color.LightGray,
-                                    Color.Black) { viewModel.editChannelName() }
+                                    Color.Black) { viewModel.updateChannelName() }
 
                             }
 
@@ -170,7 +168,7 @@ fun ChannelInfoScreen(
                             title = "Error",
                             message = " ",
                             buttonText = "Ok",
-                            onDismiss = { viewModel.getChannelMembers(token, channel) }
+                            onDismiss = { viewModel.getChannelMembers(token, channel.id) }
                         )
                     }
 

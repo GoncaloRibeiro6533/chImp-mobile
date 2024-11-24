@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pt.isel.chimp.channels.channelsList.ChannelsListScreenState
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.domain.user.UserInChannel
@@ -31,12 +30,12 @@ class ChannelInfoViewModel(private val channelService: ChannelService) : ViewMod
         private set
 
 
-    fun getChannelMembers(token: String, channel: Channel) {
+    fun getChannelMembers(token: String, channelId: Int) {
         if (state != ChannelInfoScreenState.Loading) {
             state = ChannelInfoScreenState.Loading
             viewModelScope.launch {
                 state = try {
-                    when (val members = channelService.getChannelMembers(token, channel)) {
+                    when (val members = channelService.getChannelMembers(token, channelId)) {
                         is Success -> ChannelInfoScreenState.Success(members.value)
                         is Failure -> ChannelInfoScreenState.Error(members.value)
                     }
@@ -47,7 +46,7 @@ class ChannelInfoViewModel(private val channelService: ChannelService) : ViewMod
         }
     }
 
-    fun editChannelName() {
+    fun updateChannelName() {
         TODO()
     }
 

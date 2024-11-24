@@ -70,9 +70,7 @@ class UserServiceHttp(private val client: HttpClient) : UserService {
             is  Success -> success(response.value.toUser())
             is  Failure -> failure(response.value)
         }
-
     }
-
 
     override suspend fun logout(token: String): Either<ApiError, Unit> {
         return when(val response = client.post<Unit>(
@@ -82,5 +80,4 @@ class UserServiceHttp(private val client: HttpClient) : UserService {
             is Failure -> failure(response.value)
         }
     }
-
 }

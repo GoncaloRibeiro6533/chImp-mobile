@@ -1,6 +1,5 @@
 package pt.isel.chimp.service
 
-import kotlinx.coroutines.delay
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
@@ -8,8 +7,6 @@ import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.domain.user.UserInChannel
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.utils.Either
-import pt.isel.chimp.utils.failure
-import pt.isel.chimp.utils.success
 
 
 /**
@@ -26,7 +23,12 @@ interface ChannelService {
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun createChannel(creatorToken: String, name: String, visibility: Visibility): Either<ApiError, Channel>
+    suspend fun createChannel(
+        name: String,
+        creatorId: Int,
+        visibility: Visibility,
+        creatorToken: String
+    ): Either<ApiError, Channel>
 
     /**
      * Gets a channel by its id.
@@ -47,7 +49,7 @@ interface ChannelService {
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun getChannelsByUser(token: String, limit: Int = 10, skip: Int = 0): Either<ApiError, List<Channel>>
+    suspend fun getChannelsOfUser(userId: Int, limit: Int = 10, skip: Int = 0, token: String): Either<ApiError, List<Channel>>
 
     /**
      * Adds a user to a channel.
@@ -59,17 +61,19 @@ interface ChannelService {
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun addUserToChannel(token: String, userToAdd: Int, channelId: Int, role: Role): Either<ApiError, Channel>
+    suspend fun joinChannel(token: String, userToAdd: Int, channelId: Int, role: Role): Either<ApiError, Channel>
 
     /**
      * Gets the members of a channel.
      * @param token the user token.
-     * @param channel the channel.
+     * @param channelId the channel.
      * @return the members of the channel.
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun getChannelMembers(token: String, channel: Channel): Either<ApiError, List<Pair<User, UserInChannel>>>
+    suspend fun getChannelMembers(token: String, channelId: Int): Either<ApiError, List<Pair<User, UserInChannel>>>
+
+    suspend fun updateChannelName(token: String, channelId: Int, newName: String): Either<ApiError, Channel>
 
     /**
      * Creates a channel.

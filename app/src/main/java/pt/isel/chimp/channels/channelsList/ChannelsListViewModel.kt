@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.channel.Channel
-import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.ChannelService
@@ -26,13 +25,12 @@ class ChannelsListViewModel(private val channelService: ChannelService) : ViewMo
     var state: ChannelsListScreenState by mutableStateOf(ChannelsListScreenState.Idle)
         private set
 
-    fun getChannels(token: String, user: User) { //todo search by user or by id?
+    fun getChannels(token: String, userId: Int) {
         if (state != ChannelsListScreenState.Loading) {
             state = ChannelsListScreenState.Loading
             viewModelScope.launch {
                 state = try {
-                    val channels = channelService.getChannelsByUser(token) //todo add parameter user?
-                    when (channels) {
+                    when (val channels = channelService.getChannelsOfUser(userId, token = token)) {
                         is Success -> ChannelsListScreenState.Success(channels.value)
                         is Failure -> ChannelsListScreenState.Error(channels.value)
                     }

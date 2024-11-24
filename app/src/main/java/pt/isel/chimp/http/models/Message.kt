@@ -2,11 +2,13 @@ package pt.isel.chimp.http.models
 
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
+import pt.isel.chimp.http.models.channel.ChannelIdentifiers
 import pt.isel.chimp.http.models.user.UserIdentifiers
 
 @Serializable
 data class MessageInputModel(
     val channelId: Int,
+    val userId: Int,
     val content: String,
 )
 

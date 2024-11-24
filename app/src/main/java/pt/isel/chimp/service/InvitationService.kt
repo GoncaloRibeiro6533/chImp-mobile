@@ -9,10 +9,11 @@ import pt.isel.chimp.utils.Either
 interface InvitationService {
 
     suspend fun createChannelInvitation(
-        senderToken: String,
+        senderId: Int,
         receiverId: Int,
         channelId: Int,
-        role: Role
+        role: Role,
+        senderToken: String
     )
         : Either<ApiError, Invitation>
 
@@ -21,5 +22,5 @@ interface InvitationService {
     //todo change return of acceptInv, here and in daw
     suspend fun acceptInvitation(invitationId: Int, token: String): Either<ApiError, Channel>
 
-    suspend fun declineInvitation(invitationId: Int, userId: Int, token: String): Either<ApiError, Boolean>
+    suspend fun declineInvitation(invitationId: Int, token: String): Either<ApiError, Boolean>
 }

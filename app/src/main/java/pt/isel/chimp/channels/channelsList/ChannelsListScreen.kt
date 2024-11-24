@@ -69,7 +69,7 @@ fun ChannelsListScreen(
                 )
                 when (state) {
                     is ChannelsListScreenState.Idle -> {
-                        viewModel.getChannels("token1",user) //TODO
+                        viewModel.getChannels("token1",user.id) //TODO
                     }
                     is ChannelsListScreenState.Loading -> {
                         LoadingView()
@@ -107,7 +107,7 @@ fun ChannelsListScreen(
                             title = "Error",
                             message = state.error.message,
                             buttonText = "Ok",
-                            onDismiss = { viewModel.getChannels("token1",user) } //TODO
+                            onDismiss = { viewModel.getChannels("token1",user.id) } //TODO
                         )
                     }
                 }

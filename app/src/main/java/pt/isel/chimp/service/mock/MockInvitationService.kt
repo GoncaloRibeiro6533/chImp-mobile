@@ -27,10 +27,11 @@ class MockInvitationService(private val repoMock: RepoMock) :InvitationService {
     }
 
     override suspend fun createChannelInvitation(
-        senderToken: String,
+        senderId: Int, //todo senderId adicionado por causa do http
         receiverId: Int,
         channelId: Int,
-        role: Role
+        role: Role,
+        senderToken: String
     ): Either<ApiError, Invitation> =
         interceptRequest<Invitation>(senderToken) { sender ->
             val receiver = repoMock.userRepoMock.findUserById(receiverId)
@@ -64,7 +65,6 @@ class MockInvitationService(private val repoMock: RepoMock) :InvitationService {
 
     override suspend fun declineInvitation(
         invitationId: Int,
-        userId: Int,
         token: String
     ): Either<ApiError, Boolean> =
         interceptRequest<Boolean>(token) {

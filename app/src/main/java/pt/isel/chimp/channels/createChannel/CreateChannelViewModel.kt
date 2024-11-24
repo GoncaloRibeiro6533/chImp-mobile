@@ -28,12 +28,17 @@ class CreateChannelViewModel (private val channelService: ChannelService) : View
         private set
 
 
-    fun createChannel(token: String, name: String, visibility: String) {
+    fun createChannel(name: String, creatorId: Int, visibility: String, token: String) {
         if (state != CreateChannelScreenState.Loading) {
             state = CreateChannelScreenState.Loading
             viewModelScope.launch {
                 state = try {
-                    val channel = channelService.createChannel(token, name, Visibility.valueOf(visibility))
+                    val channel = channelService.createChannel(
+                        name,
+                        creatorId,
+                        Visibility.valueOf(visibility),
+                        token
+                    )
                     when (channel) {
                         is Success -> CreateChannelScreenState.Success(channel.value)
                         is Failure -> CreateChannelScreenState.Error(channel.value)
