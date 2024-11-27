@@ -70,21 +70,18 @@ fun ChannelInfoScreen(
             ) {
                 when (state) {
                     is ChannelInfoScreenState.Idle -> {
-                        viewModel.getChannelMembers(channel.id)
+                        viewModel.getChannelMembers(channel)
                     }
                     is ChannelInfoScreenState.Loading -> {
                         LoadingView()
                     }
                     is ChannelInfoScreenState.Success -> {
-
                         ChannelInfoView(
-                            token =token,
-                            user = user,
-                            channel = channel,
-                            members = state.channelMembers,
-                            viewModel = viewModel,
-                            //innerPadding = innerPadding
-
+                            channelInfo = state.channelInfo,
+                            onUpdateChannel = { newName ->
+                                viewModel.updateChannelName(state.channelInfo, newName)
+                            },
+                            onLeaveChannel = { viewModel.leaveChannel(state.channelInfo.channel) }
                         )
                     }
                     is ChannelInfoScreenState.Error -> {
@@ -92,7 +89,7 @@ fun ChannelInfoScreen(
                             title = "Error",
                             message = " ",
                             buttonText = "Ok",
-                            onDismiss = { viewModel.getChannelMembers(channel.id) }
+                            onDismiss = { viewModel.getChannelMembers(channel) }
                         )
                     }
 

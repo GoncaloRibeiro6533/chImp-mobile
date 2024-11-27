@@ -32,9 +32,9 @@ fun ChannelDialog(
     placeHolderText: String,
     buttonColor: Color,
     buttonTextColor: Color,
-    onConfirm : () -> Unit,
+    onConfirm : (String) -> Unit,
 
-) {
+    ) {
     var openDialog by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
@@ -115,7 +115,7 @@ fun ChannelDialog(
                         }
                         Button(
                             onClick = {
-                                onConfirm
+                                onConfirm(text)
                                 openDialog = false
                             },
                             colors = ButtonColors(Color(0xFF32cd32), Color.Black, Color.Green, Color.Green)

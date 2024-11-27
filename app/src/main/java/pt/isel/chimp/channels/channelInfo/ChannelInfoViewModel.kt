@@ -17,10 +17,15 @@ import pt.isel.chimp.service.ChannelService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
 
+data class ChannelInfo(
+    val channel: Channel,
+    val members: List<Pair<User, Role>>
+)
+
 sealed interface ChannelInfoScreenState {
     data object Idle: ChannelInfoScreenState
     data object Loading: ChannelInfoScreenState
-    data class Success(val channelMembers: List<Pair<User, Role>>): ChannelInfoScreenState
+    data class Success(val channelInfo: ChannelInfo): ChannelInfoScreenState
     data class SuccessOnLeave(val channel: Channel): ChannelInfoScreenState
     data class Error(val error: ApiError): ChannelInfoScreenState
 }
@@ -35,14 +40,14 @@ class ChannelInfoViewModel(
         private set
 
 
-    fun getChannelMembers(channelId: Int) {
+    fun getChannelMembers(channel: Channel) {
         if (state != ChannelInfoScreenState.Loading) {
             state = ChannelInfoScreenState.Loading
             viewModelScope.launch {
                 state = try {
                     val token = repo.getUserInfo()?.token ?: throw Exception("User not authenticated")
-                    when (val members = channelService.getChannelMembers(token, channelId)) {
-                        is Success -> ChannelInfoScreenState.Success(members.value)
+                    when (val members = channelService.getChannelMembers(token, channel.id)) {
+                        is Success -> ChannelInfoScreenState.Success(ChannelInfo(channel, members.value))
                         is Failure -> ChannelInfoScreenState.Error(members.value)
                     }
                 } catch (e: Throwable) {
@@ -52,8 +57,23 @@ class ChannelInfoViewModel(
         }
     }
 
-    fun updateChannelName() {
-        TODO()
+    fun updateChannelName(
+        channel: ChannelInfo,
+        newName: String) {
+        if (state != ChannelInfoScreenState.Loading) {
+            state = ChannelInfoScreenState.Loading
+            viewModelScope.launch {
+                state = try {
+                    val user = repo.getUserInfo() ?: throw Exception("User not authenticated")
+                    when (val updatedChannel = channelService.updateChannelName(user.token, channel.channel.id,newName)) {
+                        is Success -> ChannelInfoScreenState.Success(ChannelInfo(updatedChannel.value, channel.members))
+                        is Failure -> ChannelInfoScreenState.Error(updatedChannel.value)
+                    }
+                } catch (e: Throwable) {
+                    ChannelInfoScreenState.Error(ApiError("Error updating channel name"))
+                }
+            }
+        }
     }
 
     fun leaveChannel(channel: Channel){

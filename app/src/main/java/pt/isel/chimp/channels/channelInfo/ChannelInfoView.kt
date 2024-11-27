@@ -34,16 +34,11 @@ import pt.isel.chimp.service.repo.RepoMockImpl
 
 @Composable
 fun ChannelInfoView(
-    token: String,
-    user: User,
-    channel: Channel,
-    members:  List<Pair<User, Role>>,
-    viewModel: ChannelInfoViewModel,
-    //innerPadding: PaddingValues
-
+    channelInfo: ChannelInfo,
+    onUpdateChannel : (String) -> Unit,
+    onLeaveChannel : () -> Unit
 ){
 
-    val num = members.size
 
     Column(
         modifier = Modifier
@@ -51,14 +46,14 @@ fun ChannelInfoView(
             .padding(0.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ChannelLogo(channel.name, 135)
+        ChannelLogo(channelInfo.channel.name, 135)
         Text(
-            text = channel.name,
+            text = channelInfo.channel.name,
             modifier = Modifier.padding(10.dp),
             fontSize = 30.sp
         )
         Text(
-            text = "Channel - $num members",
+            text = "Channel - ${channelInfo.members.size} members",
             modifier = Modifier.padding(6.dp)
         )
 
@@ -79,9 +74,9 @@ fun ChannelInfoView(
                 "Edit Channel Name",
                 "Enter new channel name:",
                 "OK",
-                channel.name,
+                channelInfo.channel.name,
                 Color.LightGray,
-                Color.Black) { viewModel.updateChannelName() }
+                Color.Black) { newName -> onUpdateChannel(newName)}
 
         }
 
@@ -101,8 +96,8 @@ fun ChannelInfoView(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
         ) {
-            items(members) { member ->
-                MemberView(member.first, member.second, channel.creator)
+            items(channelInfo.members) { member ->
+                MemberView(member.first, member.second, channelInfo.channel.creator)
             }
             item {
 
@@ -111,7 +106,7 @@ fun ChannelInfoView(
                     "Do you want to leave this Channel?",
                     "Leave", "",
                     Color.Red,
-                    Color.White) { viewModel.leaveChannel(token, channel, user) }
+                    Color.White) { onLeaveChannel() }
 
 
                 /*
@@ -150,12 +145,9 @@ fun ChannelInfoViewPreview() {
 
     val channel = Channel(1, "Channel 1 long", user1, Visibility.PUBLIC)
     ChannelInfoView(
-        token = "",
-        user = user2,
-        channel = channel,
-        members = list,
-        viewModel = ChannelInfoViewModel(MockChannelService(RepoMockImpl())),
-
+        channelInfo = ChannelInfo(channel, list),
+        onUpdateChannel = { },
+        onLeaveChannel = { }
     )
 }
 

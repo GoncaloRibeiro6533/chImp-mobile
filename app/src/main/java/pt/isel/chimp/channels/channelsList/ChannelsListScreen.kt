@@ -42,7 +42,7 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 fun ChannelsListScreen(
     viewModel: ChannelsListViewModel,
     onMenuRequested: () -> Unit = { },
-    onChannelSelected: () -> Unit = { },
+    onChannelSelected: (Channel) -> Unit = { },
     onNavigateToCreateChannel: () -> Unit = { }
 ) {
     ChImpTheme {
@@ -84,7 +84,9 @@ fun ChannelsListScreen(
                         val channels = state.channels //TODO move to view file
                         Spacer(modifier = Modifier.padding(8.dp))
 
-                        ChannelListView(channels) {onChannelSelected}
+                        ChannelListView(channels) { channel ->
+                            onChannelSelected(channel)
+                        }
                     }
                     is ChannelsListScreenState.Error -> {
                         ErrorAlert(

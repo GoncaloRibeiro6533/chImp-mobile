@@ -27,7 +27,7 @@ import pt.isel.chimp.service.repo.RepoMockImpl
 @Composable
 fun ChannelListView(
     channels: List<Channel>,
-    onChannelSelected: () -> Unit
+    onChannelSelected: (Channel) -> Unit
 ) {
 
     LazyColumn(
@@ -46,7 +46,7 @@ fun ChannelListView(
         items(channels) { channel ->
             ChannelItem(
                 channel = channel,
-                onClick = { onChannelSelected() })
+                onClick = { onChannelSelected(channel) })
         }
         if (channels.isEmpty()) {
             item {

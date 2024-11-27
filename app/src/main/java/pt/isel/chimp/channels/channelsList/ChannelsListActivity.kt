@@ -35,8 +35,6 @@ class ChannelsListActivity : ComponentActivity() {
                     finish()
                 },
                 onChannelSelected = { channel ->
-                onMenuRequested = { navigateTo(this, MenuActivity::class.java) },
-                onChannelSelected = {
                     navigateTo(this, ChannelActivity::class.java)
                 },
                 onNavigateToCreateChannel = { navigateTo(this, CreateChannelActivity::class.java) }
