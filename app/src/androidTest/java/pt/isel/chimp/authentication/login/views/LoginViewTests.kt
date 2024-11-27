@@ -1,4 +1,4 @@
-package pt.isel.chimp.login.views
+package pt.isel.chimp.authentication.login.views
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled

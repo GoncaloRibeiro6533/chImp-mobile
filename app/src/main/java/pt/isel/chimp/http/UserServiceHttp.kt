@@ -20,7 +20,6 @@ import pt.isel.chimp.utils.failure
 import pt.isel.chimp.utils.success
 
 class UserServiceHttp(private val client: HttpClient) : UserService {
-    val token = "DfmMD7TH09TTsR88_Cs6IO-TivmrCJEMNOzM1Isy4u4="
 
     override suspend fun fetchUser(token: String): Either<ApiError, User> {
         TODO()
