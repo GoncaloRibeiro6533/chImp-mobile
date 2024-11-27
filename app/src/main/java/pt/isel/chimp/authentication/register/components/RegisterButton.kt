@@ -19,12 +19,13 @@ private const val BUTTON_PADDING = 8
 @Composable
 fun RegisterButton(
     enabled: Boolean = true,
-    onRegisterClickCallback: () -> Unit
+    modifier: Modifier,
+    onRegisterClickCallback: () -> Unit,
 ) {
     IconButton(
         onClick = onRegisterClickCallback,
         enabled = enabled,
-        modifier = Modifier.padding(BUTTON_PADDING.dp),
+        modifier = modifier.padding(BUTTON_PADDING.dp),
         text = "Register",
         painter = painterResource(id = R.drawable.ic_round_person_add_24),
         contentDescription = "Button to register screen"

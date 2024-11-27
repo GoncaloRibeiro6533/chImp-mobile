@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pt.isel.chimp.authentication.register.components.RegisterButton
@@ -21,6 +22,10 @@ import pt.isel.chimp.authentication.register.components.RegisterTextFields
 import pt.isel.chimp.authentication.validateEmail
 import pt.isel.chimp.authentication.validatePassword
 import pt.isel.chimp.authentication.validateUsername
+
+const val REGISTER_VIEW = "register_views"
+const val REGISTER_TEXT_FIELDS = "register_text_fields"
+const val REGISTER_BUTTON = "register_button"
 
 @Composable
 fun RegisterView(
@@ -37,7 +42,7 @@ fun RegisterView(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(16.dp).fillMaxWidth()
+        modifier = Modifier.padding(16.dp).fillMaxWidth().testTag(REGISTER_VIEW)
     ) {
         Row(
             modifier = Modifier.padding(bottom = 16.dp),
@@ -54,10 +59,14 @@ fun RegisterView(
             password = password,
             onEmailChangeCallback = { email = it.trim() },
             onUsernameChangeCallback = { username = it.trim() },
-            onPasswordChangeCallback = { password = it.trim() }
+            onPasswordChangeCallback = { password = it.trim() },
+            modifier = Modifier.testTag(REGISTER_TEXT_FIELDS)
         )
 
-        RegisterButton(enabled = !invalidFields) {
+        RegisterButton(
+            enabled = !invalidFields,
+            modifier = Modifier.testTag(REGISTER_BUTTON),
+        ) {
            onSubmit(username, password, email)
         }
     }

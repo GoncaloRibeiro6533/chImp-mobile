@@ -74,94 +74,16 @@ fun ChannelInfoScreen(
                         LoadingView()
                     }
                     is ChannelInfoScreenState.Success -> {
-                        val members = state.channelMembers
-                        val num = members.size
 
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(0.dp)
-                                .align(Alignment.CenterHorizontally),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            ChannelLogo(channel.name, 135)
-                            Text(
-                                text = channel.name,
-                                modifier = Modifier.padding(10.dp),
-                                fontSize = 30.sp
-                            )
-                            Text(
-                                text = "Channel - $num members",
-                                modifier = Modifier.padding(6.dp)
-                            )
+                        ChannelInfoView(
+                            token =token,
+                            user = user,
+                            channel = channel,
+                            members = state.channelMembers,
+                            viewModel = viewModel,
+                            //innerPadding = innerPadding
 
-                            Row (
-                                horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally),
-
-                            ) {
-
-                                ChannelDialog(
-                                    "Invite Member +",
-                                    "Enter Member Username:",
-                                    "Invite",
-                                    "username",
-                                    Color(0xFF32cd32),
-                                    Color.Black) { TODO() }
-
-                                ChannelDialog(
-                                    "Edit Channel Name",
-                                    "Enter new channel name:",
-                                    "OK",
-                                    channel.name,
-                                    Color.LightGray,
-                                    Color.Black) { viewModel.updateChannelName() }
-
-                            }
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            LazyColumn(
-                                contentPadding = PaddingValues(
-                                    top = 0.dp,
-                                    bottom = innerPadding.calculateBottomPadding(),
-                                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr)
-                                ),
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                items(members) { member ->
-                                    MemberView(member.first, member.second, channel.creator)
-                                }
-                                item {
-
-                                    ChannelDialog(
-                                        "Leave Channel",
-                                        "Do you want to leave this Channel?",
-                                        "Leave", "",
-                                        Color.Red,
-                                        Color.White) { viewModel.leaveChannel(token, channel, user) }
-
-
-                                    /*
-                                    Button(
-                                        onClick = {
-                                            viewModel.leaveChannel(token, channel, user)
-                                        },
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(8.dp)
-                                            .align(Alignment.CenterHorizontally),
-                                        colors = ButtonColors(Color.Red, Color.White, Color.Green, Color.Green)
-                                    ) {
-                                        Text("Leave Group")
-
-
-                                    }*/
-                                }
-                            }
-                        }
+                        )
                     }
                     is ChannelInfoScreenState.Error -> {
                         ErrorAlert(
@@ -186,7 +108,7 @@ fun ChannelInfoScreen(
 fun ChannelScreenPreview() {
     ChannelInfoScreen(
         viewModel = ChannelInfoViewModel(MockChannelService(RepoMockImpl())),
-        Channel(1, "Channel 1 long",
+        channel = Channel(1, "Channel 1 long",
             creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
         onNavigationBack = { },
         onChannelLeave = { }

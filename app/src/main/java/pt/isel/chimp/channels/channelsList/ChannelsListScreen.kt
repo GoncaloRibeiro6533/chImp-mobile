@@ -38,7 +38,7 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 fun ChannelsListScreen(
     viewModel: ChannelsListViewModel,
     onMenuRequested: () -> Unit = { },
-    onChannelSelected: (Channel) -> Unit = { },
+    onChannelSelected: () -> Unit = { },
     onNavigateToCreateChannel: () -> Unit = { }
 ) {
     val user = User(1, "Bob", "bob@example.com")
@@ -77,30 +77,8 @@ fun ChannelsListScreen(
                     is ChannelsListScreenState.Success -> {
                         val channels = state.channels //TODO move to view file
                         Spacer(modifier = Modifier.padding(8.dp))
-                        LazyColumn(
-                            contentPadding = PaddingValues(
-                                top = 0.dp,
-                                bottom = innerPadding.calculateBottomPadding(),
-                                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr)
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            items(channels) { channel ->
-                                ChannelItem(
-                                    channel = channel,
-                                    onClick = { onChannelSelected(channel) })
-                            }
-                            if (channels.isEmpty()) {
-                                item {
-                                    Text(
-                                        text = "You don't have any channels yet",
-                                        modifier = Modifier.padding(16.dp)
-                                    )
-                                }
-                            }
-                        }
+
+                        ChannelListView(channels) {onChannelSelected}
                     }
                     is ChannelsListScreenState.Error -> {
                         ErrorAlert(
