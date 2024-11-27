@@ -57,7 +57,7 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         token: String
     ): Either<ApiError, Channel> {
         return when(val response = client.get<ChannelOutputModel>(
-            url = "/channel/$id",
+            url = "/channels/$id",
             token = token
         )) {
             is Success -> success(response.value.toChannel())
@@ -70,7 +70,7 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         channelId: Int
     ): Either<ApiError, List<Pair<User, Role>>> {
         return when(val response = client.get<ChannelMembersList>(
-            url = "/channel/${channelId}/members",
+            url = "/channels/${channelId}/members",
             token = token
         )) {
             is Success -> success(response.value.toChannelMembers())
@@ -85,7 +85,7 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         token: String
     ): Either<ApiError, List<Channel>> {
         return when(val response = client.get<ChannelList>(
-            url = "/channel/user/$userId",
+            url = "/channels/user/$userId",
             token = token
         )) {
             is Success -> success(response.value.channels.map { it.toChannel() })
@@ -99,7 +99,7 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         newName: String
     ): Either<ApiError, Channel> {
         return when(val response = client.put<ChannelOutputModel>(
-            url = "/channel/$channelId/$newName",
+            url = "/channels/$channelId/$newName",
             token = token,
         )) {
             is Success -> success(response.value.toChannel())
@@ -113,7 +113,7 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         userID: Int
     ): Either<ApiError, Channel> {
         return when(val response = client.put<ChannelOutputModel>(
-            url = "/channel/$channelId/leave/$userID",
+            url = "/channels/$channelId/leave/$userID",
             token = token
         )) {
             is Success -> success(response.value.toChannel())

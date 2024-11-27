@@ -69,7 +69,7 @@ fun ChannelsListScreen(
                 )
                 when (state) {
                     is ChannelsListScreenState.Idle -> {
-                        viewModel.getChannels("token1",user.id) //TODO
+                        viewModel.getChannels("token1",user.id) //TODO fix token
                     }
                     is ChannelsListScreenState.Loading -> {
                         LoadingView()
