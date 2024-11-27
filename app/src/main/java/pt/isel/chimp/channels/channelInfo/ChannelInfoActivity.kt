@@ -5,8 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import pt.isel.chimp.DependenciesContainer
-import pt.isel.chimp.channels.channelsList.ChannelsListViewModel
-import pt.isel.chimp.channels.channelsList.ChannelsListViewModelFactory
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User

@@ -1,6 +1,5 @@
 package pt.isel.chimp.menu
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,12 +15,8 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import pt.isel.chimp.DependenciesContainer
 import pt.isel.chimp.about.AboutActivity
-import pt.isel.chimp.authentication.login.LoginActivity
 import pt.isel.chimp.channels.channelsList.ChannelsListActivity
 import pt.isel.chimp.channels.createChannel.CreateChannelActivity
-import pt.isel.chimp.domain.user.AuthenticatedUser
-import pt.isel.chimp.home.HomeActivity
-import pt.isel.chimp.http.utils.ChImpException
 import pt.isel.chimp.profile.ProfileActivity
 import pt.isel.chimp.utils.navigateTo
 

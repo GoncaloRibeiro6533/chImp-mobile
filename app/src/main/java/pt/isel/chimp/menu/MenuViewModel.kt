@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import pt.isel.chimp.channels.channelsList.ChannelsListScreenState
-import pt.isel.chimp.channels.channelsList.ChannelsListViewModel
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService

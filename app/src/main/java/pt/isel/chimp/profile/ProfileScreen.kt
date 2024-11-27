@@ -15,7 +15,6 @@ import pt.isel.chimp.about.ABOUT_SCREEN_TEST_TAG
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.service.mock.ChImpServiceMock
-import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme

@@ -25,9 +25,6 @@ import pt.isel.chimp.domain.user.UserInChannel
 import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.mock.ChImpServiceMock
-import pt.isel.chimp.service.mock.MockChannelService
-import pt.isel.chimp.service.mock.MockMessageService
-import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
