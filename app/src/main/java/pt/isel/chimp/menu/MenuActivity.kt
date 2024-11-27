@@ -50,7 +50,12 @@ class MenuActivity : ComponentActivity() {
                 ProfileActivity::class.java
             )
         },
-        MenuItem("My Channels", "my channels screen", Icons.AutoMirrored.Filled.List) { finish() },
+        MenuItem("My Channels", "my channels screen", Icons.AutoMirrored.Filled.List) {
+            navigateTo(this,
+                ChannelsListActivity::class.java)
+            finish()
+        },
+
         MenuItem("Search channel", "search channel screen", Icons.Default.Search) { },
         MenuItem("Create channel", "create channel screen", Icons.Default.Add) {
             navigateTo(
@@ -76,7 +81,7 @@ class MenuActivity : ComponentActivity() {
                 onNavigateBack = {
                     navigateTo(this, ChannelsListActivity::class.java)
                     finish()
-                                 },
+                },
                 onLogout = {
                     //navigateTo(this, HomeActivity::class.java)
                     //finishAffinity()
