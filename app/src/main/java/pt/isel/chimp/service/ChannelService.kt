@@ -41,14 +41,14 @@ interface ChannelService {
 
     /**
      * Gets the channels of a user.
-     * @param token the user token.
+     * @param this@getChannelsOfUser the user token.
      * @param limit the maximum number of channels to return.
      * @param skip the number of channels to skip.
      * @return the channels.
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun getChannelsOfUser(userId: Int, limit: Int = 10, skip: Int = 0, token: String): Either<ApiError, List<Channel>>
+    suspend fun getChannelsOfUser(userId: Int, token: String, limit: Int = 10, skip: Int = 0): Either<ApiError, List<Channel>>
 
     /**
      * Adds a user to a channel.

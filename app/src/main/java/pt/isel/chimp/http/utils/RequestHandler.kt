@@ -17,8 +17,12 @@ import pt.isel.chimp.utils.success
 
 data class ApiError(val message: String)
 
+const val NGROK = "https://1356-2001-8a0-7efc-e400-24dd-a0a2-4738-2e47.ngrok-free.app"
+
+
 const val MEDIA_TYPE = "application/json"
-const val BASE_URL = "http://localhost:8080/api"
+val BASE_URL = //"http://localhost:8080/api"
+    "$NGROK/api"
 const val TOKEN_TYPE = "Bearer"
 const val ERROR_MEDIA_TYPE = "application/problem+json"
 const val SCHEME = "bearer"

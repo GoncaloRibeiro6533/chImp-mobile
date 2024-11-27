@@ -51,7 +51,7 @@ class MockChannelService(private val repoMock: RepoMock) : ChannelService {
        }
 
 
-    override suspend fun getChannelsOfUser(userId: Int, limit: Int, skip: Int, token: String): Either<ApiError, List<Channel>> =
+    override suspend fun getChannelsOfUser(userId: Int, token: String, limit: Int, skip: Int): Either<ApiError, List<Channel>> =
         interceptRequest<List<Channel>>(token) { user ->
             delay(1000)
             if (limit < 0 || skip < 0) return@interceptRequest failure(ApiError("Invalid limit or skip"))

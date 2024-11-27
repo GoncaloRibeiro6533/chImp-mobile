@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService
@@ -24,17 +25,22 @@ sealed interface ChannelInfoScreenState {
     data class Error(val error: ApiError): ChannelInfoScreenState
 }
 
-class ChannelInfoViewModel(private val channelService: ChannelService) : ViewModel() {
+class ChannelInfoViewModel(
+    private val repo: UserInfoRepository,
+    private val channelService: ChannelService,
+    initialState: ChannelInfoScreenState = ChannelInfoScreenState.Idle
+) : ViewModel() {
 
-    var state: ChannelInfoScreenState by mutableStateOf(ChannelInfoScreenState.Idle)
+    var state: ChannelInfoScreenState by mutableStateOf(initialState)
         private set
 
 
-    fun getChannelMembers(token: String, channelId: Int) {
+    fun getChannelMembers(channelId: Int) {
         if (state != ChannelInfoScreenState.Loading) {
             state = ChannelInfoScreenState.Loading
             viewModelScope.launch {
                 state = try {
+                    val token = repo.getUserInfo()?.token ?: throw Exception("User not authenticated")
                     when (val members = channelService.getChannelMembers(token, channelId)) {
                         is Success -> ChannelInfoScreenState.Success(members.value)
                         is Failure -> ChannelInfoScreenState.Error(members.value)
@@ -50,12 +56,13 @@ class ChannelInfoViewModel(private val channelService: ChannelService) : ViewMod
         TODO()
     }
 
-    fun leaveChannel(token: String, channel: Channel, user: User){
+    fun leaveChannel(channel: Channel){
         if(state != ChannelInfoScreenState.Loading) {
             state = ChannelInfoScreenState.Loading
             viewModelScope.launch {
                 state = try {
-                    when (val serviceChannel = channelService.removeUserFromChannel(token, channel.id, user.id)) {
+                    val user = repo.getUserInfo() ?: throw Exception("User not authenticated")
+                    when (val serviceChannel = channelService.removeUserFromChannel(user.token, channel.id, user.user.id)) {
                         is Success -> ChannelInfoScreenState.SuccessOnLeave(serviceChannel.value)
                         is Failure -> ChannelInfoScreenState.Error(serviceChannel.value)
                     }
@@ -69,8 +76,14 @@ class ChannelInfoViewModel(private val channelService: ChannelService) : ViewMod
 }
 
 @Suppress("UNCHECKED_CAST")
-class ChannelInfoViewModelFactory(private val service: ChImpService): ViewModelProvider.Factory {
+class ChannelInfoViewModelFactory(
+    private val repo: UserInfoRepository,
+    private val service: ChImpService
+): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ChannelInfoViewModel(service.channelService) as T
+        return ChannelInfoViewModel(
+            repo,
+            service.channelService
+        ) as T
     }
 }

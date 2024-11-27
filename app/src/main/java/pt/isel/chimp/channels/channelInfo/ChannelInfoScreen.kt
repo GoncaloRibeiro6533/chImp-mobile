@@ -22,11 +22,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import pt.isel.chimp.channels.generalComponents.ChannelLogo
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.mock.MockChannelService
 import pt.isel.chimp.service.repo.RepoMockImpl
@@ -43,9 +47,7 @@ fun ChannelInfoScreen(
 ) {
 
     val user = User(1, "Bob", "bob@example.com")
-
     val state = viewModel.state
-    val token = "token1"
     ChImpTheme {
 
         Scaffold(
@@ -68,7 +70,7 @@ fun ChannelInfoScreen(
             ) {
                 when (state) {
                     is ChannelInfoScreenState.Idle -> {
-                        viewModel.getChannelMembers(token, channel.id)
+                        viewModel.getChannelMembers(channel.id)
                     }
                     is ChannelInfoScreenState.Loading -> {
                         LoadingView()
@@ -141,7 +143,7 @@ fun ChannelInfoScreen(
                                         "Do you want to leave this Channel?",
                                         "Leave", "",
                                         Color.Red,
-                                        Color.White) { viewModel.leaveChannel(token, channel, user) }
+                                        Color.White) { viewModel.leaveChannel(channel) }
 
 
                                     /*
@@ -168,7 +170,7 @@ fun ChannelInfoScreen(
                             title = "Error",
                             message = " ",
                             buttonText = "Ok",
-                            onDismiss = { viewModel.getChannelMembers(token, channel.id) }
+                            onDismiss = { viewModel.getChannelMembers(channel.id) }
                         )
                     }
 
@@ -181,11 +183,16 @@ fun ChannelInfoScreen(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ChannelScreenPreview() {
+    val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
     ChannelInfoScreen(
-        viewModel = ChannelInfoViewModel(MockChannelService(RepoMockImpl())),
+        viewModel = ChannelInfoViewModel(
+            UserInfoRepo(preferences),
+            MockChannelService(RepoMockImpl())
+        ),
         Channel(1, "Channel 1 long",
             creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
         onNavigationBack = { },

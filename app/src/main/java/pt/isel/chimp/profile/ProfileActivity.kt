@@ -9,9 +9,15 @@ import pt.isel.chimp.DependenciesContainer
 
 class ProfileActivity : ComponentActivity() {
 
+    private val chImpService by lazy { (application as DependenciesContainer).chImpService }
+    private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
+
     private val viewModel by viewModels<ProfileScreenViewModel>(
         factoryProducer = {
-            ProfileScreenViewModelFactory((application as DependenciesContainer).chImpService)
+            ProfileScreenViewModelFactory(
+                userInfoRepository,
+                chImpService
+            )
         }
     )
 

@@ -1,37 +1,52 @@
 package pt.isel.chimp.home
 
+import kotlinx.coroutines.Job
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import pt.isel.chimp.domain.channel.Channel
-import pt.isel.chimp.http.utils.ApiError
-import pt.isel.chimp.service.ChImpService
-import pt.isel.chimp.service.UserService
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import pt.isel.chimp.domain.repository.UserInfoRepository
 
 
 sealed interface HomeScreenState {
     data object Idle : HomeScreenState
-    data object Loading : HomeScreenState
-    data class Error(val error: ApiError) : HomeScreenState
-    data class Success(val channels: List<Channel>) : HomeScreenState
+    data object Logged : HomeScreenState
+    data object NotLogged : HomeScreenState
 }
 
 
-class HomeScreenViewModel(private val userService: UserService) : ViewModel() {
+class HomeScreenViewModel(
+    private val repo: UserInfoRepository,
+    initialState : HomeScreenState = HomeScreenState.Idle
+) : ViewModel() {
 
-    var state: HomeScreenState by mutableStateOf<HomeScreenState>(HomeScreenState.Idle)
+    var state: HomeScreenState by mutableStateOf<HomeScreenState>(initialState)
         private set
 
-    //TODO check if there is a session and try to . If not, navigate to login screen
+    fun getSession(): Job? {
+        return viewModelScope.launch {
+            delay(700)
+            //TODO remove the clear
+            repo.clearUserInfo()
+            val userInfo = repo.getUserInfo()
+            state = if (userInfo != null) {
+                HomeScreenState.Logged
+            } else {
+                HomeScreenState.NotLogged
+            }
+        }
+    }
 
 
 }
 
 @Suppress("UNCHECKED_CAST")
-class HomeScreenViewModelFactory(private val service: ChImpService): ViewModelProvider.Factory {
+class HomeScreenViewModelFactory(private val repo: UserInfoRepository): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>):  T {
-        return HomeScreenViewModel(service.userService) as T
+        return HomeScreenViewModel(repo) as T
     }
 }

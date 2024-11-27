@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import pt.isel.chimp.about.AboutActivity
 import pt.isel.chimp.authentication.login.LoginActivity
 import pt.isel.chimp.authentication.register.RegisterActivity
+import pt.isel.chimp.channels.channelsList.ChannelsListActivity
 import pt.isel.chimp.ui.theme.ChImpTheme
 import pt.isel.chimp.utils.navigateTo
 
@@ -20,9 +21,12 @@ const val TAG = "CHIMP"
 
 class HomeActivity : ComponentActivity() {
 
+
+    private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
+
     private val viewModel by viewModels<HomeScreenViewModel>(
         factoryProducer = {
-            HomeScreenViewModelFactory((application as DependenciesContainer).chImpService)
+            HomeScreenViewModelFactory(userInfoRepository)
         }
     )
 
@@ -40,7 +44,10 @@ class HomeActivity : ComponentActivity() {
                         viewModel = viewModel,
                         onAboutRequested = { navigateTo(this, AboutActivity::class.java) },
                         onLoginRequested = { navigateTo(this, LoginActivity::class.java) },
-                        onRegisterRequested = { navigateTo(this, RegisterActivity::class.java) }
+                        onRegisterRequested = { navigateTo(this, RegisterActivity::class.java) },
+                        onLoggedIntent = {
+                            navigateTo(this, ChannelsListActivity::class.java)
+                        }
                         )
                 }
             }

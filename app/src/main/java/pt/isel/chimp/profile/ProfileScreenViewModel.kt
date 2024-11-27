@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.profile.Profile
+import pt.isel.chimp.domain.repository.UserInfoRepository
+import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.UserService
@@ -26,17 +28,20 @@ sealed interface ProfileScreenState {
 
 }
 
-class ProfileScreenViewModel(private val userServices: UserService) : ViewModel() {
+class ProfileScreenViewModel(
+    private val repo: UserInfoRepository,
+    private val userServices: UserService) : ViewModel() {
 
     var state: ProfileScreenState by mutableStateOf<ProfileScreenState>(ProfileScreenState.Idle)
         private set
 
-    fun fetchProfile(token: String) {
+    fun fetchProfile() {
         if (state != ProfileScreenState.Loading) {
                 state = ProfileScreenState.Loading
             viewModelScope.launch {
                 state = try {
-                    val user = userServices.fetchUser(token)
+                    val userInfo = repo.getUserInfo() ?: throw Exception("User not authenticated")
+                    val user = userServices.findUserById(userInfo.token, userInfo.user.id)
                     when (user) {
                         is Success ->
                             ProfileScreenState.Success(Profile(user.value.username, user.value.email))
@@ -49,14 +54,19 @@ class ProfileScreenViewModel(private val userServices: UserService) : ViewModel(
         }
     }
 
-    fun editUsername(newUsername: String, token: String) {
+    fun editUsername(newUsername: String) {
         if (state != ProfileScreenState.Loading) {
             state = ProfileScreenState.Loading
             viewModelScope.launch {
                 state = try {
-                    val user = userServices.updateUsername(newUsername, token)
+                    val userInfo = repo.getUserInfo() ?: throw Exception("User not authenticated")
+                    val user = userServices.updateUsername(newUsername, userInfo.token)
                     when (user) {
-                        is Success -> ProfileScreenState.Success(Profile(user.value.username, user.value.email))
+                        is Success -> {
+                            repo.updateUserInfo(AuthenticatedUser(user.value, userInfo.token))
+                            //TODO: update local storage
+                            ProfileScreenState.Success(Profile(user.value.username, user.value.email))
+                        }
                         is Failure -> ProfileScreenState.Error(user.value)
                     }
                 } catch (e: Throwable) {
@@ -81,9 +91,15 @@ class ProfileScreenViewModel(private val userServices: UserService) : ViewModel(
 }
 
 @Suppress("UNCHECKED_CAST")
-class ProfileScreenViewModelFactory(private val service: ChImpService): ViewModelProvider.Factory {
+class ProfileScreenViewModelFactory(
+    private val repo: UserInfoRepository,
+    private val service: ChImpService
+): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>):  T {
-        return ProfileScreenViewModel(service.userService) as T
+        return ProfileScreenViewModel(
+            repo,
+            service.userService
+        ) as T
     }
 }
 

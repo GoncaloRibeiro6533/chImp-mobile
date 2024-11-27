@@ -15,13 +15,12 @@ interface MessageService {
     /**
      * Creates a message.
      * @param token the user token.
-     * @param senderId the id of the sender.
      * @param channelId the id of the channel.
      * @param content the message content.
      * @return the created message.
      * @return ApiError if an error occurs.
      */
-    suspend fun createMessage(token: String, senderId: Int, channelId: Int, content: String
+    suspend fun createMessage(token: String, channelId: Int, content: String
     ): Either<ApiError, Message>
 
 

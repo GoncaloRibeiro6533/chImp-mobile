@@ -27,7 +27,6 @@ class MockMessageService(private val repoMock: RepoMock) : MessageService {
 
     override suspend fun createMessage(
         token: String,
-        senderId: Int,
         channelId: Int,
         content: String)
             : Either<ApiError, Message> =

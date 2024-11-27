@@ -11,6 +11,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import pt.isel.chimp.channels.channelsList.components.ChannelDetailsView
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.Role
@@ -19,7 +22,9 @@ import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.domain.user.UserInChannel
+import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.profile.ErrorAlert
+import pt.isel.chimp.service.mock.ChImpServiceMock
 import pt.isel.chimp.service.mock.MockChannelService
 import pt.isel.chimp.service.mock.MockMessageService
 import pt.isel.chimp.service.repo.RepoMockImpl
@@ -62,23 +67,25 @@ fun ChannelScreen(
             ) {
                 HorizontalDivider()
                 when (val state = viewModel.state) {
+                    is ChannelScreenState.Initialized -> {
+                        viewModel.getMessages(channel.id, 30, 0)
+                    }
                     is ChannelScreenState.Idle -> {
-                        //viewModel.findChannelById(channel.id, authenticatedUser.token) //TODO why this calling?
-                        viewModel.getMessages(channel.id, 10, 0, authenticatedUser.token)
+                        viewModel.getMessages(channel.id, 30, 0)
                     }
                     is ChannelScreenState.Loading -> {
                         LoadingView()
                     }
-                    is ChannelScreenState.SuccessOnFindChannel -> {
-                        viewModel.getMessages(channel.id, 30, 0, authenticatedUser.token)
-                    }
+                   /* is ChannelScreenState.SuccessOnFindChannel -> {
+                        viewModel.getMessages(channel.id, 30, 0)
+                    }*/
                     is ChannelScreenState.SuccessOnSendMessage -> {
-                        viewModel.getMessages(channel.id, 30, 0, authenticatedUser.token)
+                        viewModel.getMessages(channel.id, 30, 0)
                     }
-                    is ChannelScreenState.Success -> { //TODO
+                    is ChannelScreenState.Success -> {
                         ChannelView(
                             messages = state.messages,
-                            onMessageSend = { content -> viewModel.sendMessage(channel, authenticatedUser, content, authenticatedUser.token) },
+                            onMessageSend = { content -> viewModel.sendMessage(channel, content) },
                             userRole = userRole
                         )
                     }
@@ -87,7 +94,7 @@ fun ChannelScreen(
                             title = "Error",
                             message = state.error.message,
                             buttonText = "Ok",
-                            onDismiss = { viewModel.findChannelById(channel.id, authenticatedUser.token) }
+                            onDismiss = { TODO() }
                         )
                 }
             }
@@ -95,11 +102,16 @@ fun ChannelScreen(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ChannelScreenPreview() {
+    val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
     ChannelScreen(
-        viewModel = ChannelViewModel(MockChannelService(RepoMockImpl()), MockMessageService(RepoMockImpl())),
+        viewModel = ChannelViewModel(
+            UserInfoRepo(preferences),
+            ChImpServiceMock()
+        ),
         channel = Channel(1, "Channel 1 long",
             creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
         onNavigationBack = { },

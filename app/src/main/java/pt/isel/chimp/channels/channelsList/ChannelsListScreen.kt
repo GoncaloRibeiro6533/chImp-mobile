@@ -23,10 +23,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import pt.isel.chimp.channels.channelsList.components.ChannelItem
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.mock.MockChannelService
 import pt.isel.chimp.service.repo.RepoMockImpl
@@ -41,7 +45,6 @@ fun ChannelsListScreen(
     onChannelSelected: (Channel) -> Unit = { },
     onNavigateToCreateChannel: () -> Unit = { }
 ) {
-    val user = User(1, "Bob", "bob@example.com")
     ChImpTheme {
         val state = viewModel.state
         Scaffold(
@@ -68,8 +71,11 @@ fun ChannelsListScreen(
                     modifier = Modifier.padding(start = 16.dp)
                 )
                 when (state) {
+                    is ChannelsListScreenState.Initialized ->
+                        viewModel.getChannels()
+
                     is ChannelsListScreenState.Idle -> {
-                        viewModel.getChannels("token1",user.id) //TODO
+                        viewModel.getChannels()
                     }
                     is ChannelsListScreenState.Loading -> {
                         LoadingView()
@@ -107,7 +113,7 @@ fun ChannelsListScreen(
                             title = "Error",
                             message = state.error.message,
                             buttonText = "Ok",
-                            onDismiss = { viewModel.getChannels("token1",user.id) } //TODO
+                            onDismiss = { viewModel.getChannels() }
                         )
                     }
                 }
@@ -117,11 +123,16 @@ fun ChannelsListScreen(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 @Preview(showBackground = true , showSystemUi = true)
 @Composable
 fun PreviewChannelsListScreen() {
+    val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
     ChannelsListScreen(
-        viewModel = ChannelsListViewModel(MockChannelService(RepoMockImpl())),
+        viewModel = ChannelsListViewModel(
+            UserInfoRepo(preferences),
+            MockChannelService(RepoMockImpl())
+        ),
         onMenuRequested = { },
         onChannelSelected = { }
     )

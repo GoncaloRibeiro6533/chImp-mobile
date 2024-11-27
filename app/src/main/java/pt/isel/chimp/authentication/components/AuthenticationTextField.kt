@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.VisualTransformation
  * @param errorMessage error message to show
  * @param visualTransformation visual transformation to apply to the text field
  */
+@Suppress("Deprecated")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthenticationTextField(

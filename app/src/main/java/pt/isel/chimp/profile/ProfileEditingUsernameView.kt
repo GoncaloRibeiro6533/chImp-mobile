@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import pt.isel.chimp.ui.theme.ChImpTheme
 import pt.isel.chimp.R
 import pt.isel.chimp.domain.profile.Profile
+import pt.isel.chimp.domain.user.User
 
 const val EDIT_USERNAME_VIEW_TAG = "EditingUsernameView"
 const val SAVE_BUTTON_TAG = "SaveButton"
@@ -68,6 +69,9 @@ fun EditingUsernameView(
                 modifier = modifier.testTag(SAVE_BUTTON_TAG),
                 onClick = { onSaveIntent(currentUsername) },
                 enabled = currentUsername != state.profile.username
+                        && currentUsername.isNotBlank()
+                        && currentUsername.length <= User.MAX_USERNAME_LENGTH
+
 
             ) {
                 Text(text = stringResource(R.string.editing_username_save_button))

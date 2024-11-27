@@ -80,11 +80,11 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
 
     override suspend fun getChannelsOfUser(
         userId: Int,
+        token: String,
         limit: Int,
-        skip: Int,
-        token: String
+        skip: Int
     ): Either<ApiError, List<Channel>> {
-        return when(val response = client.get<ChannelList>(
+        return when(val response = this@ChannelServiceHttp.client.get<ChannelList>(
             url = "/channel/user/$userId",
             token = token
         )) {

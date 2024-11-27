@@ -8,9 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import pt.isel.chimp.about.ABOUT_SCREEN_TEST_TAG
 import pt.isel.chimp.components.LoadingView
+import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.service.mock.ChImpServiceMock
+import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -22,7 +27,6 @@ fun ProfileScreen(
     viewModel: ProfileScreenViewModel,
     onNavigateBack: () -> Unit
 ) {
-    val token = "token1"
     ChImpTheme {
         Scaffold(
             modifier = Modifier
@@ -39,7 +43,7 @@ fun ProfileScreen(
             ) {
                 when (val currentState = viewModel.state) {
                     is ProfileScreenState.Idle -> {
-                            viewModel.fetchProfile(token)
+                            viewModel.fetchProfile()
                     }
                     is ProfileScreenState.Loading -> {
                         LoadingView()
@@ -54,7 +58,7 @@ fun ProfileScreen(
                         EditingUsernameView(
                             state = currentState,
                             onSaveIntent = { newUsername ->
-                                viewModel.editUsername(newUsername, token)
+                                viewModel.editUsername(newUsername)
                             },
                             onCancelIntent = { viewModel.setSuccessState(currentState.profile) }
                         )
@@ -65,7 +69,7 @@ fun ProfileScreen(
                             title = "Error",
                             message = currentState.error.message,
                             buttonText = "Ok",
-                            onDismiss = { viewModel.fetchProfile(token) }
+                            onDismiss = { viewModel.fetchProfile() }
 
                         )
                     }
@@ -77,9 +81,13 @@ fun ProfileScreen(
     }
 }
 
-
+@Suppress("UNCHECKED_CAST")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen(viewModel = ProfileScreenViewModel(ChImpServiceMock().userService), {})
+    val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
+    ProfileScreen(viewModel = ProfileScreenViewModel(
+        UserInfoRepo(preferences),
+        ChImpServiceMock().userService,
+    ), onNavigateBack = {})
 }

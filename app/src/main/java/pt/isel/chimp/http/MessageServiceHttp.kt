@@ -18,14 +18,13 @@ import pt.isel.chimp.utils.success
 class MessageServiceHttp(private val client : HttpClient) : MessageService {
     override suspend fun createMessage(
         token: String,
-        senderId: Int,
         channelId: Int,
         content: String
     ): Either<ApiError, Message> {
         return when (val response = client.post<MessageOutputModel>(
             url = "/messages",
             token = token,
-            body = MessageInputModel(channelId, senderId, content)
+            body = MessageInputModel(channelId, content)
         )) {
             is Success -> success(response.value.toMessage())
             is Failure -> failure(response.value)

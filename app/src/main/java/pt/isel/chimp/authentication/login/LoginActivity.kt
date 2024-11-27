@@ -10,9 +10,16 @@ import pt.isel.chimp.channels.channelsList.ChannelsListActivity
 import pt.isel.chimp.utils.navigateTo
 
 class LoginActivity: ComponentActivity() {
+
+    private val chImpService by lazy { (application as DependenciesContainer).chImpService }
+    private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
+
     private val viewModel by viewModels<LoginScreenViewModel>(
         factoryProducer = {
-            LoginScreenViewModelFactory((application as DependenciesContainer).chImpService)
+            LoginScreenViewModelFactory(
+                userInfoRepository,
+                chImpService
+            )
         }
     )
 
@@ -23,6 +30,7 @@ class LoginActivity: ComponentActivity() {
                 viewModel = viewModel,
                 onLoginSuccessful = {
                         navigateTo(this,ChannelsListActivity::class.java)
+                        finish()
                 },
                 onBackRequested = { finish() },
                 onRegisterRequested = {

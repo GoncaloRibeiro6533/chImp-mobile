@@ -13,9 +13,14 @@ import pt.isel.chimp.utils.navigateTo
 
 class ChannelActivity : ComponentActivity() {
 
+    private val chImpService by lazy { (application as DependenciesContainer).chImpService }
+    private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
     private val viewModel by viewModels<ChannelViewModel>(
         factoryProducer = {
-            ChannelViewModelFactory((application as DependenciesContainer).chImpService)
+            ChannelViewModelFactory(
+                userInfoRepository,
+                chImpService
+            )
         }
     )
 

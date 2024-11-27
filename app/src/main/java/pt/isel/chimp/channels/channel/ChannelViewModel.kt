@@ -9,55 +9,41 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.message.Message
-import pt.isel.chimp.domain.user.AuthenticatedUser
+import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.http.utils.ChImpException
 import pt.isel.chimp.service.ChImpService
-import pt.isel.chimp.service.ChannelService
-import pt.isel.chimp.service.MessageService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
 
 sealed interface ChannelScreenState {
+    data object Initialized : ChannelScreenState
     data object Idle : ChannelScreenState
     data object Loading : ChannelScreenState
-    data class SuccessOnFindChannel(val channel: Channel) : ChannelScreenState
+   // data class SuccessOnFindChannel(val channel: Channel) : ChannelScreenState
     data class SuccessOnSendMessage(val messages: Message) : ChannelScreenState
     data class Success(val messages: List<Message>) : ChannelScreenState
     data class Error(val error: ApiError) : ChannelScreenState
 }
 
 class ChannelViewModel(
-    private val channelService: ChannelService,
-    private val messageService: MessageService
+    private val repo : UserInfoRepository,
+    private val service: ChImpService,
+    initialState: ChannelScreenState = ChannelScreenState.Initialized
 ) : ViewModel() {
 
-    var state: ChannelScreenState by mutableStateOf(ChannelScreenState.Idle)
+    var state: ChannelScreenState by mutableStateOf(initialState)
         private set
 
-    fun findChannelById(id: Int, token: String) {
+
+
+    fun sendMessage(channel: Channel, content: String)  {
         if (state != ChannelScreenState.Loading) {
             state = ChannelScreenState.Loading
             viewModelScope.launch {
                 state = try {
-                    val channel = channelService.getChannelById(id, token)
-                    when (channel) {
-                        is Success -> ChannelScreenState.SuccessOnFindChannel(channel.value)
-                        is Failure -> ChannelScreenState.Error(channel.value)
-                    }
-                } catch (e: Throwable) {
-                    ChannelScreenState.Error(ApiError("Error finding channel"))
-                }
-            }
-        }
-    }
-
-
-    fun sendMessage(channel: Channel, user: AuthenticatedUser, content: String, token: String)  {
-        if (state != ChannelScreenState.Loading) {
-            state = ChannelScreenState.Loading
-            viewModelScope.launch {
-                state = try {
-                    val messages = messageService.createMessage(token, user.user.id, channel.id, content)
+                    val userInfo = repo.getUserInfo() ?: throw ChImpException("User not authenticated", null)
+                    val messages = service.messageService.createMessage(userInfo.token, channel.id, content)
                     when (messages) {
                         is Success -> ChannelScreenState.SuccessOnSendMessage(messages.value)
                         is Failure -> ChannelScreenState.Error(messages.value)
@@ -70,12 +56,14 @@ class ChannelViewModel(
     }
 
 
-    fun getMessages(channelId: Int, limit: Int, skip: Int, token: String) {
+    fun getMessages(channelId: Int, limit: Int, skip: Int) {
+        //TODO if local data is available, return it and do not set state as loading
         if (state != ChannelScreenState.Loading) {
             state = ChannelScreenState.Loading
             viewModelScope.launch {
                 state = try {
-                    val messages = messageService.getMessagesByChannel(token, channelId, limit, skip)
+                    val userInfo = repo.getUserInfo() ?: throw ChImpException("User not authenticated", null)
+                    val messages = service.messageService.getMessagesByChannel(userInfo.token, channelId, limit, skip)
                     when (messages) {
                         is Success -> ChannelScreenState.Success(messages.value)
                         is Failure -> ChannelScreenState.Error(messages.value)
@@ -91,8 +79,13 @@ class ChannelViewModel(
 
 @Suppress("UNCHECKED_CAST")
 class ChannelViewModelFactory(
-    private val service : ChImpService) : ViewModelProvider.Factory {
+    private val repo: UserInfoRepository,
+    private val service : ChImpService
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ChannelViewModel(service.channelService, service.messageService) as T
+        return ChannelViewModel(
+            repo,
+            service
+        ) as T
     }
 }

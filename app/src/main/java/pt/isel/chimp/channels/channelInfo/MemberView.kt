@@ -78,7 +78,7 @@ fun MemberView(
                 } else {
                     roleLabel = when (role) {
                         Role.READ_ONLY -> "Read Only"
-                        Role.READ_WRITE -> "Read Write"
+                        Role.READ_WRITE -> "Read/Write"
                     }
                     roleColor = if (role == Role.READ_ONLY) Color.DarkGray else darkGreen
                 }

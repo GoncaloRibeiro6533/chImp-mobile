@@ -69,8 +69,11 @@
             android:label="ChannelInfoActivity"
             android:theme="@style/Theme.ChImp"
             />
-
-
+        <activity android:name=".connection.ConActivity"
+            android:exported="true"
+            android:label="ConActivity"
+            android:theme="@style/Theme.ChImp"
+            />
     </application>
 
 </manifest>

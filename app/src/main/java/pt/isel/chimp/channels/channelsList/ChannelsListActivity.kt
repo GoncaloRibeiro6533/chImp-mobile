@@ -13,9 +13,14 @@ import pt.isel.chimp.utils.navigateTo
 
 class ChannelsListActivity : ComponentActivity() {
 
+    private val chImpService by lazy { (application as DependenciesContainer).chImpService }
+    private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
     private val viewModel by viewModels<ChannelsListViewModel>(
         factoryProducer = {
-            ChannelsListViewModelFactory((application as DependenciesContainer).chImpService)
+            ChannelsListViewModelFactory(
+                userInfoRepository,
+                chImpService
+            )
         }
     )
 
@@ -25,7 +30,10 @@ class ChannelsListActivity : ComponentActivity() {
         setContent {
             ChannelsListScreen(
                 viewModel = viewModel,
-                onMenuRequested = { navigateTo(this, MenuActivity::class.java) },
+                onMenuRequested = {
+                    navigateTo(this, MenuActivity::class.java)
+                    finish()
+                },
                 onChannelSelected = { channel ->
                     navigateTo(this, ChannelActivity::class.java)
                 },

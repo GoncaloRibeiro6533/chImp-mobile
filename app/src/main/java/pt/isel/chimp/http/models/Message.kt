@@ -11,7 +11,6 @@ import pt.isel.chimp.http.models.user.UserDTO
 @Serializable
 data class MessageInputModel(
     val channelId: Int,
-    val userId: Int,
     val content: String,
 )
 
