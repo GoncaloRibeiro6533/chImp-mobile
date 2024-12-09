@@ -16,8 +16,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+
+const val DIALOG_BUTTON = "dialog_button"
+const val DIALOG_TEXT_FIELD = "dialog_text_field"
+const val CONFIRM_BUTTON = "confirm_button"
+const val CANCEL_BUTTON = "cancel_button"
+const val DROPDOWN_BUTTON = "dropdown_button"
+
 
 @Composable
 fun ChannelDialog(
@@ -27,7 +35,8 @@ fun ChannelDialog(
     placeHolderText: String,
     buttonColor: Color,
     buttonTextColor: Color,
-    onConfirm : (String) -> Unit,
+    onConfirm: (String) -> Unit,
+    modifier: Modifier,
 
     ) {
     var openDialog by remember { mutableStateOf(false) }
@@ -48,7 +57,8 @@ fun ChannelDialog(
                         TextField(
                             value = text,
                             onValueChange = { text = it },
-                            placeholder = { Text(placeHolderText) }
+                            placeholder = { Text(placeHolderText) },
+                            modifier = Modifier.testTag(DIALOG_TEXT_FIELD)
                         )
 
 
@@ -58,7 +68,8 @@ fun ChannelDialog(
                             ) {
                                 Button(
                                     onClick = { expanded = true },
-                                    colors = ButtonColors(Color(0xFF1e90ff), Color.White, Color.Green, Color.Green)
+                                    colors = ButtonColors(Color(0xFF1e90ff), Color.White, Color.Green, Color.Green),
+                                    modifier = Modifier.testTag(DROPDOWN_BUTTON)
                                 ) {
                                     Text(selectedOption)
                                 }
@@ -104,6 +115,7 @@ fun ChannelDialog(
                                 openDialog = false
                             },
                             colors = ButtonColors(Color.LightGray, Color.Red, Color.Green, Color.Green),
+                            modifier = Modifier.testTag(CANCEL_BUTTON)
 
                         ) {
                             Text("Cancel")
@@ -113,7 +125,8 @@ fun ChannelDialog(
                                 onConfirm(text)
                                 openDialog = false
                             },
-                            colors = ButtonColors(Color(0xFF32cd32), Color.Black, Color.Green, Color.Green)
+                            colors = ButtonColors(Color(0xFF32cd32), Color.Black, Color.Green, Color.Green),
+                            modifier = Modifier.testTag(CONFIRM_BUTTON)
 
                         ) {
                             Text(confirmMessage)
@@ -130,7 +143,8 @@ fun ChannelDialog(
     Button(
 
         onClick = { openDialog = true },
-        colors = ButtonColors(buttonColor, buttonTextColor, Color.Green, Color.Green)
+        colors = ButtonColors(buttonColor, buttonTextColor, Color.Green, Color.Green),
+        modifier = modifier.testTag(DIALOG_BUTTON)
     ) {
         Text(buttonName)
     }
@@ -144,7 +158,11 @@ fun ChannelDialog(
 @Composable
 fun PreviewTextFieldDialogExample() {
 
-    ChannelDialog("Edit Channel Name", "Enter new channel name:", "OK", "ChannelName",
+    ChannelDialog(
+        "Edit Channel Name", "Enter new channel name:", "OK", "ChannelName",
         Color(0xFF32cd32),
-        Color.Black) {}
+        Color.Black,
+        {},
+        Modifier
+    )
 }

@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,6 +23,13 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
+
+const val  CHANNEL_LIST = "channel_list"
+const val CHANNELS = "channels"
+const val  ADD_MEMBER_BUTTON = "add_member_button"
+const val  EDIT_CHANNEL_BUTTON = "edit_channel_button"
+const val  LEAVE_CHANNEL_BUTTON = "leave_channel_button"
+
 
 @Composable
 fun ChannelInfoView(
@@ -34,7 +42,8 @@ fun ChannelInfoView(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(0.dp),
+            .padding(0.dp)
+            .testTag(CHANNEL_LIST),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ChannelLogo(channelInfo.channel.name, 135)
@@ -59,7 +68,10 @@ fun ChannelInfoView(
                 "Invite",
                 "username",
                 Color(0xFF32cd32),
-                Color.Black) { TODO() }
+                Color.Black,
+                { TODO() },
+                Modifier.testTag(ADD_MEMBER_BUTTON)
+            )
 
             ChannelDialog(
                 "Edit Channel Name",
@@ -67,7 +79,10 @@ fun ChannelInfoView(
                 "OK",
                 channelInfo.channel.name,
                 Color.LightGray,
-                Color.Black) { newName -> onUpdateChannel(newName)}
+                Color.Black,
+                { newName -> onUpdateChannel(newName)},
+                Modifier.testTag(EDIT_CHANNEL_BUTTON)
+            )
 
         }
 
@@ -85,7 +100,7 @@ fun ChannelInfoView(
              */
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().testTag(CHANNELS)
         ) {
             items(channelInfo.members) { member ->
                 MemberView(member.first, member.second, channelInfo.channel.creator)
@@ -97,7 +112,10 @@ fun ChannelInfoView(
                     "Do you want to leave this Channel?",
                     "Leave", "",
                     Color.Red,
-                    Color.White) { onLeaveChannel() }
+                    Color.White,
+                    { onLeaveChannel() },
+                    Modifier.testTag(LEAVE_CHANNEL_BUTTON)
+                )
 
 
                 /*
