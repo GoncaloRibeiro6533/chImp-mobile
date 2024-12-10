@@ -1,15 +1,13 @@
 package pt.isel.chimp.profile
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.profile.Profile
 import pt.isel.chimp.domain.repository.UserInfoRepository
-import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.UserService
@@ -29,18 +27,21 @@ sealed interface ProfileScreenState {
 
 class ProfileScreenViewModel(
     private val repo: UserInfoRepository,
-    private val userServices: UserService) : ViewModel() {
+    private val userServices: UserService,
+    initialState: ProfileScreenState = ProfileScreenState.Idle
+    ) : ViewModel() {
 
-    var state: ProfileScreenState by mutableStateOf<ProfileScreenState>(ProfileScreenState.Idle)
-        private set
+    private val _screenState = MutableStateFlow<ProfileScreenState>(initialState)
+    val state: StateFlow<ProfileScreenState> = _screenState
+
 
     fun fetchProfile() {
-        if (state != ProfileScreenState.Loading) {
-                state = ProfileScreenState.Loading
+        if (_screenState.value != ProfileScreenState.Loading) {
+                _screenState.value = ProfileScreenState.Loading
             viewModelScope.launch {
-                state = try {
+                _screenState.value = try {
                     val userInfo = repo.getUserInfo() ?: throw Exception("User not authenticated")
-                    val user = userServices.findUserById(userInfo.token, userInfo.user.id)
+                    val user = userServices.findUserById(userInfo.id)
                     when (user) {
                         is Success ->
                             ProfileScreenState.Success(Profile(user.value.username, user.value.email))
@@ -54,15 +55,15 @@ class ProfileScreenViewModel(
     }
 
     fun editUsername(newUsername: String) {
-        if (state != ProfileScreenState.Loading) {
-            state = ProfileScreenState.Loading
+        if (_screenState.value != ProfileScreenState.Loading) {
+            _screenState.value = ProfileScreenState.Loading
             viewModelScope.launch {
-                state = try {
+                _screenState.value = try {
                     val userInfo = repo.getUserInfo() ?: throw Exception("User not authenticated")
-                    val user = userServices.updateUsername(newUsername, userInfo.token)
+                    val user = userServices.updateUsername(newUsername)
                     when (user) {
                         is Success -> {
-                            repo.updateUserInfo(AuthenticatedUser(user.value, userInfo.token))
+                            repo.updateUserInfo(user.value)
                             //TODO: update local storage
                             ProfileScreenState.Success(Profile(user.value.username, user.value.email))
                         }
@@ -76,14 +77,14 @@ class ProfileScreenViewModel(
     }
 
     fun setEditState(profile: Profile) {
-        if (state != ProfileScreenState.EditingUsername(profile)) {
-            state = ProfileScreenState.EditingUsername(profile)
+        if (_screenState.value != ProfileScreenState.EditingUsername(profile)) {
+            _screenState.value = ProfileScreenState.EditingUsername(profile)
         }
     }
 
     fun setSuccessState(profile: Profile) {
-        if (state != ProfileScreenState.Success(profile)) {
-            state = ProfileScreenState.Success(profile)
+        if (_screenState.value != ProfileScreenState.Success(profile)) {
+            _screenState.value = ProfileScreenState.Success(profile)
         }
     }
 

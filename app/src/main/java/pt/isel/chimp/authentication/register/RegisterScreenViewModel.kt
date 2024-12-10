@@ -1,11 +1,10 @@
 package pt.isel.chimp.authentication.register
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.http.utils.ApiError
@@ -21,16 +20,20 @@ sealed interface RegisterScreenState {
     data class Error(val error: ApiError): RegisterScreenState
 }
 
-class RegisterScreenViewModel(private val userServices: UserService) : ViewModel() {
+class RegisterScreenViewModel(
+    private val userServices: UserService,
+    initialState: RegisterScreenState = RegisterScreenState.Idle
+) : ViewModel() {
 
-    var state: RegisterScreenState by mutableStateOf(RegisterScreenState.Idle)
-        private set
+    private val _state = MutableStateFlow<RegisterScreenState>(initialState)
+    val state = _state.asStateFlow()
+
 
     fun registerUser(username: String, password: String, email: String) {
-        if (state != RegisterScreenState.Loading) {
-            state = RegisterScreenState.Loading
+        if (_state.value != RegisterScreenState.Loading) {
+            _state.value = RegisterScreenState.Loading
             viewModelScope.launch {
-                state = try {
+                _state.value = try {
                     val user = userServices.register(username, password, email)
                     when (user) {
                         is Success -> RegisterScreenState.Success(user.value)
@@ -44,7 +47,7 @@ class RegisterScreenViewModel(private val userServices: UserService) : ViewModel
     }
 
     fun setIdleState() {
-        state = RegisterScreenState.Idle
+        _state.value = RegisterScreenState.Idle
     }
 }
 

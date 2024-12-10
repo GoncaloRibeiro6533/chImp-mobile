@@ -1,14 +1,13 @@
 package pt.isel.chimp.authentication.login
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.repository.UserInfoRepository
-import pt.isel.chimp.domain.user.AuthenticatedUser
+import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.UserService
@@ -19,7 +18,7 @@ import pt.isel.chimp.utils.Success
 sealed interface LoginScreenState {
     data object Idle : LoginScreenState
     data object Loading : LoginScreenState
-    data class Success(val user: AuthenticatedUser) : LoginScreenState
+    data class Success(val user: User) : LoginScreenState
     data class Error(val error: ApiError) : LoginScreenState
 }
 
@@ -29,14 +28,14 @@ class LoginScreenViewModel(
     initialState : LoginScreenState = LoginScreenState.Idle
 ) : ViewModel() {
 
-        var state: LoginScreenState by mutableStateOf<LoginScreenState>(initialState)
-            private set
+        private val _state = MutableStateFlow<LoginScreenState>(initialState)
+        val state = _state.asStateFlow()
 
     fun fetchLogin(username: String, password: String) {
-            if (state != LoginScreenState.Loading) {
-                state = LoginScreenState.Loading
+            if (_state.value != LoginScreenState.Loading) {
+                _state.value = LoginScreenState.Loading
                 viewModelScope.launch {
-                    state =
+                    _state.value =
                     try {
                         val authUser = userService.login(username, password)
                         when (authUser) {
@@ -55,7 +54,7 @@ class LoginScreenViewModel(
     }
 
     fun setIdleState() {
-        state = LoginScreenState.Idle
+        _state.value = LoginScreenState.Idle
     }
 
 }

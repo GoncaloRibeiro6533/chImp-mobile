@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,11 +24,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isel.chimp.R
 import pt.isel.chimp.authentication.login.components.LoginButton
 import pt.isel.chimp.authentication.login.components.LoginTextFields
 import pt.isel.chimp.authentication.validatePassword
 import pt.isel.chimp.authentication.validateUsername
-import pt.isel.chimp.R
 
 const val LOGIN_VIEW = "login_view"
 const val LOGIN_TEXT_FIELDS = "login_text_fields"
@@ -40,8 +40,8 @@ fun LoginView(
     onSubmit: (String, String) -> Unit,
     onRegisterRequested: () -> Unit
 ){
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var username by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
 
     val invalidFields = (username.isEmpty() || password.isEmpty()) ||
             username.isNotEmpty() && !validateUsername(username) ||

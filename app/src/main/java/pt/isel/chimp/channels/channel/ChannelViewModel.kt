@@ -1,17 +1,15 @@
 package pt.isel.chimp.channels.channel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.http.utils.ApiError
-import pt.isel.chimp.http.utils.ChImpException
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
@@ -32,18 +30,17 @@ class ChannelViewModel(
     initialState: ChannelScreenState = ChannelScreenState.Initialized
 ) : ViewModel() {
 
-    var state: ChannelScreenState by mutableStateOf(initialState)
-        private set
+    private val _state = MutableStateFlow<ChannelScreenState>(initialState)
+    val state = _state.asStateFlow()
 
 
 
     fun sendMessage(channel: Channel, content: String)  {
-        if (state != ChannelScreenState.Loading) {
-            state = ChannelScreenState.Loading
+        if (_state.value != ChannelScreenState.Loading) {
+            _state.value = ChannelScreenState.Loading
             viewModelScope.launch {
-                state = try {
-                    val userInfo = repo.getUserInfo() ?: throw ChImpException("User not authenticated", null)
-                    val messages = service.messageService.createMessage(userInfo.token, channel.id, content)
+                _state.value = try {
+                    val messages = service.messageService.createMessage(channel.id, content)
                     when (messages) {
                         is Success -> ChannelScreenState.SuccessOnSendMessage(messages.value)
                         is Failure -> ChannelScreenState.Error(messages.value)
@@ -57,13 +54,12 @@ class ChannelViewModel(
 
 
     fun getMessages(channelId: Int, limit: Int, skip: Int) {
-        //TODO if local data is available, return it and do not set state as loading
-        if (state != ChannelScreenState.Loading) {
-            state = ChannelScreenState.Loading
+        //TODO if local data is available, return it and do not set _state as loading
+        if (_state.value != ChannelScreenState.Loading) {
+            _state.value = ChannelScreenState.Loading
             viewModelScope.launch {
-                state = try {
-                    val userInfo = repo.getUserInfo() ?: throw ChImpException("User not authenticated", null)
-                    val messages = service.messageService.getMessagesByChannel(userInfo.token, channelId, limit, skip)
+                _state.value = try {
+                    val messages = service.messageService.getMessagesByChannel(channelId, limit, skip)
                     when (messages) {
                         is Success -> ChannelScreenState.Success(messages.value)
                         is Failure -> ChannelScreenState.Error(messages.value)

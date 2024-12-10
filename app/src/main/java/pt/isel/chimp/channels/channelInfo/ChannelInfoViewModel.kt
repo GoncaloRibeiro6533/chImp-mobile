@@ -1,11 +1,10 @@
 package pt.isel.chimp.channels.channelInfo
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
@@ -36,17 +35,15 @@ class ChannelInfoViewModel(
     initialState: ChannelInfoScreenState = ChannelInfoScreenState.Idle
 ) : ViewModel() {
 
-    var state: ChannelInfoScreenState by mutableStateOf(initialState)
-        private set
-
+    private val _state = MutableStateFlow<ChannelInfoScreenState>(initialState)
+    val state = _state.asStateFlow()
 
     fun getChannelMembers(channel: Channel) {
-        if (state != ChannelInfoScreenState.Loading) {
-            state = ChannelInfoScreenState.Loading
+        if (_state.value != ChannelInfoScreenState.Loading) {
+            _state.value = ChannelInfoScreenState.Loading
             viewModelScope.launch {
-                state = try {
-                    val token = repo.getUserInfo()?.token ?: throw Exception("User not authenticated")
-                    when (val members = channelService.getChannelMembers(token, channel.id)) {
+                _state.value = try {
+                    when (val members = channelService.getChannelMembers(channel.id)) {
                         is Success -> ChannelInfoScreenState.Success(ChannelInfo(channel, members.value))
                         is Failure -> ChannelInfoScreenState.Error(members.value)
                     }
@@ -60,12 +57,11 @@ class ChannelInfoViewModel(
     fun updateChannelName(
         channel: ChannelInfo,
         newName: String) {
-        if (state != ChannelInfoScreenState.Loading) {
-            state = ChannelInfoScreenState.Loading
+        if (_state.value != ChannelInfoScreenState.Loading) {
+            _state.value = ChannelInfoScreenState.Loading
             viewModelScope.launch {
-                state = try {
-                    val user = repo.getUserInfo() ?: throw Exception("User not authenticated")
-                    when (val updatedChannel = channelService.updateChannelName(user.token, channel.channel.id,newName)) {
+                _state.value = try {
+                    when (val updatedChannel = channelService.updateChannelName(channel.channel.id,newName)) {
                         is Success -> ChannelInfoScreenState.Success(ChannelInfo(updatedChannel.value, channel.members))
                         is Failure -> ChannelInfoScreenState.Error(updatedChannel.value)
                     }
@@ -77,12 +73,12 @@ class ChannelInfoViewModel(
     }
 
     fun leaveChannel(channel: Channel){
-        if(state != ChannelInfoScreenState.Loading) {
-            state = ChannelInfoScreenState.Loading
+        if(_state.value != ChannelInfoScreenState.Loading) {
+            _state.value = ChannelInfoScreenState.Loading
             viewModelScope.launch {
-                state = try {
+                _state.value = try {
                     val user = repo.getUserInfo() ?: throw Exception("User not authenticated")
-                    when (val serviceChannel = channelService.removeUserFromChannel(user.token, channel.id, user.user.id)) {
+                    when (val serviceChannel = channelService.removeUserFromChannel(channel.id, user.id)) {
                         is Success -> ChannelInfoScreenState.SuccessOnLeave(serviceChannel.value)
                         is Failure -> ChannelInfoScreenState.Error(serviceChannel.value)
                     }

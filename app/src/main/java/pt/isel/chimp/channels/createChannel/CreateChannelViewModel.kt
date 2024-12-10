@@ -1,11 +1,10 @@
 package pt.isel.chimp.channels.createChannel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
@@ -22,22 +21,24 @@ sealed interface CreateChannelScreenState {
     data class Error(val error: ApiError) : CreateChannelScreenState
 }
 
-class CreateChannelViewModel (private val channelService: ChannelService) : ViewModel(){
+class CreateChannelViewModel (
+    private val channelService: ChannelService,
+    initialState: CreateChannelScreenState = CreateChannelScreenState.Idle
+    ) : ViewModel(){
 
-    var state: CreateChannelScreenState by mutableStateOf(CreateChannelScreenState.Idle)
-        private set
+    private val _state = MutableStateFlow<CreateChannelScreenState>(initialState)
+    val state = _state.asStateFlow()
 
 
-    fun createChannel(name: String, creatorId: Int, visibility: String, token: String) {
-        if (state != CreateChannelScreenState.Loading) {
-            state = CreateChannelScreenState.Loading
+    fun createChannel(name: String, creatorId: Int, visibility: String) {
+        if (_state.value != CreateChannelScreenState.Loading) {
+            _state.value = CreateChannelScreenState.Loading
             viewModelScope.launch {
-                state = try {
+                _state.value = try {
                     val channel = channelService.createChannel(
                         name,
                         creatorId,
-                        Visibility.valueOf(visibility),
-                        token
+                        Visibility.valueOf(visibility)
                     )
                     when (channel) {
                         is Success -> CreateChannelScreenState.Success(channel.value)
@@ -52,7 +53,7 @@ class CreateChannelViewModel (private val channelService: ChannelService) : View
     }
 
     fun setIdleState() {
-        state = CreateChannelScreenState.Idle
+        _state.value = CreateChannelScreenState.Idle
     }
 }
 

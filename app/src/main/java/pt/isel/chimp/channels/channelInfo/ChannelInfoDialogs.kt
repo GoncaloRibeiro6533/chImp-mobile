@@ -13,6 +13,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,10 +40,10 @@ fun ChannelDialog(
     modifier: Modifier,
 
     ) {
-    var openDialog by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf("Select Role") }
+    var openDialog by rememberSaveable { mutableStateOf(false) }
+    var text by rememberSaveable { mutableStateOf("") }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var selectedOption by rememberSaveable { mutableStateOf("Select Role") }
 
     if (openDialog) {
         AlertDialog(

@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "pt.isel.chimp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "pt.isel.chimp"
@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.0")
+    implementation(libs.room)
+    implementation(libs.work.manager)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

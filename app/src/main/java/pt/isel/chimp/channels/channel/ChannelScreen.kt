@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.datastore.core.DataStore
@@ -22,6 +23,7 @@ import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.domain.user.UserInChannel
+import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.mock.ChImpServiceMock
@@ -63,7 +65,7 @@ fun ChannelScreen(
                     .padding(innerPadding)
             ) {
                 HorizontalDivider()
-                when (val state = viewModel.state) {
+                when (val state = viewModel.state.collectAsState().value) {
                     is ChannelScreenState.Initialized -> {
                         viewModel.getMessages(channel.id, 30, 0)
                     }
@@ -107,7 +109,7 @@ fun ChannelScreenPreview() {
     ChannelScreen(
         viewModel = ChannelViewModel(
             UserInfoRepo(preferences),
-            ChImpServiceMock()
+            ChImpServiceMock(CookiesRepo(preferences))
         ),
         channel = Channel(1, "Channel 1 long",
             creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),

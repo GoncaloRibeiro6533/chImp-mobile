@@ -8,6 +8,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,7 +18,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import pt.isel.chimp.components.LoadingView
+import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.mock.MockUserService
 import pt.isel.chimp.service.repo.RepoMockImpl
@@ -53,7 +58,7 @@ fun RegisterScreen(
             Column(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
             ) {
-                when(val currentState = viewModel.state){
+                when(val currentState = viewModel.state.collectAsState().value){
                     is RegisterScreenState.Idle -> {
                         RegisterView (
                             onSubmit = { email, username, password ->
@@ -101,12 +106,13 @@ fun SimpleTextField(label: String, example: String) {
     )
 }
 
-
+@Suppress("UNCHECKED_CAST")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun RegisterView() {
+    val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
     RegisterScreen(
-        viewModel = RegisterScreenViewModel(MockUserService(RepoMockImpl())),
+        viewModel = RegisterScreenViewModel(MockUserService(RepoMockImpl(),  CookiesRepo(preferences))),
         onRegisterSuccessful = {}
     )
 }

@@ -36,9 +36,24 @@ data class ChannelMember(
     val role: Role,
 )
 
+@Serializable
 data class ChannelMembersList(
     val nMembers: Int,
     val members: List<ChannelMember>,
 ) {
     fun toChannelMembers() = members.map { it.user.toUser() to it.role }
+}
+
+@Serializable
+data class ChannelOfUser(
+    val channel: ChannelOutputModel,
+    val role: Role,
+)
+
+@Serializable
+data class ChannelOfUserList(
+    val nchannels: Int,
+    val channels: List<ChannelOfUser>,
+) {
+    fun toChannelOfUser(): Map<Channel,Role> = channels.map { it.channel.toChannel() to it.role }.toMap()
 }

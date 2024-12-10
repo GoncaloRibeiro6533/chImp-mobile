@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +22,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.mock.MockChannelService
@@ -37,7 +39,7 @@ fun ChannelsListScreen(
     onNavigateToCreateChannel: () -> Unit = { }
 ) {
     ChImpTheme {
-        val state = viewModel.state
+        val state = viewModel.state.collectAsState().value
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -72,10 +74,10 @@ fun ChannelsListScreen(
                         LoadingView()
                     }
                     is ChannelsListScreenState.Success -> {
-                        val channels = state.channels //TODO move to view file
+                         //TODO move to view file
                         Spacer(modifier = Modifier.padding(8.dp))
-
-                        ChannelListView(channels) { channel ->
+                        //TODO
+                        ChannelListView(state.channels.keys.toList()) { channel ->
                             onChannelSelected(channel)
                         }
                     }
@@ -102,7 +104,7 @@ fun PreviewChannelsListScreen() {
     ChannelsListScreen(
         viewModel = ChannelsListViewModel(
             UserInfoRepo(preferences),
-            MockChannelService(RepoMockImpl())
+            MockChannelService(RepoMockImpl(), CookiesRepo(preferences))
         ),
         onMenuRequested = { },
         onChannelSelected = { }

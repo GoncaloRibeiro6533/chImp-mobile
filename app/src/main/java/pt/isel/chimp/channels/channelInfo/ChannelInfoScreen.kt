@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.datastore.core.DataStore
@@ -15,6 +16,7 @@ import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.mock.MockChannelService
@@ -30,9 +32,7 @@ fun ChannelInfoScreen(
     onNavigationBack: () -> Unit,
     onChannelLeave: () -> Unit
 ) {
-
-    val user = User(1, "Bob", "bob@example.com")
-    val state = viewModel.state
+    val state = viewModel.state.collectAsState().value
     ChImpTheme {
 
         Scaffold(
@@ -95,7 +95,7 @@ fun ChannelScreenPreview() {
     ChannelInfoScreen(
         viewModel = ChannelInfoViewModel(
             UserInfoRepo(preferences),
-            MockChannelService(RepoMockImpl())
+            MockChannelService(RepoMockImpl(), CookiesRepo(preferences))
         ),
         Channel(1, "Channel 1 long",
             creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),

@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.mock.ChImpServiceMock
@@ -170,7 +171,7 @@ fun MenuScreenPreview() {
     MenuScreen(
         viewModel = MenuViewModel(
             repo = UserInfoRepo(preferences),
-            service = ChImpServiceMock()
+            service = ChImpServiceMock(CookiesRepo(preferences))
         ),
         menuItems = listOf(
             MenuItem("About", "about screen", Icons.Default.Info, { }),

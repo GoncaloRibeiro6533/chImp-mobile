@@ -1,9 +1,7 @@
 package pt.isel.chimp.http
 
 import io.ktor.client.HttpClient
-import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.http.models.user.AuthenticatedUserDTO
 import pt.isel.chimp.http.models.user.UserDTO
 import pt.isel.chimp.http.models.user.UserLoginCredentialsInput
 import pt.isel.chimp.http.models.user.UserRegisterInput
@@ -21,17 +19,15 @@ import pt.isel.chimp.utils.success
 
 class UserServiceHttp(private val client: HttpClient) : UserService {
 
-    override suspend fun fetchUser(token: String): Either<ApiError, User> {
+    override suspend fun fetchUser(): Either<ApiError, User> {
         TODO()
     }
 
     override suspend fun updateUsername(
         newUsername: String,
-        token: String
     ): Either<ApiError, User> {
         return when(val response = client.put<UserDTO>(
             url = "/user/edit/username",
-            token = token,
             body = UsernameUpdateInput(newUsername))) {
             is Success -> success(response.value.toUser())
             is Failure -> failure(response.value)
@@ -41,11 +37,11 @@ class UserServiceHttp(private val client: HttpClient) : UserService {
     override suspend fun login(
         username: String,
         password: String
-    ): Either<ApiError, AuthenticatedUser> {
-        return when(val response = client.post<AuthenticatedUserDTO>(
+    ): Either<ApiError, User> {
+        return when(val response = client.post<UserDTO>(
             url = "/user/login",
             body = UserLoginCredentialsInput(username = username, password = password))) {
-            is Success -> success(response.value.toAuthenticatedUser())
+            is Success -> success(response.value.toUser())
             is Failure -> failure(response.value)
         }
     }
@@ -63,17 +59,16 @@ class UserServiceHttp(private val client: HttpClient) : UserService {
         }
 
 
-    override suspend fun findUserById(token: String, id: Int): Either<ApiError, User> {
-        return when(val response = client.get<UserDTO>("/user/$id", token)) {
+    override suspend fun findUserById(id: Int): Either<ApiError, User> {
+        return when(val response = client.get<UserDTO>("/user/$id")) {
             is  Success -> success(response.value.toUser())
             is  Failure -> failure(response.value)
         }
     }
 
-    override suspend fun logout(token: String): Either<ApiError, Unit> {
+    override suspend fun logout(): Either<ApiError, Unit> {
         return when(val response = client.post<Unit>(
-            url = "/user/logout",
-            token = token)) {
+            url = "/user/logout")) {
             is Success -> success(Unit)
             is Failure -> failure(response.value)
         }

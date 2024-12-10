@@ -14,29 +14,26 @@ interface MessageService {
 
     /**
      * Creates a message.
-     * @param token the user token.
      * @param channelId the id of the channel.
      * @param content the message content.
      * @return the created message.
      * @return ApiError if an error occurs.
      */
-    suspend fun createMessage(token: String, channelId: Int, content: String
+    suspend fun createMessage(channelId: Int, content: String
     ): Either<ApiError, Message>
 
 
     /**
      * Gets the messages of a channel.
-     * @param token the user token.
      * @param channelId the id of the channel.
      * @param limit the maximum number of messages to return.
      * @param skip the number of messages to skip.
      * @return the messages.
      * @return ApiError if an error occurs.
      */
-    suspend fun getMessagesByChannel(token: String, channelId: Int, limit: Int = 10, skip: Int = 0
+    suspend fun getMessagesByChannel(channelId: Int, limit: Int = 10, skip: Int = 0
     ): Either<ApiError, List<Message>>
 
-    //TODO add getMsgHistory?
 }
 
 

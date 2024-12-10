@@ -25,11 +25,9 @@ class InvitationServiceHttp(private val client: HttpClient) : InvitationService 
         receiverId: Int,
         channelId: Int,
         role: Role,
-        senderToken: String
     ): Either<ApiError, Invitation> {
         return when (val response = client.post<InvitationOutputModelChannel>(
             url = "/invitation/channel",
-            token = senderToken,
             body = InvitationInputModelChannel(senderId, receiverId, channelId, role)
         )) {
             is Success -> success(response.value.toInvitation())
@@ -37,10 +35,9 @@ class InvitationServiceHttp(private val client: HttpClient) : InvitationService 
         }
     }
 
-    override suspend fun getInvitationsOfUser(token: String): Either<ApiError, List<Invitation>> {
+    override suspend fun getInvitationsOfUser(): Either<ApiError, List<Invitation>> {
         return when (val response = client.get<InvitationsList>(
             url = "/invitation/user/invitations",
-            token = token
         )) {
             is Success -> success(response.value.invitations.map { it.toInvitation() })
             is Failure -> failure(response.value)
@@ -49,11 +46,9 @@ class InvitationServiceHttp(private val client: HttpClient) : InvitationService 
 
     override suspend fun acceptInvitation(
         invitationId: Int,
-        token: String
     ): Either<ApiError, Channel> {
         return when (val response = client.put<ChannelOutputModel>(
             url = "/invitation/accept/$invitationId",
-            token = token,
         )) {
             is Success -> success(response.value.toChannel())
             is Failure -> failure(response.value)
@@ -62,11 +57,9 @@ class InvitationServiceHttp(private val client: HttpClient) : InvitationService 
 
     override suspend fun declineInvitation(
         invitationId: Int,
-        token: String
     ): Either<ApiError, Boolean> {
         return when (val response = client.put<Boolean>(
             url = "/invitation/decline/$invitationId",
-            token = token
         )) {
             is Success -> success(response.value)
             is Failure -> failure(response.value)

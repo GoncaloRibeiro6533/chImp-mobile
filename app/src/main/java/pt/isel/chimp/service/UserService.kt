@@ -1,6 +1,5 @@
 package pt.isel.chimp.service
 
-import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.utils.Either
@@ -12,12 +11,11 @@ import pt.isel.chimp.utils.Either
 interface UserService {
     /**
      * Fetches a user given a token.
-     * @param token the user token.
      * @return the user.
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun fetchUser(token: String): Either<ApiError, User>
+    suspend fun fetchUser(): Either<ApiError, User>
 
     /**
      * Updates the username of a user.
@@ -27,7 +25,7 @@ interface UserService {
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun updateUsername(newUsername: String, token: String): Either<ApiError, User>
+    suspend fun updateUsername(newUsername: String): Either<ApiError, User>
 
     /**
      * Logs in a user.
@@ -37,7 +35,7 @@ interface UserService {
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun login(username: String, password: String): Either<ApiError, AuthenticatedUser>
+    suspend fun login(username: String, password: String): Either<ApiError, User>
 
     /**
      * Registers a user.
@@ -58,7 +56,7 @@ interface UserService {
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun findUserById(token: String, id: Int): Either<ApiError, User>
+    suspend fun findUserById(id: Int): Either<ApiError, User>
 
     /**
      * Logs out a user.
@@ -67,5 +65,5 @@ interface UserService {
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun logout(token: String): Either<ApiError, Unit>
+    suspend fun logout(): Either<ApiError, Unit>
 }

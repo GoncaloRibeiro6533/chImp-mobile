@@ -2,29 +2,29 @@ package pt.isel.chimp.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import pt.isel.chimp.ui.theme.ChImpTheme
+import androidx.compose.ui.unit.dp
 import pt.isel.chimp.R
 import pt.isel.chimp.domain.profile.Profile
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.ui.theme.ChImpTheme
 
 const val EDIT_USERNAME_VIEW_TAG = "EditingUsernameView"
 const val SAVE_BUTTON_TAG = "SaveButton"
@@ -42,7 +42,7 @@ fun EditingUsernameView(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        var currentUsername by remember { mutableStateOf(state.profile.username) }
+        var currentUsername by rememberSaveable { mutableStateOf(state.profile.username) }
         TextField(
             value = currentUsername,
             onValueChange = { currentUsername = it.trim() },

@@ -15,7 +15,6 @@ import kotlinx.coroutines.CancellationException
 interface ChannelService {
     /**
      * Creates a channel.
-     * @param creatorToken the user token.
      * @param name the channel name.
      * @param visibility the channel visibility.
      * @return the created channel.
@@ -26,7 +25,6 @@ interface ChannelService {
         name: String,
         creatorId: Int,
         visibility: Visibility,
-        creatorToken: String
     ): Either<ApiError, Channel>
 
     /**
@@ -37,7 +35,7 @@ interface ChannelService {
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun getChannelById(id: Int, token: String): Either<ApiError, Channel>
+    suspend fun getChannelById(id: Int): Either<ApiError, Channel>
 
     /**
      * Gets the channels of a user.
@@ -48,7 +46,7 @@ interface ChannelService {
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun getChannelsOfUser(userId: Int, token: String, limit: Int = 10, skip: Int = 0): Either<ApiError, List<Channel>>
+    suspend fun getChannelsOfUser(userId: Int, limit: Int = 10, skip: Int = 0): Either<ApiError, Map<Channel,Role>>
 
     /**
      * Adds a user to a channel.
@@ -60,7 +58,7 @@ interface ChannelService {
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun joinChannel(token: String, userToAdd: Int, channelId: Int, role: Role): Either<ApiError, Channel>
+    suspend fun joinChannel(userToAdd: Int, channelId: Int, role: Role): Either<ApiError, Channel>
 
     /**
      * Gets the members of a channel.
@@ -70,9 +68,9 @@ interface ChannelService {
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun getChannelMembers(token: String, channelId: Int): Either<ApiError, List<Pair<User, Role>>>
+    suspend fun getChannelMembers(channelId: Int): Either<ApiError, List<Pair<User, Role>>>
 
-    suspend fun updateChannelName(token: String, channelId: Int, newName: String): Either<ApiError, Channel>
+    suspend fun updateChannelName(channelId: Int, newName: String): Either<ApiError, Channel>
 
     /**
      * Creates a channel.
@@ -82,7 +80,7 @@ interface ChannelService {
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
-    suspend fun removeUserFromChannel(token: String, channelId: Int, userID: Int): Either<ApiError, Channel>
+    suspend fun removeUserFromChannel(channelId: Int, userID: Int): Either<ApiError, Channel>
 }
 
 

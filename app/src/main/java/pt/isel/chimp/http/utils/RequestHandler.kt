@@ -9,6 +9,7 @@ import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpHeaders
+import pt.isel.chimp.ChImpApplication
 import pt.isel.chimp.http.models.Problem
 import pt.isel.chimp.http.models.ProblemDTO
 import pt.isel.chimp.utils.Either
@@ -17,12 +18,11 @@ import pt.isel.chimp.utils.success
 
 data class ApiError(val message: String)
 
-const val NGROK = "https://1356-2001-8a0-7efc-e400-24dd-a0a2-4738-2e47.ngrok-free.app"
 
 
 const val MEDIA_TYPE = "application/json"
 val BASE_URL = //"http://localhost:8080/api"
-    "$NGROK/api"
+    "${ChImpApplication.Companion.NGROK}/api"
 const val TOKEN_TYPE = "Bearer"
 const val ERROR_MEDIA_TYPE = "application/problem+json"
 const val SCHEME = "bearer"
@@ -39,6 +39,7 @@ suspend inline fun <reified T : Any> HttpClient.get(
         get(BASE_URL + url) {
             if (token.isNotEmpty()) header("Authorization", "$TOKEN_TYPE $token")
             header("Content-Type", MEDIA_TYPE)
+            header("Accept", "$MEDIA_TYPE, $ERROR_MEDIA_TYPE")
         }.processResponse()
     } catch (e: Exception) {
         failure(ApiError("Unexpected error: ${e.message ?: e.cause?.message }"))
@@ -54,6 +55,8 @@ suspend inline fun <reified T : Any> HttpClient.post(
         post(BASE_URL + url) {
             if (token.isNotEmpty()) header("Authorization", "$TOKEN_TYPE $token")
             header("Content-Type", MEDIA_TYPE)
+            header("Accept", "$MEDIA_TYPE, $ERROR_MEDIA_TYPE")
+
             if (body != null) setBody(body)
         }.processResponse()
     } catch (e: Exception) {
@@ -70,6 +73,8 @@ suspend inline fun <reified T : Any> HttpClient.put(
         put(BASE_URL + url) {
             if (token.isNotEmpty()) header("Authorization", "$TOKEN_TYPE $token")
             header("Content-Type", MEDIA_TYPE)
+            header("Accept", "$MEDIA_TYPE, $ERROR_MEDIA_TYPE")
+
             if (body != null) setBody(body)
         }.processResponse()
     } catch (e: Exception) {

@@ -62,11 +62,14 @@ class ChannelRepoMock {
         return channels.find { it.id == id }
     }
 
-    fun findChannelsOfUser(user: User): List<Channel> {
-        return userInChannel
-            .filter { it.value.any { it.first.id == user.id } }
-            .map { it.key }
+    fun findChannelsOfUser(user: User): Map<Channel,Role> {
+        val channels: Map<Channel,Role> =
+            userInChannel.filter { it.value.any { it.first.id == user.id } }
+                .map { it.key to it.value.find { it.first.id == user.id }!!.second }
+                .toMap()
+        return channels
     }
+
 
     fun findChannelByName(name: String, limit: Int = 10, skip: Int = 0 ): List<Channel> {
         return channels.filter { it.name.contains(name) }.drop(skip).take(limit)

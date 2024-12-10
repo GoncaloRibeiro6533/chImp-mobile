@@ -13,14 +13,13 @@ interface InvitationService {
         receiverId: Int,
         channelId: Int,
         role: Role,
-        senderToken: String
     )
         : Either<ApiError, Invitation>
 
-    suspend fun getInvitationsOfUser(token: String): Either<ApiError, List<Invitation>>
+    suspend fun getInvitationsOfUser(): Either<ApiError, List<Invitation>>
 
     //todo change return of acceptInv, here and in daw
-    suspend fun acceptInvitation(invitationId: Int, token: String): Either<ApiError, Channel>
+    suspend fun acceptInvitation(invitationId: Int): Either<ApiError, Channel>
 
-    suspend fun declineInvitation(invitationId: Int, token: String): Either<ApiError, Boolean>
+    suspend fun declineInvitation(invitationId: Int): Either<ApiError, Boolean>
 }

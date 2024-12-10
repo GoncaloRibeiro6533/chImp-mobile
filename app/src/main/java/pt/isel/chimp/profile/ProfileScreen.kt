@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
@@ -13,6 +14,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import pt.isel.chimp.about.ABOUT_SCREEN_TEST_TAG
 import pt.isel.chimp.components.LoadingView
+import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.service.mock.ChImpServiceMock
 import pt.isel.chimp.ui.NavigationHandlers
@@ -40,7 +42,7 @@ fun ProfileScreen(
                     .fillMaxSize()
                     .padding(innerPadding),
             ) {
-                when (val currentState = viewModel.state) {
+                when (val currentState = viewModel.state.collectAsState().value) {
                     is ProfileScreenState.Idle -> {
                             viewModel.fetchProfile()
                     }
@@ -87,6 +89,6 @@ fun ProfileScreenPreview() {
     val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
     ProfileScreen(viewModel = ProfileScreenViewModel(
         UserInfoRepo(preferences),
-        ChImpServiceMock().userService,
+        ChImpServiceMock(CookiesRepo(preferences)).userService,
     ), onNavigateBack = {})
 }

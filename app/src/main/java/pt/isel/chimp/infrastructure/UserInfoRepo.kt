@@ -9,21 +9,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import pt.isel.chimp.domain.repository.UserInfoRepository
-import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.domain.user.User
 
 
 class UserInfoRepo(private val store: DataStore<Preferences>) : UserInfoRepository {
-    override val userInfo: Flow<AuthenticatedUser?> =
+    override val userInfo: Flow<User?> =
         store.data.map { preferences ->
-            preferences.toAuthenticatedUser()
+            preferences.toUser()
         }
 
-    override suspend fun getUserInfo() :AuthenticatedUser? {
+    override suspend fun getUserInfo() :User? {
         val preferences = store.data.first()
-        return preferences.toAuthenticatedUser()
+        return preferences.toUser()
     }
-    override suspend fun updateUserInfo(userInfo: AuthenticatedUser) {
+    override suspend fun updateUserInfo(userInfo: User) {
         store.edit { preferences ->
             userInfo.writeToPreferences(preferences)
         }
@@ -35,22 +34,19 @@ class UserInfoRepo(private val store: DataStore<Preferences>) : UserInfoReposito
 
 private val USERNAME_KEY = stringPreferencesKey("username")
 private val USER_ID_KEY = stringPreferencesKey("userId")
-private val TOKEN_KEY = stringPreferencesKey("token")
 private val USER_EMAIL_KEY = stringPreferencesKey("email")
 
 
-private fun Preferences.toAuthenticatedUser(): AuthenticatedUser? {
+private fun Preferences.toUser(): User? {
     val username = this[USERNAME_KEY] ?: return null
-    val token = this[TOKEN_KEY] ?: return null
     val userId = this[USER_ID_KEY] ?: return null
     val email = this[USER_EMAIL_KEY] ?: return null
-    return AuthenticatedUser(User(userId.toInt(), username, email), token)
+    return User(userId.toInt(), username, email)
 }
 
-private fun AuthenticatedUser.writeToPreferences(preferences: MutablePreferences): MutablePreferences {
-    preferences[USERNAME_KEY] = user.username
-    preferences[TOKEN_KEY] = token
-    preferences[USER_ID_KEY] = user.id.toString()
-    preferences[USER_EMAIL_KEY] = user.email
+private fun User.writeToPreferences(preferences: MutablePreferences): MutablePreferences {
+    preferences[USERNAME_KEY] = username
+    preferences[USER_ID_KEY] = id.toString()
+    preferences[USER_EMAIL_KEY] = email
     return preferences
 }
