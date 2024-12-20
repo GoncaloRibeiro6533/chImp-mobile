@@ -20,21 +20,34 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pt.isel.chimp.channels.ChannelParcelable
+import pt.isel.chimp.channels.UserParcelable
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.channels.generalComponents.ChannelLogo
+import pt.isel.chimp.domain.Role
 import pt.isel.chimp.utils.RoundedRectangleWithText
 
 
 @Composable
-fun ChannelItem(channel: Channel, onClick: () -> Unit) {
+fun ChannelItem(
+    channel: Channel,
+    role: Role,
+    onClick: (ChannelParcelable) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .clickable {
-                onClick()
+                onClick(
+                    ChannelParcelable(
+                        channel.id,
+                        channel.name,
+                        UserParcelable(channel.creator.id, channel.creator.username, channel.creator.email),
+                        channel.visibility,
+                        role)
+                )
                        },
     ) {
         ChannelDetailsView(channel)
@@ -83,11 +96,15 @@ fun ChannelDetailsView(
 @Composable
 fun ChannelItemPreview() {
     ChannelItem(
-        channel = Channel(1, "Channel 1 long name",
+        channel = Channel(
+            1, "Channel 1 long name",
             User(1, "Bob", "bob@mexample.com"),
             Visibility.PUBLIC
         ),
-        onClick = { }
+        onClick = {
+
+        },
+        role = Role.READ_ONLY
     )
 }
 

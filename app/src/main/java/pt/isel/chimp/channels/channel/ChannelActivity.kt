@@ -1,37 +1,47 @@
 package pt.isel.chimp.channels.channel
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import pt.isel.chimp.DependenciesContainer
+import pt.isel.chimp.channels.ChannelParcelable
 import pt.isel.chimp.channels.channelInfo.ChannelInfoActivity
-import pt.isel.chimp.domain.channel.Channel
-import pt.isel.chimp.domain.channel.Visibility
-import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.utils.navigateTo
 
 class ChannelActivity : ComponentActivity() {
 
     private val chImpService by lazy { (application as DependenciesContainer).chImpService }
-    private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
+    private val repo by lazy { (application as DependenciesContainer).repo }
     private val viewModel by viewModels<ChannelViewModel>(
         factoryProducer = {
             ChannelViewModelFactory(
-                userInfoRepository,
+                repo,
                 chImpService
             )
         }
     )
 
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?,) {
         super.onCreate(savedInstanceState)
+        if(!intent.hasExtra("channel")) {
+            finish()
+            return
+        }
+        val channel = intent.getParcelableExtra("channel", ChannelParcelable::class.java)
+        if (channel == null) {
+            finish()
+            return
+        }
         setContent{
-            ChannelScreen( //todo channel here always null...
+            ChannelScreen(
                 viewModel = viewModel,
-               //TODO: get channel from intent
-                channel =  Channel(1, "DAW", creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
+                channel =  channel.toChannel(),
+                role = channel.role,
                 onNavigationBack = { finish() },
                 onNavigationChannelInfo = {
                     navigateTo(this, ChannelInfoActivity::class.java)

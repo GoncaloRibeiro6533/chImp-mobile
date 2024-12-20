@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import pt.isel.chimp.channels.ChannelParcelable
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.infrastructure.CookiesRepo
@@ -35,7 +36,7 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 fun ChannelsListScreen(
     viewModel: ChannelsListViewModel,
     onMenuRequested: () -> Unit = { },
-    onChannelSelected: (Channel) -> Unit = { },
+    onChannelSelected: (ChannelParcelable) -> Unit = { },
     onNavigateToCreateChannel: () -> Unit = { }
 ) {
     ChImpTheme {
@@ -77,7 +78,7 @@ fun ChannelsListScreen(
                          //TODO move to view file
                         Spacer(modifier = Modifier.padding(8.dp))
                         //TODO
-                        ChannelListView(state.channels.keys.toList()) { channel ->
+                        ChannelListView(state.channels) { channel ->
                             onChannelSelected(channel)
                         }
                     }
@@ -95,7 +96,7 @@ fun ChannelsListScreen(
 
     }
 }
-
+/*
 @Suppress("UNCHECKED_CAST")
 @Preview(showBackground = true , showSystemUi = true)
 @Composable
@@ -110,3 +111,4 @@ fun PreviewChannelsListScreen() {
         onChannelSelected = { }
     )
 }
+*/
