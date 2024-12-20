@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.UserService
 import pt.isel.chimp.utils.Failure
@@ -23,7 +24,8 @@ sealed interface LoginScreenState {
 }
 
 class LoginScreenViewModel(
-    private val repo : UserInfoRepository,
+    private val userInfo : UserInfoRepository,
+    private val repo: ChImpRepo,
     private val userService: UserService,
     initialState : LoginScreenState = LoginScreenState.Idle
 ) : ViewModel() {
@@ -35,13 +37,16 @@ class LoginScreenViewModel(
             if (_state.value != LoginScreenState.Loading) {
                 _state.value = LoginScreenState.Loading
                 viewModelScope.launch {
+                    //TODO remove
+                    repo.userRepo.clear()
+                    repo.channelRepo.clear()
                     _state.value =
                     try {
                         val authUser = userService.login(username, password)
                         when (authUser) {
                             is Success -> {
-                                //TODO update local database
-                                repo.updateUserInfo(authUser.value)
+                                repo.userRepo.insertUser(listOf(authUser.value))
+                                userInfo.updateUserInfo(authUser.value)
                                 LoginScreenState.Success(authUser.value)
                             }
                             is Failure -> LoginScreenState.Error(authUser.value)
@@ -61,11 +66,13 @@ class LoginScreenViewModel(
 
 @Suppress("UNCHECKED_CAST")
 class LoginScreenViewModelFactory(
-    private val repo : UserInfoRepository,
+    private val userInfo: UserInfoRepository,
+    private val repo : ChImpRepo,
     private val service: ChImpService
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>):  T {
         return LoginScreenViewModel(
+            userInfo,
             repo,
             service.userService
         ) as T

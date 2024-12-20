@@ -4,12 +4,13 @@ import android.app.Application
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.room.Room
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
 import io.ktor.client.plugins.cookies.CookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
+import io.ktor.client.plugins.sse.SSE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import pt.isel.chimp.domain.repository.UserInfoRepository
@@ -17,11 +18,14 @@ import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.http.ChImpServiceHttp
 import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.infrastructure.UserInfoRepo
-import pt.isel.chimp.service.mock.ChImpServiceMock
+import pt.isel.chimp.repository.ChImpRepo
+import pt.isel.chimp.repository.ChImpRepoImp
+import pt.isel.chimp.storage.ChImpClientDB
+import kotlin.time.Duration.Companion.seconds
 
 class ChImpApplication : Application(), DependenciesContainer {
 
-    private val client by lazy {
+    override val client: HttpClient by lazy {
         HttpClient(OkHttp) {
             install(ContentNegotiation) {
                 json(Json {
@@ -31,7 +35,12 @@ class ChImpApplication : Application(), DependenciesContainer {
                 })
             }
             install(HttpCookies){
-                storage = AcceptAllCookiesStorage()
+                storage = cookieRep
+            }
+            install(SSE) {
+                reconnectionTime = 5.seconds
+                showCommentEvents()
+                showRetryEvents()
             }
 
 
@@ -39,8 +48,8 @@ class ChImpApplication : Application(), DependenciesContainer {
     }
 
     override val chImpService: ChImpService by lazy {
-        ChImpServiceMock(cookieRep)
-       // ChImpServiceHttp(client = client)
+       // ChImpServiceMock(cookieRep)
+        ChImpServiceHttp(client = client)
     }
 
 
@@ -53,9 +62,22 @@ class ChImpApplication : Application(), DependenciesContainer {
     override val cookieRep: CookiesStorage by lazy {
         CookiesRepo(preferencesDataStore)
     }
+
+    override val clientDB: ChImpClientDB by lazy {
+        Room.databaseBuilder(
+            context = this,
+            klass = ChImpClientDB::class.java,
+            "chimp-db"
+        ).build()
+    }
+
+    override val repo: ChImpRepo by lazy {
+        ChImpRepoImp(clientDB)
+    }
+
     //While using with mock service, it needs to be equal to "/"
     companion object { //TODO: improve this
-        val NGROK = "/"
+        val NGROK = "https://0689-2001-8a0-7efc-e400-e4fa-f624-8c09-af0a.ngrok-free.app"
     }
 
 

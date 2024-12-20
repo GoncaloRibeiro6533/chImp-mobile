@@ -20,9 +20,7 @@ import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
-import pt.isel.chimp.domain.user.AuthenticatedUser
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.domain.user.UserInChannel
 import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.profile.ErrorAlert
@@ -35,12 +33,10 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 fun ChannelScreen(
     viewModel: ChannelViewModel,
     channel: Channel,
+    role: Role,
     onNavigationBack: () -> Unit,
     onNavigationChannelInfo: () -> Unit
 ) {
-    val user = User (1, "Bob", "bob@email.com")
-    val userRole = UserInChannel(user.id, channel.id, Role.READ_WRITE)
-    val authenticatedUser = AuthenticatedUser(user, "token1")
     ChImpTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -67,25 +63,19 @@ fun ChannelScreen(
                 HorizontalDivider()
                 when (val state = viewModel.state.collectAsState().value) {
                     is ChannelScreenState.Initialized -> {
-                        viewModel.getMessages(channel.id, 30, 0)
+                        viewModel.getMessages(channel, 30, 0)
                     }
                     is ChannelScreenState.Idle -> {
-                        viewModel.getMessages(channel.id, 30, 0)
+                        viewModel.getMessages(channel, 30, 0)
                     }
                     is ChannelScreenState.Loading -> {
                         LoadingView()
-                    }
-                   /* is ChannelScreenState.SuccessOnFindChannel -> {
-                        viewModel.getMessages(channel.id, 30, 0)
-                    }*/
-                    is ChannelScreenState.SuccessOnSendMessage -> {
-                        viewModel.getMessages(channel.id, 30, 0)
                     }
                     is ChannelScreenState.Success -> {
                         ChannelView(
                             messages = state.messages,
                             onMessageSend = { content -> viewModel.sendMessage(channel, content) },
-                            userRole = userRole
+                            userRole = role
                         )
                     }
                     is ChannelScreenState.Error ->
@@ -93,14 +83,14 @@ fun ChannelScreen(
                             title = "Error",
                             message = state.error.message,
                             buttonText = "Ok",
-                            onDismiss = { TODO() }
+                            onDismiss = { onNavigationBack() }
                         )
                 }
             }
         }
     }
 }
-
+/*
 @Suppress("UNCHECKED_CAST")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -113,8 +103,9 @@ fun ChannelScreenPreview() {
         ),
         channel = Channel(1, "Channel 1 long",
             creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
+        role = Role.READ_WRITE,
         onNavigationBack = { },
         onNavigationChannelInfo = { },
     )
-}
+}*/
 

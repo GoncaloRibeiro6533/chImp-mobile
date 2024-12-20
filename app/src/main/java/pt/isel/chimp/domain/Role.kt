@@ -1,6 +1,6 @@
 package pt.isel.chimp.domain
 
-enum class Role {
-    READ_ONLY,
-    READ_WRITE,
+enum class Role( val value: String) {
+    READ_ONLY("READ_ONLY"),
+    READ_WRITE("READ_WRITE"),
 }

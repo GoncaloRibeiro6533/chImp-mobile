@@ -27,7 +27,7 @@ import java.time.LocalDateTime
 fun ChannelView(
     messages: List<Message>,
     onMessageSend: (String) -> Unit,
-    userRole: UserInChannel
+    userRole: Role
 ) {
     Column(
         modifier = Modifier.fillMaxSize().fillMaxWidth(),
@@ -48,7 +48,7 @@ fun ChannelView(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
-            if (userRole.role == Role.READ_WRITE) {
+            if (userRole == Role.READ_WRITE) {
                 ChatBoxView(onMessageSend = { content ->
                     onMessageSend(content)
                 }, enabled = true)
@@ -91,7 +91,7 @@ fun ChannelViewPreview() {
             )
         ),
         onMessageSend = { },
-        userRole = UserInChannel(userBob.id, channel.id, Role.READ_WRITE)
+        userRole = Role.READ_WRITE
     )
 }
 
@@ -116,6 +116,6 @@ fun ChannelViewPreviewReadOnly() {
             )
         ),
         onMessageSend = { },
-        userRole = UserInChannel(userAlice.id, channel.id, Role.READ_ONLY)
+        userRole = Role.READ_ONLY
     )
 }

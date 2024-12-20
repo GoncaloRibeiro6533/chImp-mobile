@@ -38,7 +38,7 @@ data class ChannelMember(
 
 @Serializable
 data class ChannelMembersList(
-    val nMembers: Int,
+    val nmembers: Int,
     val members: List<ChannelMember>,
 ) {
     fun toChannelMembers() = members.map { it.user.toUser() to it.role }

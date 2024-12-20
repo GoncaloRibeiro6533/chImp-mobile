@@ -10,15 +10,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pt.isel.chimp.channels.ChannelParcelable
 import pt.isel.chimp.channels.channelsList.components.ChannelItem
+import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
 
 @Composable
 fun ChannelListView(
-    channels: List<Channel>,
-    onChannelSelected: (Channel) -> Unit
+    channels: Map<Channel,Role>,
+    onChannelSelected: (ChannelParcelable) -> Unit
 ) {
 
     LazyColumn(
@@ -34,10 +36,13 @@ fun ChannelListView(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        items(channels) { channel ->
+        items(channels.keys.toList()) { channel ->
             ChannelItem(
                 channel = channel,
-                onClick = { onChannelSelected(channel) })
+                role = channels[channel] ?: Role.READ_ONLY, //TODO
+                onClick = { channel ->
+                    onChannelSelected(channel)
+                })
         }
         if (channels.isEmpty()) {
             item {
@@ -50,6 +55,7 @@ fun ChannelListView(
     }
 }
 
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ChannelListViewPreview() {
@@ -58,12 +64,16 @@ fun ChannelListViewPreview() {
     val channel1 = Channel(1, "Channel 1", user1, Visibility.PUBLIC)
     val channel2 = Channel(2, "Channel 2", user1, Visibility.PUBLIC)
     val channel3 = Channel(3, "Channel 3", user1, Visibility.PUBLIC)
-    val list = listOf(channel1, channel2, channel3)
+    val map = mapOf(
+        channel1 to Role.READ_ONLY,
+        channel2 to Role.READ_WRITE,
+        channel3 to Role.READ_ONLY
+    )
 
 
     ChannelListView(
 
-        channels = list,
+        channels = map,
         onChannelSelected = {}
-        )
+    )
 }

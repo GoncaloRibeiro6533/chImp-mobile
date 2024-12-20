@@ -34,14 +34,15 @@ class MenuViewModel(
         state = MenuScreenState.LoggingOut
         viewModelScope.launch {
            state =  try {
-                repo.clearUserInfo()
                  when (val result = service.userService.logout()) {
                     is Success -> MenuScreenState.LoggedOut
                     is Failure -> MenuScreenState.Error(result.value)
                 }
             } catch (e: Exception) {
-                MenuScreenState.Error(ApiError("Error logging out"))
+               repo.clearUserInfo()
+               MenuScreenState.Error(ApiError("Error logging out"))
             }
+            repo.clearUserInfo()
         }
     }
 

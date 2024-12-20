@@ -25,7 +25,11 @@ class CookiesRepo(
             existingCookies.removeIf {
                 it.name == cookie.name && it.domain == cookie.domain && it.path == cookie.path
             }
-            existingCookies.add(cookie)
+            //TODO
+            val c = cookie.copy(
+                domain = requestUrl.host,
+            )
+            existingCookies.add(c)
             preferences.writeCookies(existingCookies)
         }
     }
@@ -43,18 +47,18 @@ class CookiesRepo(
 }
 
     private val COOKIE_KEY = stringPreferencesKey("cookie")
-    // Extensão para converter Preferences em lista de Cookies
+
     private fun Preferences.toCookies(): List<Cookie> {
         val cookiesString = this[COOKIE_KEY] ?: return emptyList()
         return Json.decodeFromString(cookiesString)
     }
 
-    // Extensão para escrever cookies no DataStore
     private fun MutablePreferences.writeCookies(cookies: List<Cookie>): MutablePreferences {
         this[COOKIE_KEY] = Json.encodeToString(cookies)
         return this
     }
 
+    //TODO: improve this
     // Função de correspondência de cookies com a URL
     private fun Cookie.matches(url: Url): Boolean {
             val hostMatches = domain?.let {
