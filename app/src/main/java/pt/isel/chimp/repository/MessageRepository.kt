@@ -8,7 +8,6 @@ import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.storage.ChImpClientDB
 import pt.isel.chimp.storage.entities.ChannelEntity
 import pt.isel.chimp.storage.entities.MessageEntity
-import pt.isel.chimp.storage.entities.MessageWithSenderAndChannel
 import pt.isel.chimp.storage.entities.UserEntity
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -25,7 +24,7 @@ class MessageRepository(
                 it.sender.email
             )
         }.toTypedArray())
-        db.channelDao().insertChannel(messages.first().channel.let {
+        db.channelDao().insertChannels(messages.first().channel.let {
             ChannelEntity(
                 it.id,
                 it.name,
@@ -52,10 +51,10 @@ class MessageRepository(
                     id = it.message.id,
                     sender = User(it.sender.id, it.sender.username, it.sender.email),
                     channel = Channel(
-                        it.channel.id,
-                        it.channel.name,
+                        channel.id,
+                        channel.name,
                         channel.creator,
-                        it.channel.visibility
+                        channel.visibility
                         ),
                     content = it.message.content,
                     timestamp = LocalDateTime.ofEpochSecond(it.message.timestamp, 0, ZoneOffset.UTC)

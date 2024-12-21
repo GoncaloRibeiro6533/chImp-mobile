@@ -1,7 +1,6 @@
 package pt.isel.chimp.channels.channelsList
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -14,20 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import pt.isel.chimp.channels.ChannelParcelable
 import pt.isel.chimp.components.LoadingView
-import pt.isel.chimp.domain.channel.Channel
-import pt.isel.chimp.infrastructure.CookiesRepo
-import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.profile.ErrorAlert
-import pt.isel.chimp.service.mock.MockChannelService
-import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -65,19 +55,28 @@ fun ChannelsListScreen(
                     modifier = Modifier.padding(start = 16.dp)
                 )
                 when (state) {
-                    is ChannelsListScreenState.Initialized ->
-                        viewModel.getChannels()
-
-                    is ChannelsListScreenState.Idle -> {
-                        viewModel.getChannels()
+                    is ChannelsListScreenState.LoadingUserInfo -> {
+                        LoadingView()
+                        viewModel.loadUserInfoData()
                     }
-                    is ChannelsListScreenState.Loading -> {
+                    is ChannelsListScreenState.LoadFromRemote -> {
+                        LoadingView()
+                        viewModel.loadRemoteData(state.userInfo)
+                    }
+                    is ChannelsListScreenState.SaveData -> {
+                        LoadingView()
+                        viewModel.saveData(state.user,state.channels)
+                    }
+                    is ChannelsListScreenState.Uninitialized,
+                    is ChannelsListScreenState.Loading,
+                    is ChannelsListScreenState.LoadFromLocalData,
+                    is ChannelsListScreenState.LoadedUserInfo
+                        -> {
                         LoadingView()
                     }
                     is ChannelsListScreenState.Success -> {
-                         //TODO move to view file
-                        Spacer(modifier = Modifier.padding(8.dp))
-                        //TODO
+                        //Spacer(modifier = Modifier.padding(8.dp))
+
                         ChannelListView(state.channels) { channel ->
                             onChannelSelected(channel)
                         }
@@ -87,7 +86,7 @@ fun ChannelsListScreen(
                             title = "Error",
                             message = state.error.message,
                             buttonText = "Ok",
-                            onDismiss = { viewModel.getChannels() }
+                            onDismiss = {  }
                         )
                     }
                 }

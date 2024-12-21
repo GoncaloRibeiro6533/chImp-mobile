@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
@@ -21,8 +22,9 @@ sealed class MenuScreenState {
 }
 
 class MenuViewModel(
-    private val repo: UserInfoRepository,
+    private val userInfo: UserInfoRepository,
     private val service: ChImpService,
+    private val repo: ChImpRepo,
     initialState: MenuScreenState = MenuScreenState.Idle
 ) : ViewModel() {
 
@@ -35,14 +37,22 @@ class MenuViewModel(
         viewModelScope.launch {
            state =  try {
                  when (val result = service.userService.logout()) {
-                    is Success -> MenuScreenState.LoggedOut
+                    is Success -> {
+                        // TODO
+                        userInfo.clearUserInfo()
+                        repo.userRepo.clear()
+                        repo.channelRepo.clear()
+                        MenuScreenState.LoggedOut
+                    }
                     is Failure -> MenuScreenState.Error(result.value)
                 }
             } catch (e: Exception) {
-               repo.clearUserInfo()
+               userInfo.clearUserInfo()
+               repo.userRepo.clear()
+               repo.channelRepo.clear()
+               //TODO
                MenuScreenState.Error(ApiError("Error logging out"))
             }
-            repo.clearUserInfo()
         }
     }
 
@@ -51,13 +61,15 @@ class MenuViewModel(
 
 @Suppress("UNCHECKED_CAST")
 class MenuViewModelFactory(
-    private val repo: UserInfoRepository,
-    private val service: ChImpService
+    private val userInfo: UserInfoRepository,
+    private val service: ChImpService,
+    private val repo: ChImpRepo
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>):  T {
         return MenuViewModel(
-            repo,
-            service
+            userInfo,
+            service,
+            repo
         ) as T
     }
 }

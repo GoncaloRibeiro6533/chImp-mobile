@@ -5,8 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-import pt.isel.chimp.domain.Role
-import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.storage.entities.ChannelEntity
 import pt.isel.chimp.storage.entities.ChannelWithCreator
 import pt.isel.chimp.storage.entities.UserInChannel
@@ -14,8 +12,6 @@ import pt.isel.chimp.storage.entities.UserInChannel
 @Dao
 interface ChannelDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertChannel(channel: ChannelEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertChannels(vararg channels :ChannelEntity)

@@ -1,6 +1,5 @@
 package pt.isel.chimp.storage.entities
 
-import androidx.room.DatabaseView
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -41,9 +40,4 @@ data class MessageWithSenderAndChannel(
         parentColumn = "senderId",
         entityColumn = "id"
     ) val sender: UserEntity,
-    @Relation(
-        parentColumn = "channelId",
-        entityColumn = "id"
-    ) val channel: ChannelEntity,
-   // @Embedded val creator: UserEntity
 )

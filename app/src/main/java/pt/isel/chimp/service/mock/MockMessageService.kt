@@ -7,6 +7,7 @@ import pt.isel.chimp.ChImpApplication
 import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.MessageService
 import pt.isel.chimp.service.repo.RepoMock
 import pt.isel.chimp.utils.Either
@@ -16,7 +17,8 @@ import java.time.LocalDateTime
 
 class MockMessageService(
     private val repoMock: RepoMock,
-    private val cookieStorage: CookiesStorage
+    private val cookieStorage: CookiesStorage,
+    private val repo: ChImpRepo
     ) : MessageService {
 
     private suspend fun <T: Any>interceptRequest(block: suspend (User) -> Either<ApiError, T>): Either<ApiError, T> {
@@ -35,8 +37,9 @@ class MockMessageService(
             delay(1000)
             val channel = repoMock.channelRepoMock.findChannelById(channelId) ?:
             return@interceptRequest failure(ApiError("Channel not found"))
-            return@interceptRequest success(
-                repoMock.messageRepoMock.createMessage(user, channel, content, LocalDateTime.now()))
+            val message = repoMock.messageRepoMock.createMessage(user, channel, content, LocalDateTime.now())
+            repo.messageRepo.insertMessage(listOf(message))
+            return@interceptRequest success(message)
         }
 
     override suspend fun getMessagesByChannel(

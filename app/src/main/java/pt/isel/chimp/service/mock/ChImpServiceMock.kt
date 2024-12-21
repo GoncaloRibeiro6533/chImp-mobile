@@ -1,6 +1,7 @@
 package pt.isel.chimp.service.mock
 
 import io.ktor.client.plugins.cookies.CookiesStorage
+import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.ChannelService
 import pt.isel.chimp.service.InvitationService
@@ -9,13 +10,9 @@ import pt.isel.chimp.service.UserService
 import pt.isel.chimp.service.repo.RepoMockImpl
 
 class ChImpServiceMock(
-    private val cookieStorage: CookiesStorage
+    private val cookieStorage: CookiesStorage,
+    private val repo: ChImpRepo
 ) : ChImpService {
-    //TODO
-    val repoCookie : CookieRepoMock by lazy {
-        CookieRepoMock()
-    }
-
 
     val repoMock : RepoMockImpl by lazy {
         RepoMockImpl()
@@ -28,7 +25,7 @@ class ChImpServiceMock(
         MockChannelService(repoMock, cookieStorage)
     }
     override val messageService: MessageService by lazy {
-        MockMessageService(repoMock, cookieStorage)
+        MockMessageService(repoMock, cookieStorage, repo)
     }
 
     override val invitationService: InvitationService by lazy {
