@@ -1,19 +1,11 @@
 package pt.isel.chimp.repository
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.storage.ChImpClientDB
-import pt.isel.chimp.storage.daos.ChannelDao
-import pt.isel.chimp.storage.daos.UserDao
 import pt.isel.chimp.storage.entities.ChannelEntity
 import pt.isel.chimp.storage.entities.UserEntity
 import pt.isel.chimp.storage.entities.UserInChannel
@@ -65,6 +57,7 @@ class ChannelRepository(
     }
 
     suspend fun clear() {
+        db.channelDao().clearUserInChannel()
         db.channelDao().clear()
     }
 }

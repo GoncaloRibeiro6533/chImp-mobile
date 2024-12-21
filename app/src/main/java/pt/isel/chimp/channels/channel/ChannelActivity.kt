@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import pt.isel.chimp.DependenciesContainer
 import pt.isel.chimp.channels.ChannelParcelable
 import pt.isel.chimp.channels.channelInfo.ChannelInfoActivity
+import pt.isel.chimp.channels.channelsList.ChannelsListActivity
 import pt.isel.chimp.utils.navigateTo
 
 class ChannelActivity : ComponentActivity() {
@@ -29,20 +30,25 @@ class ChannelActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?,) {
         super.onCreate(savedInstanceState)
         if(!intent.hasExtra("channel")) {
+            navigateTo(this, ChannelsListActivity::class.java)
             finish()
             return
         }
         val channel = intent.getParcelableExtra("channel", ChannelParcelable::class.java)
         if (channel == null) {
+            navigateTo(this, ChannelsListActivity::class.java)
             finish()
             return
         }
+        viewModel.loadLocalData(channel.toChannel())
         setContent{
             ChannelScreen(
                 viewModel = viewModel,
                 channel =  channel.toChannel(),
                 role = channel.role,
-                onNavigationBack = { finish() },
+                onNavigationBack = {
+                    navigateTo(this, ChannelsListActivity::class.java)
+                    finish() },
                 onNavigationChannelInfo = {
                     navigateTo(this, ChannelInfoActivity::class.java)
                 }

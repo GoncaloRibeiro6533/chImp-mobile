@@ -38,8 +38,9 @@ class LoginScreenViewModel(
                 _state.value = LoginScreenState.Loading
                 viewModelScope.launch {
                     //TODO remove
-                    repo.userRepo.clear()
+                    repo.messageRepo.clear()
                     repo.channelRepo.clear()
+                    repo.userRepo.clear()
                     _state.value =
                     try {
                         val authUser = userService.login(username, password)

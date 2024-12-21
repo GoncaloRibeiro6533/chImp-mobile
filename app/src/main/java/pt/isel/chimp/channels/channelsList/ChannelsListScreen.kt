@@ -69,10 +69,6 @@ fun ChannelsListScreen(
                     is ChannelsListScreenState.Uninitialized -> {
                         // do nothing
                     }
-                    is ChannelsListScreenState.Loading,
-                        -> {
-                        LoadingView()
-                    }
                     is ChannelsListScreenState.Success -> {
                         ChannelListView(state.channels) { channel ->
                             onChannelSelected(channel)

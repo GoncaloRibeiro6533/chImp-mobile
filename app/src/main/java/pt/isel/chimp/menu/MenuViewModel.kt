@@ -38,10 +38,10 @@ class MenuViewModel(
            state =  try {
                  when (val result = service.userService.logout()) {
                     is Success -> {
-                        // TODO
-                        userInfo.clearUserInfo()
+                        repo.messageRepo.clear()
                         repo.userRepo.clear()
                         repo.channelRepo.clear()
+                        userInfo.clearUserInfo()
                         MenuScreenState.LoggedOut
                     }
                     is Failure -> MenuScreenState.Error(result.value)

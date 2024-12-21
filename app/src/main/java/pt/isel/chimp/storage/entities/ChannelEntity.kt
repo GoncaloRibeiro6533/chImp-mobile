@@ -1,6 +1,5 @@
 package pt.isel.chimp.storage.entities
 
-import androidx.room.DatabaseView
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -15,7 +14,7 @@ import pt.isel.chimp.domain.channel.Visibility
             entity = UserEntity::class,
             parentColumns = ["id"],
             childColumns = ["creatorId"],
-            onDelete = ForeignKey.CASCADE
+           // onDelete = ForeignKey.CASCADE
         )
     ]
 )

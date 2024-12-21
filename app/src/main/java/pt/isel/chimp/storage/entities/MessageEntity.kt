@@ -14,13 +14,13 @@ import androidx.room.Relation
             entity = UserEntity::class,
             parentColumns = ["id"],
             childColumns = ["senderId"],
-            onDelete = ForeignKey.CASCADE
+            //onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = ChannelEntity::class,
             parentColumns = ["id"],
             childColumns = ["channelId"],
-            onDelete = ForeignKey.CASCADE
+           // onDelete = ForeignKey.CASCADE
         )
     ]
     )

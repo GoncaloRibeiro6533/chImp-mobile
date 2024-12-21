@@ -1,14 +1,17 @@
 package pt.isel.chimp.domain.message
 
+import kotlinx.serialization.Serializable
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.user.User
 import java.time.LocalDateTime
 //TODO maybe a property sended or sending, or a list in a repository
+@Serializable
 data class Message(
     val id: Int,
     val sender: User,
     val channel: Channel,
     val content: String,
+    @Serializable(with = LocalDateTimeSerializer::class)
     val timestamp: LocalDateTime,
 ) {
     companion object {

@@ -13,13 +13,13 @@ import pt.isel.chimp.domain.Role
             entity = UserEntity::class,
             parentColumns = ["id"],
             childColumns = ["userId"],
-            onDelete = ForeignKey.CASCADE
+            //onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = ChannelEntity::class,
             parentColumns = ["id"],
             childColumns = ["channelId"],
-            onDelete = ForeignKey.CASCADE
+            //onDelete = ForeignKey.CASCADE
         )
     ]
 )

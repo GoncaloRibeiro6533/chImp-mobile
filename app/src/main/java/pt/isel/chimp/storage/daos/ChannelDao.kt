@@ -35,6 +35,8 @@ interface ChannelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUserInChannel(vararg userInChannel: UserInChannel)
 
+    @Query("DELETE FROM user_in_channel")
+    suspend fun clearUserInChannel()
     @Query("DELETE FROM channel")
     suspend fun clear()
 

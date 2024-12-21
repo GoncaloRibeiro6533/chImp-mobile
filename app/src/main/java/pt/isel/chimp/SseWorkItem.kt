@@ -11,6 +11,7 @@ import io.ktor.client.plugins.sse.sse
 import io.ktor.sse.ServerSentEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.repository.ChImpRepo
@@ -51,7 +52,8 @@ class CoroutineSseWorkItem(
         val data = event.data ?: throw Exception("Data is null") //TODO: improve this
         when (eventC) {
             "NewChannelMessage" -> {
-                repo.messageRepo.insertMessage(listOf(Json.decodeFromString<Message>(data)))
+                val message = messageMapper(data)
+                repo.messageRepo.insertMessage(listOf(message))
             }
             "ChannelNameUpdate" -> TODO()
             "ChannelNewMemberUpdate" -> TODO()
@@ -64,17 +66,16 @@ class CoroutineSseWorkItem(
         }
     }
 
-   /* private fun parseMessage(data: String): Message {
-        val parts =
+    private fun messageMapper(data: String): Message {
+            val eventData = Json.decodeFromString<NewChannelMessage>(data)
+            return eventData.message
+    }
 
-        return Message(
-            id = parts[0].toInt(),
-            sender = parts[1].toInt(),
-            channel = parts[2].toInt(),
-            content = parts[3],
-            timestamp = parts[4].toLong()
-        )
-    }*/
+    @Serializable
+    data class NewChannelMessage(
+        val id: Long, // SSE Event identifier
+        val message: Message, // New channel message
+    )
 }
 
 

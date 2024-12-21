@@ -25,7 +25,7 @@ sealed interface ChannelsListScreenState {
     data object LoadingUserInfo: ChannelsListScreenState
     data class LoadFromRemote(val userInfo: User) : ChannelsListScreenState
     data class SaveData(val user: User, val channels: Map<Channel,Role>) : ChannelsListScreenState
-    data object Loading : ChannelsListScreenState
+    //data object Loading : ChannelsListScreenState
     data class Success(val channels: StateFlow<Map<Channel,Role>>) : ChannelsListScreenState
     data class Error(val error: ApiError) : ChannelsListScreenState
 }
@@ -135,7 +135,6 @@ class ChannelsListViewModel(
 
 
     fun loadUserInfoData(){
-        if (_channels.value.isNotEmpty()) return //TODO
         if (_state.value is ChannelsListScreenState.LoadingUserInfo) {
             viewModelScope.launch {
                 try {

@@ -13,6 +13,7 @@ import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.sse.SSE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.http.ChImpServiceHttp
@@ -49,8 +50,8 @@ class ChImpApplication : Application(), DependenciesContainer {
     }
 
     override val chImpService: ChImpService by lazy {
-        ChImpServiceMock(cookieRep, repo)
-        //ChImpServiceHttp(client = client)
+        //ChImpServiceMock(cookieRep, repo)
+        ChImpServiceHttp(client = client)
     }
 
 
@@ -66,7 +67,7 @@ class ChImpApplication : Application(), DependenciesContainer {
 
     override val clientDB: ChImpClientDB by lazy {
         Room.databaseBuilder(
-            context = this,
+            context =  applicationContext,
             klass = ChImpClientDB::class.java,
             "chimp-db"
         ).fallbackToDestructiveMigration().build()
@@ -78,7 +79,7 @@ class ChImpApplication : Application(), DependenciesContainer {
 
     //While using with mock service, it needs to be equal to "/"
     companion object { //TODO: improve this
-        val NGROK = "/"//"https://0689-2001-8a0-7efc-e400-e4fa-f624-8c09-af0a.ngrok-free.app"
+        const val NGROK = "https://b3ab-2001-8a0-7efc-e400-dcbb-d9d5-5d2-fc07.ngrok-free.app"
     }
 
 

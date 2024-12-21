@@ -1,12 +1,12 @@
 package pt.isel.chimp.repository
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.storage.ChImpClientDB
-import pt.isel.chimp.storage.entities.ChannelEntity
 import pt.isel.chimp.storage.entities.MessageEntity
 import pt.isel.chimp.storage.entities.UserEntity
 import java.time.LocalDateTime
@@ -17,21 +17,14 @@ class MessageRepository(
 ) {
 
     suspend fun insertMessage(messages: List<Message>) {
-        db.userDao().insertUsers(*messages.map {  //TODO: improve this
+        val users = messages.map { it.sender }.distinct()
+        db.userDao().insertUsers(*users.map { user ->
             UserEntity(
-                it.sender.id,
-                it.sender.username,
-                it.sender.email
+                user.id,
+                user.username,
+                user.email
             )
         }.toTypedArray())
-        db.channelDao().insertChannels(messages.first().channel.let {
-            ChannelEntity(
-                it.id,
-                it.name,
-                it.creator.id,
-                it.visibility
-            )
-        })
         db.messageDao().insertMessages(*messages.map {
             MessageEntity(
                 it.id,
@@ -45,7 +38,7 @@ class MessageRepository(
     }
 
     fun getMessages(channel: Channel): Flow<List<Message>> {
-        return db.messageDao().getMessagesByChannelId(channel.id).map { list ->
+        val a= db.messageDao().getMessagesByChannelId(channel.id).map { list ->
             list.map { it ->
                 Message(
                     id = it.message.id,
@@ -62,6 +55,7 @@ class MessageRepository(
             }
 
         }
+        return a.distinctUntilChanged()
     }
 
     suspend fun clear() {

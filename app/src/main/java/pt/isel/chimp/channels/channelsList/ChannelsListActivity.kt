@@ -6,6 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import pt.isel.chimp.CoroutineSseWorkItem
 import pt.isel.chimp.DependenciesContainer
 import pt.isel.chimp.channels.ChannelParcelable
 import pt.isel.chimp.channels.channel.ChannelActivity
@@ -37,7 +42,7 @@ class ChannelsListActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       /* val constraints = Constraints.Builder()
+       val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
@@ -45,7 +50,7 @@ class ChannelsListActivity : ComponentActivity() {
             .setConstraints(constraints).build()
 
         WorkManager.getInstance(this)
-            .enqueue(workItem)*/
+            .enqueue(workItem)
         setContent {
             viewModel.loadLocalData()
             ChannelsListScreen(

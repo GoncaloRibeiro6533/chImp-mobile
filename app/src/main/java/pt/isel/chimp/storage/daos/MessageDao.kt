@@ -14,7 +14,7 @@ interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMessages(vararg messages : MessageEntity)
 
-    @Query("SELECT m.*, u.username, u.email, c.name, c.visibility FROM message m JOIN user u ON m.senderId = u.id JOIN channel c WHERE m.channelId = :channelId ORDER BY m.timestamp DESC;")
+    @Query("SELECT m.*, u.username, u.email, c.name, c.visibility FROM message m JOIN user u ON m.senderId = u.id JOIN channel c ON m.channelId=c.id WHERE m.channelId = :channelId ORDER BY m.timestamp DESC;")
     fun getMessagesByChannelId(channelId: Int): Flow<List<MessageWithSenderAndChannel>>
 
     @Query("DELETE FROM message")

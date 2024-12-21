@@ -1,7 +1,9 @@
 package pt.isel.chimp.domain.channel
 
+import kotlinx.serialization.Serializable
 import pt.isel.chimp.domain.user.User
 
+@Serializable
 data class Channel(
     val id: Int,
     val name: String,
