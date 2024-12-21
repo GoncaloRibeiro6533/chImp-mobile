@@ -69,6 +69,12 @@
             android:label="ChannelInfoActivity"
             android:theme="@style/Theme.ChImp"
             />
+        <activity
+            android:name=".channels.searchChannels.SearchChannelsActivity"
+            android:exported="true"
+            android:label="SearchChannelsActivity"
+            android:theme="@style/Theme.ChImp"
+            />
     </application>
 
 </manifest>

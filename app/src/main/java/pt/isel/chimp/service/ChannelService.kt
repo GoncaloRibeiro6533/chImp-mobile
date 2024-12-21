@@ -81,6 +81,8 @@ interface ChannelService {
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
     suspend fun removeUserFromChannel(channelId: Int, userID: Int): Either<ApiError, Channel>
+
+    suspend fun searchChannelByName(name: String, limit: Int = 10, skip: Int = 0): Either<ApiError, List<Channel>>
 }
 
 

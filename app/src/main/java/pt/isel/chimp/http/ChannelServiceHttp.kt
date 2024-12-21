@@ -5,6 +5,7 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.http.models.channel.ChannelList
 import pt.isel.chimp.http.models.channel.ChannelMembersList
 import pt.isel.chimp.http.models.channel.ChannelOfUserList
 import pt.isel.chimp.http.models.channel.ChannelOutputModel
@@ -103,6 +104,19 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
             url = "/channels/$channelId/leave/$userID",
         )) {
             is Success -> success(response.value.toChannel())
+            is Failure -> failure(response.value)
+        }
+    }
+
+    override suspend fun searchChannelByName(
+        name: String,
+        limit: Int,
+        skip: Int
+    ): Either<ApiError, List<Channel>> {
+        return when(val response = client.get<ChannelList>(
+            url = "/channels/search/$name",
+        )) {
+            is Success -> success(response.value.toChannelList())
             is Failure -> failure(response.value)
         }
     }

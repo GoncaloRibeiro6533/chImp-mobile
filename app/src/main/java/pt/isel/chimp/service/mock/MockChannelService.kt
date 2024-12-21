@@ -10,6 +10,7 @@ import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.service.ChannelService
+import pt.isel.chimp.service.repo.ChannelRepoMock.Companion.channels
 import pt.isel.chimp.service.repo.RepoMock
 import pt.isel.chimp.utils.Either
 import pt.isel.chimp.utils.failure
@@ -123,4 +124,17 @@ class MockChannelService(
             repoMock.channelRepoMock.removeUser(userID, channelId)
             return@interceptRequest success(channel)
         }
+
+    override suspend fun searchChannelByName(
+        name: String,
+        limit: Int,
+        skip: Int
+    ): Either<ApiError, List<Channel>> = interceptRequest {
+
+        val channel = repoMock.channelRepoMock.findChannelByName(name, limit, skip)
+        if (channels.isEmpty()) {
+            return@interceptRequest failure(ApiError("Channel not found"))
+        }
+        return@interceptRequest success(channel)
+    }
 }

@@ -13,7 +13,7 @@
     <string name="profile_icon_description">profile icon</string>
     <string name="loading_label">Loading…</string>
     <string name="error_icon_description">Warning</string>
-    <string name="login_button_text">Login\n</string>
+    <string name="login_button_text">Login</string>
     <string name="login_button_content_description">LoginButton</string>
     <string name="login_title">Login</string>
     <string name="sign_up_annotated_string">Sign Up</string>

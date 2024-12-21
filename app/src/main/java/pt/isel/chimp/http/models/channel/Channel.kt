@@ -28,7 +28,9 @@ data class ChannelOutputModel(
 data class ChannelList(
     val nChannels: Int,
     val channels: List<ChannelOutputModel>,
-)
+) {
+    fun toChannelList() = channels.map { it.toChannel() }
+}
 
 @Serializable
 data class ChannelMember(

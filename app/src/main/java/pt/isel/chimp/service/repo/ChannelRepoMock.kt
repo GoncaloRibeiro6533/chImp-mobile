@@ -1,5 +1,6 @@
 package pt.isel.chimp.service.repo
 
+import androidx.compose.ui.text.toLowerCase
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
@@ -72,7 +73,7 @@ class ChannelRepoMock {
 
 
     fun findChannelByName(name: String, limit: Int = 10, skip: Int = 0 ): List<Channel> {
-        return channels.filter { it.name.contains(name) }.drop(skip).take(limit)
+        return channels.filter { it.name.lowercase().contains(name.lowercase()) }.drop(skip).take(limit)
     }
 
     fun getChannelMembers(channelId: Int): List<Pair<User, Role>> {

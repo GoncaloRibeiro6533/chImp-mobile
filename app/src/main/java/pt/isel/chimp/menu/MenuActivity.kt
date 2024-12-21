@@ -17,6 +17,7 @@ import pt.isel.chimp.DependenciesContainer
 import pt.isel.chimp.about.AboutActivity
 import pt.isel.chimp.channels.channelsList.ChannelsListActivity
 import pt.isel.chimp.channels.createChannel.CreateChannelActivity
+import pt.isel.chimp.channels.searchChannels.SearchChannelsActivity
 import pt.isel.chimp.profile.ProfileActivity
 import pt.isel.chimp.utils.navigateTo
 
@@ -58,16 +59,21 @@ class MenuActivity : ComponentActivity() {
             finish()
         },
 
-        MenuItem("Search channel", "search channel screen", Icons.Default.Search) { },
+        MenuItem("Search channel", "search channel screen", Icons.Default.Search) {
+            navigateTo(
+                this,
+                SearchChannelsActivity::class.java
+            )
+        },
         MenuItem("Create channel", "create channel screen", Icons.Default.Add) {
             navigateTo(
                 this,
                 CreateChannelActivity::class.java
             )
         },
-        MenuItem("Create Channel invitation", "create channel invitation screen", Icons.Default.Add) { },
-        //MenuItem("Create Registration invitation", "create registration invitation screen", Icons.Default.Add, { }),
-        MenuItem("My Channel Invitations", "my channel invitations screen", Icons.Default.Notifications) { },
+        MenuItem("My Channel Invitations", "my channel invitations screen", Icons.Default.Notifications) {
+
+        },
         MenuItem("Logout", "logout screen", Icons.AutoMirrored.Filled.ExitToApp) {
             viewModel.logout()
         },
