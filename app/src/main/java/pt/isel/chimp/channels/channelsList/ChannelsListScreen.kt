@@ -1,6 +1,7 @@
 package pt.isel.chimp.channels.channelsList
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -54,29 +55,25 @@ fun ChannelsListScreen(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 16.dp)
                 )
+                Spacer(modifier = Modifier.padding(8.dp))
                 when (state) {
-                    is ChannelsListScreenState.LoadingUserInfo -> {
+                    is ChannelsListScreenState.LoadingUserInfo,
+                    is ChannelsListScreenState.LoadFromRemote,
+                    is ChannelsListScreenState.SaveData
+                        -> {
                         LoadingView()
-                        viewModel.loadUserInfoData()
+                        if (state is ChannelsListScreenState.LoadingUserInfo) viewModel.loadUserInfoData()
+                        if (state is ChannelsListScreenState.LoadFromRemote) viewModel.loadRemoteData(state.userInfo)
+                        if (state is ChannelsListScreenState.SaveData) viewModel.saveData(state.user,state.channels)
                     }
-                    is ChannelsListScreenState.LoadFromRemote -> {
-                        LoadingView()
-                        viewModel.loadRemoteData(state.userInfo)
+                    is ChannelsListScreenState.Uninitialized -> {
+                        // do nothing
                     }
-                    is ChannelsListScreenState.SaveData -> {
-                        LoadingView()
-                        viewModel.saveData(state.user,state.channels)
-                    }
-                    is ChannelsListScreenState.Uninitialized,
                     is ChannelsListScreenState.Loading,
-                    is ChannelsListScreenState.LoadFromLocalData,
-                    is ChannelsListScreenState.LoadedUserInfo
                         -> {
                         LoadingView()
                     }
                     is ChannelsListScreenState.Success -> {
-                        //Spacer(modifier = Modifier.padding(8.dp))
-
                         ChannelListView(state.channels) { channel ->
                             onChannelSelected(channel)
                         }

@@ -9,12 +9,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import pt.isel.chimp.channels.ChannelParcelable
 import pt.isel.chimp.channels.channelsList.components.ChannelItem
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.domain.channel.Visibility
+import pt.isel.chimp.domain.user.User
 
 @Composable
 fun ChannelListView(
@@ -45,27 +49,16 @@ fun ChannelListView(
         }
     }
 }
-/*
+
 @Suppress("UNCHECKED_CAST")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewChannelsListScreen() {
+fun PreviewChannelsList() {
     val fakeChannels = mapOf(
         Channel(1, "Channel 1", User(1, "Alice", "alice@example.com"), Visibility.PUBLIC) to Role.READ_WRITE,
         Channel(2, "Channel 2", User(2, "Bob", "bob@example.com"), Visibility.PRIVATE) to Role.READ_ONLY,
     )
 
-    val channelsFlow = MutableSharedFlow<Map<Channel, Role>>(replay = 1).apply {
-        tryEmit(fakeChannels)
-    }
-
-    ChannelsListScreen(
-        viewModel = ChannelsListViewModel(
-            userInfo = UserInfoRepo(preferencesDataStore("preferences") as DataStore<Preferences>),
-            channelService = MockChannelService(RepoMockImpl(), CookiesRepo(preferencesDataStore("cookies") as DataStore<Preferences>)),
-            repo = ChImpRepoImp(RepoMockImpl())
-        ),
-        onMenuRequested = {},
-        onChannelSelected = {}
-    )
-}*/
+    val channelsFlow = MutableStateFlow<Map<Channel, Role>>(fakeChannels)
+    ChannelListView(channelsFlow) { }
+}

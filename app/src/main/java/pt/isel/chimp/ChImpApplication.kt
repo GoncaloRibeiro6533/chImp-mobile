@@ -69,7 +69,7 @@ class ChImpApplication : Application(), DependenciesContainer {
             context = this,
             klass = ChImpClientDB::class.java,
             "chimp-db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     override val repo: ChImpRepo by lazy {

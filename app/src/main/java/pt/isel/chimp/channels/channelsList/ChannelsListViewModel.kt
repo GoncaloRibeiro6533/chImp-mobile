@@ -23,8 +23,6 @@ import pt.isel.chimp.utils.Success
 sealed interface ChannelsListScreenState {
     data object Uninitialized : ChannelsListScreenState
     data object LoadingUserInfo: ChannelsListScreenState
-    data class LoadedUserInfo(val userInfo: User) : ChannelsListScreenState
-    data class LoadFromLocalData(val userInfo: User) : ChannelsListScreenState
     data class LoadFromRemote(val userInfo: User) : ChannelsListScreenState
     data class SaveData(val user: User, val channels: Map<Channel,Role>) : ChannelsListScreenState
     data object Loading : ChannelsListScreenState
@@ -162,7 +160,7 @@ class ChannelsListViewModel(
                     if (stream.isNotEmpty()) {
                         _state.value = ChannelsListScreenState.Success(channels)
                     }
-                    if (stream.isEmpty()) {
+                    if (stream.isEmpty() && _state.value is ChannelsListScreenState.Uninitialized) {
                         _state.value = ChannelsListScreenState.LoadingUserInfo
                     }
                 }
@@ -196,7 +194,6 @@ class ChannelsListViewModel(
             viewModelScope.launch {
                 try {
                     repo.channelRepo.insertChannels(user.id, channels)
-                    //_state.value = ChannelsListScreenState.Success(_channels)
                 } catch (e: Throwable) {
                     _state.value = ChannelsListScreenState.Error(ApiError("Error saving channels: ${e.message}"))
                 }
