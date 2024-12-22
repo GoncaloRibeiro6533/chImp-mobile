@@ -1,11 +1,30 @@
 package pt.isel.chimp.service.repo
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import pt.isel.chimp.domain.Token
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.infrastructure.CookiesRepo
 
 
-class UserRepoMock {
+class UserRepoMock(
+    private val cookiesStorage: CookiesRepo
+) {
 
+    fun getTokens() {
+        runBlocking(Dispatchers.Default) {
+            val cookies  =cookiesStorage.getAllCookies()
+            cookies.forEach {
+                if(it.name == "token"){
+                    val token = it.value
+                        val u = cookies.first { it.name == "user" }.value
+                        createSession(u.toInt())
+
+                }
+            }
+
+        }
+    }
     companion object {
         val users =
             mutableListOf<User>(
@@ -35,6 +54,10 @@ class UserRepoMock {
     }
 
     fun findSessionByToken(token: String): Token? {
+        val result = sessions.find { it.token == token }
+        if (result == null) {
+            getTokens()
+        }
         return sessions.find { it.token == token }
     }
 

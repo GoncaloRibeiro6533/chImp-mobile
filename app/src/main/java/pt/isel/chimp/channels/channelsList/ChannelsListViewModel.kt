@@ -150,6 +150,22 @@ class ChannelsListViewModel(
         }
     }
 
+    fun onFatalError() {
+        viewModelScope.launch {
+            try {
+                repo.messageRepo.clear()
+                repo.channelRepo.clear()
+                repo.userRepo.clear()
+                userInfo.clearUserInfo()
+            } catch (e: Exception) {
+                userInfo.clearUserInfo()
+                repo.messageRepo.clear()
+                repo.channelRepo.clear()
+                repo.userRepo.clear()
+            }
+        }
+    }
+
     fun loadLocalData(): Job? {
         if (_state.value !is ChannelsListScreenState.Uninitialized) return null
         return viewModelScope.launch {

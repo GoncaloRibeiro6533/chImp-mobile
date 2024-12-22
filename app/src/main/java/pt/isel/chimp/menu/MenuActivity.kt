@@ -28,7 +28,7 @@ class MenuActivity : ComponentActivity() {
     private val chImpService by lazy { (application as DependenciesContainer).chImpService }
     private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
     private val chImpRepo by lazy { (application as DependenciesContainer).repo }
-
+    private val db by lazy { (application as DependenciesContainer).clientDB }
     private val viewModel by viewModels<MenuViewModel>(
         factoryProducer = {
             MenuViewModelFactory(

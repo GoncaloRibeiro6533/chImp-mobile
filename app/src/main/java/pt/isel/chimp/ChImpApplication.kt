@@ -49,7 +49,7 @@ class ChImpApplication : Application(), DependenciesContainer {
     }
 
     override val chImpService: ChImpService by lazy {
-        //ChImpServiceMock(cookieRep, repo)
+        //ChImpServiceMock(cookieRep as CookiesRepo, repo)
         ChImpServiceHttp(client = client)
     }
 
@@ -69,7 +69,7 @@ class ChImpApplication : Application(), DependenciesContainer {
             context =  applicationContext,
             klass = ChImpClientDB::class.java,
             "chimp-db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     override val repo: ChImpRepo by lazy {

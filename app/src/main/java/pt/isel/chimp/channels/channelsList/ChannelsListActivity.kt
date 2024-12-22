@@ -61,7 +61,12 @@ class ChannelsListActivity : ComponentActivity() {
                 onChannelSelected = { channel ->
                    navigateToChannel(channel)
                 },
-                onNavigateToCreateChannel = { navigateTo(this, CreateChannelActivity::class.java) }
+                onNavigateToCreateChannel = { navigateTo(this, CreateChannelActivity::class.java) },
+                onFatalError = {
+                    viewModel.onFatalError()
+                    WorkManager.getInstance(applicationContext).cancelAllWork()
+                    finish()
+                }
             )
         }
 

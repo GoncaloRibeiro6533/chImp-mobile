@@ -76,9 +76,10 @@ fun CreateChannelScreen(
 @Composable
 fun CreateChannelScreenPreview() {
     val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
+    val cookieRepo = CookiesRepo(preferences)
     CreateChannelScreen(
-        viewModel = CreateChannelViewModel(MockChannelService(RepoMockImpl(),
-            CookiesRepo(preferences)
+        viewModel = CreateChannelViewModel(MockChannelService(RepoMockImpl(cookieRepo),
+            cookieRepo
             )),
         onNavigateBack = { },
         onChannelCreated = { }

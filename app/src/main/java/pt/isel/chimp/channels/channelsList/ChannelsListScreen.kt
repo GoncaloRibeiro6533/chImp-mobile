@@ -28,7 +28,8 @@ fun ChannelsListScreen(
     viewModel: ChannelsListViewModel,
     onMenuRequested: () -> Unit = { },
     onChannelSelected: (ChannelParcelable) -> Unit = { },
-    onNavigateToCreateChannel: () -> Unit = { }
+    onNavigateToCreateChannel: () -> Unit = { },
+    onFatalError: () -> Unit = { }
 ) {
     ChImpTheme {
         val state = viewModel.state.collectAsState().value
@@ -78,8 +79,8 @@ fun ChannelsListScreen(
                         ErrorAlert(
                             title = "Error",
                             message = state.error.message,
-                            buttonText = "Ok",
-                            onDismiss = {  }
+                            buttonText = "Close app",
+                            onDismiss = { onFatalError() }
                         )
                     }
                 }

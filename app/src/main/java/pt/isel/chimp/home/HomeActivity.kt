@@ -5,16 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import pt.isel.chimp.DependenciesContainer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import pt.isel.chimp.CoroutineSseWorkItem
+import pt.isel.chimp.DependenciesContainer
 import pt.isel.chimp.about.AboutActivity
 import pt.isel.chimp.authentication.login.LoginActivity
 import pt.isel.chimp.authentication.register.RegisterActivity
@@ -59,10 +54,6 @@ class HomeActivity : ComponentActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        deleteDatabase("chimp-db")
-        deleteSharedPreferences("preferences")
-    }
+
 }
 

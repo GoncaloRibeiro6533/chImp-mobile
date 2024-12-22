@@ -27,6 +27,8 @@ fun RoundedRectangleWithText(text: String, backgroundColor: Color) {
             fontWeight = FontWeight.Bold,
             fontSize = 12.sp,
             textAlign = TextAlign.Center,
+            maxLines = 1,
+            softWrap = true,
             modifier = Modifier.align(Alignment.Center)
         )
     }

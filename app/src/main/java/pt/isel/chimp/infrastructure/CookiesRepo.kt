@@ -41,6 +41,10 @@ class CookiesRepo(
         }
     }
 
+    suspend fun getAllCookies(): List<Cookie> {
+        return store.data.first().toCookies()
+    }
+
     override fun close() {}
 
 

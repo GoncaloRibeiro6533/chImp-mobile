@@ -92,10 +92,11 @@ fun ChannelInfoScreen(
 @Composable
 fun ChannelScreenPreview() {
     val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
+    val cookiesRepo = CookiesRepo(preferences)
     ChannelInfoScreen(
         viewModel = ChannelInfoViewModel(
             UserInfoRepo(preferences),
-            MockChannelService(RepoMockImpl(), CookiesRepo(preferences))
+            MockChannelService(RepoMockImpl(cookiesRepo), CookiesRepo(preferences))
         ),
         Channel(1, "Channel 1 long",
             creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),

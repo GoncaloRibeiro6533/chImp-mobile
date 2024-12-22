@@ -16,16 +16,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import pt.isel.chimp.components.LoadingView
-import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.profile.ErrorAlert
-import pt.isel.chimp.service.mock.MockUserService
-import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -106,13 +99,3 @@ fun SimpleTextField(label: String, example: String) {
     )
 }
 
-@Suppress("UNCHECKED_CAST")
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun RegisterView() {
-    val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
-    RegisterScreen(
-        viewModel = RegisterScreenViewModel(MockUserService(RepoMockImpl(),  CookiesRepo(preferences))),
-        onRegisterSuccessful = {}
-    )
-}

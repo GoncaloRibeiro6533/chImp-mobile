@@ -64,7 +64,17 @@ class MockUserService(
             domain = "localhost",
             expires = GMTDate().plus( 7 * 24 * 60 * 60 * 1000) // 7 dias
         )
+        val userCookie = Cookie(
+            name = "user",
+            value = user.id.toString(),
+            path = "/",
+            secure = false,
+            httpOnly = true,
+            domain = "localhost",
+            expires = GMTDate().plus( 7 * 24 * 60 * 60 * 1000) // 7 dias
+        )
         cookieStorage.addCookie(Url(ChImpApplication.Companion.NGROK), cookie)
+        cookieStorage.addCookie(Url(ChImpApplication.Companion.NGROK), userCookie)
         return success(user)
     }
 
