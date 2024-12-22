@@ -156,8 +156,8 @@ class ChannelsListViewModel(
             try {
                 repo.channelRepo.getChannels().collect { stream ->
                     _channels.value = stream
-                    if (stream.isNotEmpty()) {
-                        _state.value = ChannelsListScreenState.Success(channels)
+                    if (stream.isNotEmpty() && _state.value !is ChannelsListScreenState.Success) {
+                        _state.value = ChannelsListScreenState.Success(_channels)
                     }
                     if (stream.isEmpty() && _state.value is ChannelsListScreenState.Uninitialized) {
                         _state.value = ChannelsListScreenState.LoadingUserInfo
@@ -193,6 +193,7 @@ class ChannelsListViewModel(
             viewModelScope.launch {
                 try {
                     repo.channelRepo.insertChannels(user.id, channels)
+                    _state.value = ChannelsListScreenState.Success(_channels)
                 } catch (e: Throwable) {
                     _state.value = ChannelsListScreenState.Error(ApiError("Error saving channels: ${e.message}"))
                 }

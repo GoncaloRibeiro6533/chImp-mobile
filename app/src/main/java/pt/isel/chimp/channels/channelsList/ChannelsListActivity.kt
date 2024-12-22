@@ -57,7 +57,6 @@ class ChannelsListActivity : ComponentActivity() {
                 viewModel = viewModel,
                 onMenuRequested = {
                     navigateTo(this, MenuActivity::class.java)
-                    finish()
                 },
                 onChannelSelected = { channel ->
                    navigateToChannel(channel)
@@ -72,6 +71,8 @@ class ChannelsListActivity : ComponentActivity() {
                 navigateTo(this@ChannelsListActivity, MenuActivity::class.java)
             }
         })
+
     }
+
 }
 

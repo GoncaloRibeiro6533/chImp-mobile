@@ -20,7 +20,7 @@ class UserRepository(
         }.toTypedArray())
     }
 
-    suspend fun getUsers(): Flow<List<User>> {
+    fun getUsers(): Flow<List<User>> {
         return db.userDao().getAllUsers().map {
             it.map {
                 User(

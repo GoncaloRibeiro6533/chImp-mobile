@@ -4,8 +4,6 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Relation
-import pt.isel.chimp.domain.Role
-import pt.isel.chimp.domain.channel.Visibility
 
 @Entity(
     tableName = "channel",
@@ -23,8 +21,8 @@ data class ChannelEntity(
     val id: Int,
     val name: String,
     val creatorId: Int,
-    val visibility: Visibility,
-    val role: Role
+    val visibility: String,
+    val role: String
 )
 
 data class ChannelWithCreator(

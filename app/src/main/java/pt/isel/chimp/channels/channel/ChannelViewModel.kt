@@ -97,7 +97,7 @@ class ChannelViewModel(
                 repo.messageRepo.getMessages(channel).collect { stream ->
                     Log.d("ChannelViewModel", stream.toString())
                     _messages.value = stream
-                    if (stream.isNotEmpty()) {
+                    if (stream.isNotEmpty() && _state.value !is ChannelScreenState.Success) {
                         _state.value = ChannelScreenState.Success(messages)
                     }
                     if (stream.isEmpty() && _state.value is ChannelScreenState.Uninitialized){
@@ -133,6 +133,7 @@ class ChannelViewModel(
             viewModelScope.launch {
                 try {
                     repo.messageRepo.insertMessage(messages)
+                    _state.value = ChannelScreenState.Success(_messages)
                 } catch (e: Throwable) {
                     _state.value = ChannelScreenState.Error(ApiError("Error saving messages"))
                 }

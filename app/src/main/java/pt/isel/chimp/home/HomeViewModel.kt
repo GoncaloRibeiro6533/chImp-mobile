@@ -29,9 +29,7 @@ class HomeScreenViewModel(
 
     fun getSession(): Job? {
         return viewModelScope.launch {
-            delay(700)
-            //TODO remove the clear
-            repo.clearUserInfo()
+            delay(200)
             val userInfo = repo.getUserInfo()
             state = if (userInfo != null) {
                 HomeScreenState.Logged

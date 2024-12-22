@@ -39,17 +39,19 @@ class MenuViewModel(
                  when (val result = service.userService.logout()) {
                     is Success -> {
                         repo.messageRepo.clear()
-                        repo.userRepo.clear()
                         repo.channelRepo.clear()
+                        repo.userRepo.clear()
                         userInfo.clearUserInfo()
+                        //Destroy the work manager
                         MenuScreenState.LoggedOut
                     }
                     is Failure -> MenuScreenState.Error(result.value)
                 }
             } catch (e: Exception) {
                userInfo.clearUserInfo()
-               repo.userRepo.clear()
+               repo.messageRepo.clear()
                repo.channelRepo.clear()
+               repo.userRepo.clear()
                //TODO
                MenuScreenState.Error(ApiError("Error logging out"))
             }

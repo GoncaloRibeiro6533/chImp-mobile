@@ -13,11 +13,12 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.work.WorkManager
 import pt.isel.chimp.DependenciesContainer
 import pt.isel.chimp.about.AboutActivity
-import pt.isel.chimp.channels.channelsList.ChannelsListActivity
 import pt.isel.chimp.channels.createChannel.CreateChannelActivity
 import pt.isel.chimp.channels.searchChannels.SearchChannelsActivity
+import pt.isel.chimp.home.HomeActivity
 import pt.isel.chimp.profile.ProfileActivity
 import pt.isel.chimp.utils.navigateTo
 
@@ -54,8 +55,8 @@ class MenuActivity : ComponentActivity() {
             )
         },
         MenuItem("My Channels", "my channels screen", Icons.AutoMirrored.Filled.List) {
-            navigateTo(this,
-                ChannelsListActivity::class.java)
+            /*navigateTo(this,
+                ChannelsListActivity::class.java)*/
             finish()
         },
 
@@ -76,6 +77,7 @@ class MenuActivity : ComponentActivity() {
         },
         MenuItem("Logout", "logout screen", Icons.AutoMirrored.Filled.ExitToApp) {
             viewModel.logout()
+            WorkManager.getInstance(applicationContext).cancelAllWork()
         },
     )
 
@@ -87,13 +89,15 @@ class MenuActivity : ComponentActivity() {
                 viewModel = viewModel,
                 menuItems = menuItems,
                 onNavigateBack = {
-                    navigateTo(this, ChannelsListActivity::class.java)
+                    //navigateTo(this, ChannelsListActivity::class.java)
                     finish()
                 },
                 onLogout = {
-                    //navigateTo(this, HomeActivity::class.java)
+                    //
                     //finishAffinity()
-                    finish()
+                    //finish previous activity
+                    finishAffinity()
+                    navigateTo(this, HomeActivity::class.java)
                 }
             )
         }

@@ -13,7 +13,6 @@ import io.ktor.client.plugins.cookies.HttpCookies
 import io.ktor.client.plugins.sse.SSE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.http.ChImpServiceHttp
@@ -70,7 +69,7 @@ class ChImpApplication : Application(), DependenciesContainer {
             context =  applicationContext,
             klass = ChImpClientDB::class.java,
             "chimp-db"
-        ).fallbackToDestructiveMigration().build()
+        ).build()
     }
 
     override val repo: ChImpRepo by lazy {

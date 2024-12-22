@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.storage.ChImpClientDB
 import pt.isel.chimp.storage.entities.ChannelEntity
@@ -24,8 +25,8 @@ class ChannelRepository(
                         channel.creator.username,
                         channel.creator.email
                     ),
-                    channel.channel.visibility
-                ) to channel.channel.role
+                    Visibility.valueOf(channel.channel.visibility)
+                ) to Role.valueOf(channel.channel.role)
             }.toMap()
         }
     }
@@ -39,12 +40,12 @@ class ChannelRepository(
             )
         }.toTypedArray())
         db.channelDao().insertChannels(*channels.keys.map { channel ->
-            ChannelEntity(
+                ChannelEntity(
                 channel.id,
                 channel.name,
                 channel.creator.id,
-                channel.visibility,
-                channels[channel] ?: Role.READ_WRITE
+                channel.visibility.value,
+                channels[channel]?.value ?: Role.READ_WRITE.value
             )
         }.toTypedArray())
         db.channelDao().insertUserInChannel(*channels.map { (channel, role) ->
