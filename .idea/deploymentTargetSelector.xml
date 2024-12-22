@@ -5,9 +5,6 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Tests in 'pt.isel.chimp'">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="ChannelsListActivity">
         <option name="selectionMode" value="DROPDOWN" />
         <DropdownSelection timestamp="2024-11-24T14:46:26.056797500Z">
@@ -34,9 +31,6 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="ChannelsListActivity">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="SearchChannelsActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

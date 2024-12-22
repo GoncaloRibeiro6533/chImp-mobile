@@ -25,7 +25,7 @@ class ChannelRepository(
                         channel.creator.email
                     ),
                     channel.channel.visibility
-                ) to Role.READ_WRITE
+                ) to channel.channel.role
             }.toMap()
         }
     }
@@ -43,7 +43,8 @@ class ChannelRepository(
                 channel.id,
                 channel.name,
                 channel.creator.id,
-                channel.visibility
+                channel.visibility,
+                channels[channel] ?: Role.READ_WRITE
             )
         }.toTypedArray())
         db.channelDao().insertUserInChannel(*channels.map { (channel, role) ->

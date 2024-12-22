@@ -12,10 +12,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import pt.isel.chimp.domain.Role
+import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.message.Message
+import pt.isel.chimp.domain.user.User
+import java.time.LocalDateTime
 
 @Composable
 fun ChannelView(
@@ -59,17 +65,13 @@ fun ChannelView(
 }
 
 
-/*
+
 private val userBob = User(1, "Bob", "bob@example.com")
 private val  userAlice = User(2, "Alice", "alice@example.com")
 private val channel = Channel(1, "Channel 1", userBob, Visibility.PUBLIC)
 
-
-@Preview(showBackground = true)
-@Composable
-fun ChannelViewPreview() {
-    ChannelView(
-        messages = listOf(
+private val messages =
+        listOf(
             Message(
                 1,
                 sender = userBob,
@@ -84,34 +86,25 @@ fun ChannelViewPreview() {
                 content = "Hello, Bob!",
                 timestamp = LocalDateTime.of(2021, 10, 1, 10, 1)
             )
-        ),
+        )
+
+@Preview(showBackground = true)
+@Composable
+fun ChannelViewPreview() {
+    ChannelView(
+        messages = MutableStateFlow(messages),
         onMessageSend = { },
         userRole = Role.READ_WRITE
     )
-}*/
+}
 
-/*
+
 @Preview(showBackground = true)
 @Composable
 fun ChannelViewPreviewReadOnly() {
     ChannelView(
-        messages = listOf(
-            Message(
-                1,
-                sender = userBob,
-                channel = channel,
-                content = "Hello, Alice!",
-                timestamp = LocalDateTime.of(2021, 10, 1, 10, 0)
-            ),
-            Message(
-                2,
-                sender = userBob,
-                channel = channel,
-                content = "This is my Channel",
-                timestamp = LocalDateTime.of(2021, 10, 1, 10, 1)
-            )
-        ),
+        messages = MutableStateFlow(messages),
         onMessageSend = { },
         userRole = Role.READ_ONLY
     )
-}*/
+}

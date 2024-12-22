@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import pt.isel.chimp.domain.Role
 
-
+/*
 @Entity(
     tableName = "user_channel_role",
     primaryKeys = ["userId", "channelId"],
@@ -28,4 +28,4 @@ data class UserChannelRoleEntity(
     val channelId: Int,
     val role: Role
 
-)
+)*/
