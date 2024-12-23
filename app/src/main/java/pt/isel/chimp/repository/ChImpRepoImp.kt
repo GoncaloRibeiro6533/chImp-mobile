@@ -9,7 +9,5 @@ class ChImpRepoImp(
     override val channelRepo = ChannelRepository(db)
     override val userRepo = UserRepository(db)
     override val messageRepo = MessageRepository(db)
-    /*val userRepo: UserRepo
-    val messageRepo: MessageRepo
-    */
+    override val invitationRepo = InvitationRepository(db)
 }

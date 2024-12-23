@@ -15,19 +15,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import pt.isel.chimp.channels.ChannelParcelable
+import pt.isel.chimp.channels.UserParcelable
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.profile.ErrorAlert
-import pt.isel.chimp.service.mock.MockChannelService
-import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -35,18 +29,17 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 @Composable
 fun SearchChannelsScreen(
     viewModel: SearchChannelsViewModel,
-    currentUser: User,
-    onMenuRequested: () -> Unit = { },
-    onChannelSelected: (ChannelParcelable) -> Unit = { }
+    onBackRequest: () -> Unit = { },
+    user: User,
+    onChannelSelected: (ChannelParcelable) -> Unit = { },
 ) {
     ChImpTheme {
         val state = viewModel.state.collectAsState().value
-        val userChannels = viewModel.userChannels.collectAsState().value
         val searchQuery = remember { mutableStateOf("") }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                TopBar(NavigationHandlers(onMenuRequested = onMenuRequested))
+                TopBar(NavigationHandlers(onBackRequested = onBackRequest))
             },
         ) { innerPadding ->
             Column(
@@ -54,35 +47,45 @@ fun SearchChannelsScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                Text(
-                    text = "Search Channels",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-                OutlinedTextField(
-                    value = searchQuery.value,
-                    onValueChange = {
-                        searchQuery.value = it
-                        viewModel.getChannels(it, 10, 0)
-                    },
-                    label = { Text("Search") },
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
-                    },
-                    modifier = Modifier.padding(16.dp)
-                )
+                    Text(
+                        text = "Search Channels",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                    OutlinedTextField(
+                        value = searchQuery.value,
+                        onValueChange = {
+                            searchQuery.value = it
+                            viewModel.getChannels(it,  20, 0)
+                        },
+                        label = { Text("Search") },
+                        leadingIcon = {
+                            Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
+                        },
+                        modifier = Modifier.padding(16.dp)
+                    )
                 when (state) {
                     is SearchChannelsScreenState.Loading -> {
                         LoadingView()
                     }
                     is SearchChannelsScreenState.Typing -> {
-                        //LoadingView()
                     }
                     is SearchChannelsScreenState.Success -> {
-                        SearchChannelListView(state.channels, userChannels, currentUser, viewModel) {
-                            onChannelSelected(it)
+                        SearchChannelListView(state.channels, state.channelsOfUser, user) {
+                            viewModel.addUserToChannel(user.id, it.toChannel())
                         }
+                    }
+                    is SearchChannelsScreenState.EnteringChannel -> {
+                        LoadingView()
+                         onChannelSelected(
+                            ChannelParcelable(
+                                state.channel.id,
+                                state.channel.name,
+                                UserParcelable(state.channel.creator.id, state.channel.creator.username, state.channel.creator.email),
+                                state.channel.visibility,
+                                state.role
+                            ))
                     }
                     is SearchChannelsScreenState.Error -> {
                         ErrorAlert(

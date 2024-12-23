@@ -1,5 +1,6 @@
 package pt.isel.chimp.menu
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +17,8 @@ import androidx.compose.material.icons.filled.Search
 import androidx.work.WorkManager
 import pt.isel.chimp.DependenciesContainer
 import pt.isel.chimp.about.AboutActivity
+import pt.isel.chimp.channels.UserParcelable
+import pt.isel.chimp.channels.channel.ChannelActivity
 import pt.isel.chimp.channels.createChannel.CreateChannelActivity
 import pt.isel.chimp.channels.searchChannels.SearchChannelsActivity
 import pt.isel.chimp.home.HomeActivity
@@ -60,11 +63,13 @@ class MenuActivity : ComponentActivity() {
             finish()
         },
 
-        MenuItem("Search channel", "search channel screen", Icons.Default.Search) {
-            navigateTo(
-                this,
-                SearchChannelsActivity::class.java
-            )
+        MenuItem("Search channel", "search channel screen", Icons.Default.Search) { user->
+            finish()
+            val parcelable = UserParcelable(user.id, user.username, user.email)
+            val intent = Intent(this, SearchChannelsActivity::class.java)
+                .putExtra("user", parcelable)
+            finish()
+            this.startActivity(intent)
         },
         MenuItem("Create channel", "create channel screen", Icons.Default.Add) {
             navigateTo(
@@ -84,6 +89,7 @@ class MenuActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        viewModel.getUserInfo()
         setContent {
             MenuScreen(
                 viewModel = viewModel,
@@ -96,6 +102,7 @@ class MenuActivity : ComponentActivity() {
                     //
                     //finishAffinity()
                     //finish previous activity
+                    WorkManager.getInstance(applicationContext).cancelAllWork()
                     finishAffinity()
                     navigateTo(this, HomeActivity::class.java)
                 }

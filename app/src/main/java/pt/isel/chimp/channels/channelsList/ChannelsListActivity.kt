@@ -7,11 +7,13 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import pt.isel.chimp.CoroutineSseWorkItem
 import pt.isel.chimp.DependenciesContainer
+import pt.isel.chimp.SseForegroundService
 import pt.isel.chimp.channels.ChannelParcelable
 import pt.isel.chimp.channels.channel.ChannelActivity
 import pt.isel.chimp.channels.createChannel.CreateChannelActivity
@@ -42,15 +44,19 @@ class ChannelsListActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-        val workItem = OneTimeWorkRequestBuilder<CoroutineSseWorkItem>()
-            .setConstraints(constraints).build()
-
-        WorkManager.getInstance(this)
-            .enqueue(workItem)
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+            val workRequest = OneTimeWorkRequestBuilder<CoroutineSseWorkItem>()
+                .setConstraints(constraints)
+                .addTag("sse")
+                .build()
+            WorkManager.getInstance(applicationContext).enqueueUniqueWork(
+                "SseWork",
+                ExistingWorkPolicy.KEEP,
+                workRequest)
+        /* val intent = Intent(this, SseForegroundService::class.java)
+         startService(intent)*/
         setContent {
             viewModel.loadLocalData()
             ChannelsListScreen(
@@ -59,7 +65,7 @@ class ChannelsListActivity : ComponentActivity() {
                     navigateTo(this, MenuActivity::class.java)
                 },
                 onChannelSelected = { channel ->
-                   navigateToChannel(channel)
+                    navigateToChannel(channel)
                 },
                 onNavigateToCreateChannel = { navigateTo(this, CreateChannelActivity::class.java) },
                 onFatalError = {

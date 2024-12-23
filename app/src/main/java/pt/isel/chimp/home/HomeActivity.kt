@@ -24,9 +24,10 @@ class HomeActivity : ComponentActivity() {
 
     private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
 
+    private val cookieRepo by lazy { (application as DependenciesContainer).cookieRep }
     private val viewModel by viewModels<HomeScreenViewModel>(
         factoryProducer = {
-            HomeScreenViewModelFactory(userInfoRepository)
+            HomeScreenViewModelFactory(userInfoRepository, cookieRepo)
         }
     )
 

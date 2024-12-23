@@ -10,12 +10,15 @@ import pt.isel.chimp.storage.entities.MessageEntity
 import pt.isel.chimp.storage.entities.UserEntity
 import pt.isel.chimp.storage.entities.UserInChannel
 
-@Database(entities = [ChannelEntity::class, UserEntity::class, UserInChannel::class, MessageEntity::class], version =10)
+@Database(entities = [
+    ChannelEntity::class,
+    UserEntity::class,
+    UserInChannel::class,
+    MessageEntity::class,
+   ], version =13)
 abstract class ChImpClientDB : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun channelDao(): ChannelDao
     abstract fun messageDao(): MessageDao
-   /* abstract fun channelUserDao(): ChannelUserDao
-    abstract fun channelMessageDao(): ChannelMessageDao
-    abstract fun channelUserMessageDao(): ChannelUserMessageDao*/
+    //abstract fun invitationDao(): InvitationDao
 }

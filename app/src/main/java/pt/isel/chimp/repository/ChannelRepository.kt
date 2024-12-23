@@ -58,6 +58,17 @@ class ChannelRepository(
 
     }
 
+    suspend fun updateChannel(channel: Channel) {
+        db.channelDao().updateChannelName(channel.id, channel.name)
+    }
+
+    suspend fun insertUserInChannel(userId: Int, channelId: Int, role: Role) {
+        db.channelDao().insertUserInChannel(UserInChannel(userId, channelId, role.value))
+    }
+
+    suspend fun removeUserFromChannel(userId: Int, channelId: Int) {
+        db.channelDao().deleteUserInChannel(userId, channelId)
+    }
     suspend fun clear() {
         db.channelDao().clearUserInChannel()
         db.channelDao().clear()

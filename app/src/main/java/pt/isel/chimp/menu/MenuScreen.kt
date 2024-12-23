@@ -38,6 +38,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
+import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.profile.ErrorAlert
@@ -52,7 +53,7 @@ data class MenuItem(
     val title: String,
     val description: String,
     val icon: ImageVector,
-    val onClick: () -> Unit
+    val onClick: (user: User) -> Unit
 
 )
 
@@ -69,7 +70,7 @@ fun MenuScreen(
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                if (state == MenuScreenState.Idle || state is MenuScreenState.Error) {
+                if (state is MenuScreenState.Idle || state is MenuScreenState.Error) {
                     TopBar(NavigationHandlers(onBackRequested = onNavigateBack))
                 }
             },
@@ -79,10 +80,12 @@ fun MenuScreen(
             ) {
                 HorizontalDivider()
             when (state) {
+                is MenuScreenState.LoadFromUserInfo -> {
+                }
                 is MenuScreenState.Idle -> {
                     LazyColumn {
                         items(menuItems) { item ->
-                            MenuItemView(item)
+                            MenuItemView(item, state.user)
                             HorizontalDivider()
                         }
                     }
@@ -136,11 +139,11 @@ fun MenuScreen(
 
 
 @Composable
-private fun MenuItemView(item: MenuItem) {
+private fun MenuItemView(item: MenuItem, user: User) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = item.onClick)
+            .clickable(onClick = { item.onClick(user) })
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -162,7 +165,10 @@ private fun MenuItemView(item: MenuItem) {
 @Preview
 @Composable
 fun MenuItemViewPreview() {
-    MenuItemView(MenuItem("About", "about screen", Icons.Default.Info, { }),)
+    MenuItemView(
+        MenuItem("About", "about screen", Icons.Default.Info, { }),
+        user = User(1, "Alice", "alice@example.com")
+    )
 }
 
 

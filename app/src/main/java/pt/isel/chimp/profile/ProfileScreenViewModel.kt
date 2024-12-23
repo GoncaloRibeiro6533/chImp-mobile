@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.profile.Profile
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.UserService
 import pt.isel.chimp.utils.Failure
@@ -28,6 +29,7 @@ sealed interface ProfileScreenState {
 class ProfileScreenViewModel(
     private val repo: UserInfoRepository,
     private val userServices: UserService,
+    private val db: ChImpRepo,
     initialState: ProfileScreenState = ProfileScreenState.Idle
     ) : ViewModel() {
 
@@ -93,12 +95,14 @@ class ProfileScreenViewModel(
 @Suppress("UNCHECKED_CAST")
 class ProfileScreenViewModelFactory(
     private val repo: UserInfoRepository,
-    private val service: ChImpService
+    private val service: ChImpService,
+    private val db:  ChImpRepo,
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>):  T {
         return ProfileScreenViewModel(
             repo,
-            service.userService
+            service.userService,
+            db
         ) as T
     }
 }

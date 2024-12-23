@@ -11,12 +11,14 @@ class ProfileActivity : ComponentActivity() {
 
     private val chImpService by lazy { (application as DependenciesContainer).chImpService }
     private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
+    private val chImpRepository by lazy { (application as DependenciesContainer).repo }
 
     private val viewModel by viewModels<ProfileScreenViewModel>(
         factoryProducer = {
             ProfileScreenViewModelFactory(
                 userInfoRepository,
-                chImpService
+                chImpService,
+                chImpRepository
             )
         }
     )
