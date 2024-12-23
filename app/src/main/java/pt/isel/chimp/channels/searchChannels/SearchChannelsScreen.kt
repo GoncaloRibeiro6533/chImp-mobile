@@ -21,8 +21,9 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import pt.isel.chimp.channels.ChannelParcelable
 import pt.isel.chimp.components.LoadingView
-import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.service.mock.MockChannelService
@@ -34,11 +35,13 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 @Composable
 fun SearchChannelsScreen(
     viewModel: SearchChannelsViewModel,
+    currentUser: User,
     onMenuRequested: () -> Unit = { },
-    onChannelSelected: (Channel) -> Unit = { }
+    onChannelSelected: (ChannelParcelable) -> Unit = { }
 ) {
     ChImpTheme {
         val state = viewModel.state.collectAsState().value
+        val userChannels = viewModel.userChannels.collectAsState().value
         val searchQuery = remember { mutableStateOf("") }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -77,9 +80,9 @@ fun SearchChannelsScreen(
                         //LoadingView()
                     }
                     is SearchChannelsScreenState.Success -> {
-                        //ChannelListView(state.channels) { ch ->
-                        //    onChannelSelected(ch)
-                        //}
+                        SearchChannelListView(state.channels, userChannels, currentUser, viewModel) {
+                            onChannelSelected(it)
+                        }
                     }
                     is SearchChannelsScreenState.Error -> {
                         ErrorAlert(
@@ -95,7 +98,7 @@ fun SearchChannelsScreen(
 }
 
 
-
+/*
 @Suppress("UNCHECKED_CAST")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -104,9 +107,12 @@ fun SearchChannelPreview() {
     val cookiesRepo = CookiesRepo(preferences)
     SearchChannelsScreen(
         viewModel = SearchChannelsViewModel(
-            MockChannelService(RepoMockImpl(cookiesRepo), cookiesRepo)
+            MockChannelService(RepoMockImpl(cookiesRepo), cookiesRepo),
         ),
+
         onMenuRequested = { },
         onChannelSelected = { }
     )
 }
+
+ */

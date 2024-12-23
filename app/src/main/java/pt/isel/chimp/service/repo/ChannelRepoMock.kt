@@ -15,8 +15,8 @@ class ChannelRepoMock {
                 Channel(1, "DAW", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
                 Channel(2, "PDM", User(2, "Alice", "alice@example.com"), Visibility.PRIVATE),
                 Channel(3, "TVS long long  name", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
-                /*Channel(4, "SegIngf", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
-                Channel(5, "IPW", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
+                Channel(4, "SegIngf", User(2, "Alice", "alice@example.com"), Visibility.PUBLIC),
+                /*Channel(5, "IPW", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
                 Channel(6, "PG", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
                 Channel(7, "PSC", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
                 Channel(8, "LSD", User(1, "Bob", "bob@example.com"), Visibility.PUBLIC),
@@ -25,7 +25,7 @@ class ChannelRepoMock {
                 Channel(11, "AED", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE),
 
                  */
-                Channel(12, "teste", users[1], Visibility.PRIVATE),
+                //Channel(12, "teste", users[1], Visibility.PRIVATE),
             )
 
         val userInChannel = mutableMapOf<Channel, MutableList<Pair<User, Role>>>(

@@ -27,7 +27,7 @@ class HomeScreenViewModel(
     var state: HomeScreenState by mutableStateOf<HomeScreenState>(initialState)
         private set
 
-    fun getSession(): Job? {
+    fun getSession(): Job {
         return viewModelScope.launch {
             delay(200)
             val userInfo = repo.getUserInfo()

@@ -34,7 +34,9 @@ import pt.isel.chimp.utils.RoundedRectangleWithText
 fun ChannelItem(
     channel: Channel,
     role: Role,
-    onClick: (ChannelParcelable) -> Unit) {
+    onClick: (ChannelParcelable) -> Unit,
+    showJoinMessage: Boolean = false
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,7 +52,16 @@ fun ChannelItem(
                 )
                        },
     ) {
-        ChannelDetailsView(channel)
+        Column {
+            ChannelDetailsView(channel)
+            if (showJoinMessage) {
+                Text(
+                    text = "You can join this channel",
+                    color = Color.Gray,
+                    modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                )
+            }
+        }
     }
 }
 

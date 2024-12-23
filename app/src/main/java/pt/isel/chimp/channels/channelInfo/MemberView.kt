@@ -64,9 +64,6 @@ fun MemberView(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
             ) {
-                /*todo add tag creator to the user that created the channel
-                 *  (user.id == channel.creatorId)
-                 */
                 val darkGreen = Color(0xFF006400)
                 val redColor = Color.Red
                 val roleLabel: String

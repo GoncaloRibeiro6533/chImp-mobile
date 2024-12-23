@@ -1,5 +1,6 @@
 package pt.isel.chimp.channels.channel
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -25,6 +26,10 @@ class ChannelActivity : ComponentActivity() {
         }
     )
 
+    private fun navigateToChannelInfo(channel: ChannelParcelable){
+        val intent = Intent(this, ChannelInfoActivity::class.java).putExtra("channel", channel)
+        this.startActivity(intent)
+    }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?,) {
@@ -50,11 +55,9 @@ class ChannelActivity : ComponentActivity() {
                     navigateTo(this, ChannelsListActivity::class.java)
                     finish() },
                 onNavigationChannelInfo = {
-                    navigateTo(this, ChannelInfoActivity::class.java)
+                    navigateToChannelInfo(channel)
                 }
             )
         }
     }
-
-
 }
