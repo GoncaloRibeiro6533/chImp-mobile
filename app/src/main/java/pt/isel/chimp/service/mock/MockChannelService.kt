@@ -42,6 +42,7 @@ class MockChannelService(
                 return@interceptRequest failure(ApiError("Channel name already exists"))
             }
             val channel = repoMock.channelRepoMock.createChannel(name, visibility, userCreator)
+            joinChannel(userCreator.id, channel.id, Role.READ_WRITE)
             return@interceptRequest success(channel)
         }
 
@@ -80,7 +81,7 @@ class MockChannelService(
             val channel = repoMock.channelRepoMock.findChannelById(channelId) ?: return@interceptRequest failure(ApiError("Channel not found"))
             val channelOfUser = repoMock.channelRepoMock.findChannelsOfUser(user)
             if (channel in channelOfUser) return@interceptRequest failure(ApiError("User already in channel"))
-            repoMock.channelRepoMock.addUserToChannel(userToAdd, channel, role)
+            repoMock.channelRepoMock.addUserToChannel(user, channel, role)
             return@interceptRequest success(channel)
         }
 

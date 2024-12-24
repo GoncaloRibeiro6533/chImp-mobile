@@ -1,11 +1,9 @@
 package pt.isel.chimp.service.repo
 
-import androidx.compose.ui.text.toLowerCase
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.service.repo.UserRepoMock.Companion.users
 
 class ChannelRepoMock {
 
@@ -40,22 +38,25 @@ class ChannelRepoMock {
                 User(1, "Bob", "bob@example.com") to Role.READ_ONLY,
             ),
             Channel(3, "TVS long long  name", User(1, "Bob", "bob@example.com"), Visibility.PRIVATE) to mutableListOf(
-                User(1, "Bob", "bob@example.com") to Role.READ_WRITE,)
+                User(1, "Bob", "bob@example.com") to Role.READ_WRITE,
+                ),
+            Channel(4, "SegIngf", User(2, "Alice", "alice@example.com"), Visibility.PUBLIC) to mutableListOf(
+                User(2, "Alice", "alice@example.com") to Role.READ_WRITE)
         )
 
         private var currentId = 50
     }
 
-    fun addUserToChannel(userToAdd: Int, channel: Channel, role: Role) {
+    fun addUserToChannel(userToAdd: User, channel: Channel, role: Role) {
         val entry = userInChannel.getOrDefault(channel, mutableListOf())
-        entry.add(User(userToAdd, "name", "email") to role)
+        entry.add(userToAdd to role)
         userInChannel[channel] = entry
     }
 
     fun createChannel(name: String, visibility: Visibility, creator: User): Channel {
         val channel = Channel(currentId++, name, creator, visibility)
         channels.add(channel)
-        addUserToChannel(creator.id, channel, Role.READ_WRITE)
+        addUserToChannel(creator, channel, Role.READ_WRITE)
         return channel
     }
 

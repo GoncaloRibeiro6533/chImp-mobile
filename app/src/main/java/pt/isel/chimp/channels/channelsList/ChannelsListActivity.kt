@@ -13,7 +13,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import pt.isel.chimp.CoroutineSseWorkItem
 import pt.isel.chimp.DependenciesContainer
-import pt.isel.chimp.SseForegroundService
 import pt.isel.chimp.channels.ChannelParcelable
 import pt.isel.chimp.channels.channel.ChannelActivity
 import pt.isel.chimp.channels.createChannel.CreateChannelActivity

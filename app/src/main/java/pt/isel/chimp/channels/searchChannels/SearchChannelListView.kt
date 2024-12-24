@@ -16,13 +16,11 @@ import pt.isel.chimp.channels.channelsList.components.ChannelItem
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
-import pt.isel.chimp.domain.user.User
 
 @Composable
 fun SearchChannelListView(
     channels: List<Channel>,
     userChannels: StateFlow<Map<Channel, Role>>,
-    currentUser: User,
     onChannelSelected: (ChannelParcelable) -> Unit
 ) {
     val userC = userChannels.collectAsState().value

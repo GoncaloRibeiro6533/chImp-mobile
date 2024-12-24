@@ -30,7 +30,7 @@ class SearchChannelsViewModel(
     private val service: ChImpService,
     private val repository: ChImpRepo,
     private val userInfo : UserInfoRepository,
-initialState: SearchChannelsScreenState = SearchChannelsScreenState.Typing
+    initialState: SearchChannelsScreenState = SearchChannelsScreenState.Typing
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<SearchChannelsScreenState>(initialState)
@@ -56,21 +56,21 @@ initialState: SearchChannelsScreenState = SearchChannelsScreenState.Typing
     fun getChannels(name :String, limit: Int, skip: Int) {
         if (_state.value is SearchChannelsScreenState.Typing || _state.value is SearchChannelsScreenState.Success) {
             _state.value = SearchChannelsScreenState.Loading
-        viewModelScope.launch {
-            if (name.isEmpty()) {
-                _state.value = SearchChannelsScreenState.Typing
-            } else {
-                _state.value = try {
-                    when (val channels = service.channelService.searchChannelByName(name, limit, skip)) {
-                        is Success -> SearchChannelsScreenState.Success(channels.value, _channels)
-                        is Failure -> SearchChannelsScreenState.Error(channels.value)
+            viewModelScope.launch {
+                if (name.isEmpty()) {
+                    _state.value = SearchChannelsScreenState.Typing
+                } else {
+                    _state.value = try {
+                        when (val channels = service.channelService.searchChannelByName(name, limit, skip)) {
+                            is Success -> SearchChannelsScreenState.Success(channels.value, _channels)
+                            is Failure -> SearchChannelsScreenState.Error(channels.value)
+                        }
+                    } catch (e: Throwable) {
+                        SearchChannelsScreenState.Error(ApiError("Error searching channels"))
                     }
-                } catch (e: Throwable) {
-                    SearchChannelsScreenState.Error(ApiError("Error searching channels"))
                 }
             }
         }
-    }
     }
 
 

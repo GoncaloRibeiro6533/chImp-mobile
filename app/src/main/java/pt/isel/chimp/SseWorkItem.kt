@@ -51,7 +51,7 @@ class CoroutineSseWorkItem(
         val client = (applicationContext as DependenciesContainer).client
         val repo = (applicationContext as DependenciesContainer).repo
         val userInfo = (applicationContext as DependenciesContainer).userInfoRepository
-        setForeground(createForegroundInfo("Listening for events"))
+        //setForeground(createForegroundInfo("Listening for events"))
         return withContext(Dispatchers.IO) {
             while(true) {
                 try {

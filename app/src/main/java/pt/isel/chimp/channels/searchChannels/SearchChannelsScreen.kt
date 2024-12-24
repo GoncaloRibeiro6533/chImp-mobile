@@ -47,24 +47,24 @@ fun SearchChannelsScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                    Text(
-                        text = "Search Channels",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 16.dp)
-                    )
-                    OutlinedTextField(
-                        value = searchQuery.value,
-                        onValueChange = {
-                            searchQuery.value = it
-                            viewModel.getChannels(it,  20, 0)
-                        },
-                        label = { Text("Search") },
-                        leadingIcon = {
-                            Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
-                        },
-                        modifier = Modifier.padding(16.dp)
-                    )
+                Text(
+                    text = "Search Channels",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+                OutlinedTextField(
+                    value = searchQuery.value,
+                    onValueChange = {
+                        searchQuery.value = it
+                        viewModel.getChannels(it,  20, 0)
+                    },
+                    label = { Text("Search") },
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
+                    },
+                    modifier = Modifier.padding(16.dp)
+                )
                 when (state) {
                     is SearchChannelsScreenState.Loading -> {
                         LoadingView()
@@ -72,13 +72,13 @@ fun SearchChannelsScreen(
                     is SearchChannelsScreenState.Typing -> {
                     }
                     is SearchChannelsScreenState.Success -> {
-                        SearchChannelListView(state.channels, state.channelsOfUser, user) {
+                        SearchChannelListView(state.channels, state.channelsOfUser) {
                             viewModel.addUserToChannel(user.id, it.toChannel())
                         }
                     }
                     is SearchChannelsScreenState.EnteringChannel -> {
                         LoadingView()
-                         onChannelSelected(
+                        onChannelSelected(
                             ChannelParcelable(
                                 state.channel.id,
                                 state.channel.name,

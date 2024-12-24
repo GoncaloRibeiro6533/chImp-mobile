@@ -60,7 +60,7 @@ class MockInvitationService(
                 ?: return@interceptRequest failure(ApiError("Invitation not found"))
             if (invitation.isUsed) return@interceptRequest failure(ApiError("Invitation already used"))
             val channel = repoMock.invitationRepoMock.acceptInvitation(invitationId)
-            repoMock.channelRepoMock.addUserToChannel(user.id, invitation.channel, invitation.role)
+            repoMock.channelRepoMock.addUserToChannel(user, invitation.channel, invitation.role)
             return@interceptRequest success(channel)
         }
 
