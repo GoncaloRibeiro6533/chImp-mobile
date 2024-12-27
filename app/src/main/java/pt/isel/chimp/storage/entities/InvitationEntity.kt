@@ -1,5 +1,5 @@
 package pt.isel.chimp.storage.entities
-/*
+
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -48,4 +48,4 @@ data class InvitationWithSenderChannel(
         parentColumn = "creatorId",
         entityColumn = "id"
     ) val creator: UserEntity,
-)*/
+)

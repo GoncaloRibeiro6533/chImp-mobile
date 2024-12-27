@@ -9,6 +9,7 @@ import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.storage.ChImpClientDB
 import pt.isel.chimp.storage.entities.ChannelEntity
+import pt.isel.chimp.storage.entities.InvitationEntity
 //import pt.isel.chimp.storage.entities.InvitationEntity
 import pt.isel.chimp.storage.entities.UserEntity
 import java.time.LocalDateTime
@@ -17,7 +18,7 @@ import java.time.ZoneOffset
 class InvitationRepository(
     private val db: ChImpClientDB
 ) {
-    /*
+/*
     suspend fun insertInvitations(invitations: List<Invitation>) {
         val channels = invitations.map { it.channel }.distinct()
         val senders = invitations.map { it.sender }.distinct()
@@ -81,5 +82,7 @@ class InvitationRepository(
             invitation.isUsed,
             invitation.timestamp.toEpochSecond(ZoneOffset.UTC)
         ))
-    }*/
+    }
+
+ */
 }

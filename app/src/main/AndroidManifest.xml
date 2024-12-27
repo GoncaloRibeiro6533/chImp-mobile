@@ -87,6 +87,12 @@
             android:label="SearchChannelsActivity"
             android:theme="@style/Theme.ChImp"
             />
+        <activity
+            android:name=".invitationList.InvitationListActivity"
+            android:exported="true"
+            android:label="InvitationListActivity"
+            android:theme="@style/Theme.ChImp"
+            />
     </application>
 
 </manifest>

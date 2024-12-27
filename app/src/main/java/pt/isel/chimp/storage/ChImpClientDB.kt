@@ -3,6 +3,7 @@ package pt.isel.chimp.storage
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import pt.isel.chimp.storage.daos.ChannelDao
+//import pt.isel.chimp.storage.daos.InvitationDao
 import pt.isel.chimp.storage.daos.MessageDao
 import pt.isel.chimp.storage.daos.UserDao
 import pt.isel.chimp.storage.entities.ChannelEntity

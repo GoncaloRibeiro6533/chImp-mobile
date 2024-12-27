@@ -22,6 +22,7 @@ import pt.isel.chimp.channels.channel.ChannelActivity
 import pt.isel.chimp.channels.createChannel.CreateChannelActivity
 import pt.isel.chimp.channels.searchChannels.SearchChannelsActivity
 import pt.isel.chimp.home.HomeActivity
+import pt.isel.chimp.invitationList.InvitationListActivity
 import pt.isel.chimp.profile.ProfileActivity
 import pt.isel.chimp.utils.navigateTo
 
@@ -78,6 +79,11 @@ class MenuActivity : ComponentActivity() {
             )
         },
         MenuItem("My Channel Invitations", "my channel invitations screen", Icons.Default.Notifications) {
+
+            navigateTo(
+                this,
+                InvitationListActivity::class.java
+            )
 
         },
         MenuItem("Logout", "logout screen", Icons.AutoMirrored.Filled.ExitToApp) {
