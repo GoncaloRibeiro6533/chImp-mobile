@@ -30,7 +30,6 @@ class MockInvitationService(
 
 
     override suspend fun createChannelInvitation(
-        senderId: Int, //todo senderId adicionado por causa do http
         receiverId: Int,
         channelId: Int,
         role: Role,

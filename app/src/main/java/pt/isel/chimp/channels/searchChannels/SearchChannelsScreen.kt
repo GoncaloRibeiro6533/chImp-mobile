@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import pt.isel.chimp.channels.ChannelParcelable
 import pt.isel.chimp.channels.UserParcelable
 import pt.isel.chimp.components.LoadingView
-import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
@@ -30,7 +29,6 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 fun SearchChannelsScreen(
     viewModel: SearchChannelsViewModel,
     onBackRequest: () -> Unit = { },
-    user: User,
     onChannelSelected: (ChannelParcelable) -> Unit = { },
 ) {
     ChImpTheme {
@@ -47,24 +45,24 @@ fun SearchChannelsScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                Text(
-                    text = "Search Channels",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-                OutlinedTextField(
-                    value = searchQuery.value,
-                    onValueChange = {
-                        searchQuery.value = it
-                        viewModel.getChannels(it,  20, 0)
-                    },
-                    label = { Text("Search") },
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
-                    },
-                    modifier = Modifier.padding(16.dp)
-                )
+                    Text(
+                        text = "Search Channels",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                    OutlinedTextField(
+                        value = searchQuery.value,
+                        onValueChange = {
+                            searchQuery.value = it
+                            viewModel.getChannels(it,  20, 0)
+                        },
+                        label = { Text("Search") },
+                        leadingIcon = {
+                            Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
+                        },
+                        modifier = Modifier.padding(16.dp)
+                    )
                 when (state) {
                     is SearchChannelsScreenState.Loading -> {
                         LoadingView()
@@ -73,12 +71,12 @@ fun SearchChannelsScreen(
                     }
                     is SearchChannelsScreenState.Success -> {
                         SearchChannelListView(state.channels, state.channelsOfUser) {
-                            viewModel.addUserToChannel(user.id, it.toChannel())
+                            viewModel.addUserToChannel(it.toChannel())
                         }
                     }
                     is SearchChannelsScreenState.EnteringChannel -> {
                         LoadingView()
-                        onChannelSelected(
+                         onChannelSelected(
                             ChannelParcelable(
                                 state.channel.id,
                                 state.channel.name,

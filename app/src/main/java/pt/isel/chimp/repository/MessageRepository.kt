@@ -58,6 +58,15 @@ class MessageRepository(
         return a.distinctUntilChanged()
     }
 
+    suspend fun channelHasMessages(channel: Channel): Boolean {
+        return db.messageDao().nMessagesOfChannel(channel.id) > 0
+    }
+
+
+    suspend fun deleteMessages(channel: Channel) {
+        db.messageDao().deleteMessagesOfChannel(channel.id)
+    }
+
     suspend fun clear() {
         db.messageDao().clear()
     }

@@ -18,7 +18,7 @@ import java.time.ZoneOffset
 class InvitationRepository(
     private val db: ChImpClientDB
 ) {
-/*
+
     suspend fun insertInvitations(invitations: List<Invitation>) {
         val channels = invitations.map { it.channel }.distinct()
         val senders = invitations.map { it.sender }.distinct()
@@ -26,11 +26,11 @@ class InvitationRepository(
         val users = (senders + creators).distinct()
         val invitationsEntity = invitations.map {
             InvitationEntity(
-                it.invitationId,
+                it.id,
                 it.sender.id,
                 it.receiver.id,
                 it.channel.id,
-                it.role.value,
+                it.role.name,
                 it.isUsed,
                 it.timestamp.toEpochSecond(ZoneOffset.UTC)
             )
@@ -47,8 +47,8 @@ class InvitationRepository(
                 it.id,
                 it.name,
                 it.creator.id,
-                it.visibility.value,
-                invitations.first { invitation -> invitation.channel.id == it.id }.role.value
+                it.visibility.name,
+                invitations.first { invitation -> invitation.channel.id == it.id }.role.name
             )
         }.toTypedArray())
         db.invitationDao().insertInvitations(*invitationsEntity.toTypedArray())
@@ -72,17 +72,11 @@ class InvitationRepository(
         }
     }
 
-    suspend fun deleteInvitation(invitation: Invitation) {
-        db.invitationDao().deleteInvitation(InvitationEntity(
-            invitation.invitationId,
-            invitation.sender.id,
-            invitation.receiver.id,
-            invitation.channel.id,
-            invitation.role.value,
-            invitation.isUsed,
-            invitation.timestamp.toEpochSecond(ZoneOffset.UTC)
-        ))
+    suspend fun deleteInvitation(invitationId: Int) {
+        db.invitationDao().deleteInvitation(invitationId)
     }
 
- */
+    suspend fun deleteAllInvitations() {
+        db.invitationDao().deleteAllInvitations()
+    }
 }

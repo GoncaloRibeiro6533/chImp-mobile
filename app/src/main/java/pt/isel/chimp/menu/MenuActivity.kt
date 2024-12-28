@@ -1,6 +1,5 @@
 package pt.isel.chimp.menu
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,8 +16,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.work.WorkManager
 import pt.isel.chimp.DependenciesContainer
 import pt.isel.chimp.about.AboutActivity
-import pt.isel.chimp.channels.UserParcelable
-import pt.isel.chimp.channels.channel.ChannelActivity
+import pt.isel.chimp.channels.channelsList.ChannelsListActivity
 import pt.isel.chimp.channels.createChannel.CreateChannelActivity
 import pt.isel.chimp.channels.searchChannels.SearchChannelsActivity
 import pt.isel.chimp.home.HomeActivity
@@ -32,7 +30,6 @@ class MenuActivity : ComponentActivity() {
     private val chImpService by lazy { (application as DependenciesContainer).chImpService }
     private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
     private val chImpRepo by lazy { (application as DependenciesContainer).repo }
-    private val db by lazy { (application as DependenciesContainer).clientDB }
     private val viewModel by viewModels<MenuViewModel>(
         factoryProducer = {
             MenuViewModelFactory(
@@ -51,12 +48,14 @@ class MenuActivity : ComponentActivity() {
                 this,
                 AboutActivity::class.java
             )
+            finish()
         },
         MenuItem("Profile", "profile screen", Icons.Default.Person) {
             navigateTo(
                 this,
                 ProfileActivity::class.java
             )
+            finish()
         },
         MenuItem("My Channels", "my channels screen", Icons.AutoMirrored.Filled.List) {
             /*navigateTo(this,
@@ -64,19 +63,19 @@ class MenuActivity : ComponentActivity() {
             finish()
         },
 
-        MenuItem("Search channel", "search channel screen", Icons.Default.Search) { user->
+        MenuItem("Search channel", "search channel screen", Icons.Default.Search) {
+            navigateTo(
+                this,
+                SearchChannelsActivity::class.java
+            )
             finish()
-            val parcelable = UserParcelable(user.id, user.username, user.email)
-            val intent = Intent(this, SearchChannelsActivity::class.java)
-                .putExtra("user", parcelable)
-            finish()
-            this.startActivity(intent)
         },
         MenuItem("Create channel", "create channel screen", Icons.Default.Add) {
             navigateTo(
                 this,
                 CreateChannelActivity::class.java
             )
+            finish()
         },
         MenuItem("My Channel Invitations", "my channel invitations screen", Icons.Default.Notifications) {
 
@@ -84,24 +83,24 @@ class MenuActivity : ComponentActivity() {
                 this,
                 InvitationListActivity::class.java
             )
+            finish()
 
         },
         MenuItem("Logout", "logout screen", Icons.AutoMirrored.Filled.ExitToApp) {
-            viewModel.logout()
             WorkManager.getInstance(applicationContext).cancelAllWork()
+            viewModel.logout()
         },
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        viewModel.getUserInfo()
         setContent {
             MenuScreen(
                 viewModel = viewModel,
                 menuItems = menuItems,
                 onNavigateBack = {
-                    //navigateTo(this, ChannelsListActivity::class.java)
+                    navigateTo(this, ChannelsListActivity::class.java)
                     finish()
                 },
                 onLogout = {

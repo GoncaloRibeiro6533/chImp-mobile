@@ -32,6 +32,10 @@ class UserRepository(
         }
     }
 
+    suspend fun updateUser(user: User) {
+        db.userDao().updateUsername(user.id, user.username)
+    }
+
     suspend fun clear() {
         db.userDao().clear()
     }

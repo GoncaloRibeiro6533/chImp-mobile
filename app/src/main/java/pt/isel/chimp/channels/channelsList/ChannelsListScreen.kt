@@ -58,13 +58,11 @@ fun ChannelsListScreen(
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
                 when (state) {
-                    is ChannelsListScreenState.LoadingUserInfo,
                     is ChannelsListScreenState.LoadFromRemote,
                     is ChannelsListScreenState.SaveData
                         -> {
                         LoadingView()
-                        if (state is ChannelsListScreenState.LoadingUserInfo) viewModel.loadUserInfoData()
-                        if (state is ChannelsListScreenState.LoadFromRemote) viewModel.loadRemoteData(state.userInfo)
+                        if (state is ChannelsListScreenState.LoadFromRemote) viewModel.loadRemoteData()
                         if (state is ChannelsListScreenState.SaveData) viewModel.saveData(state.user,state.channels)
                     }
                     is ChannelsListScreenState.Uninitialized -> {

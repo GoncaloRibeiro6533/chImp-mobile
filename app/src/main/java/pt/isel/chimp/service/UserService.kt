@@ -20,7 +20,6 @@ interface UserService {
     /**
      * Updates the username of a user.
      * @param newUsername the new username.
-     * @param token the user token.
      * @return the updated user.
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
@@ -50,7 +49,6 @@ interface UserService {
 
     /**
      * Finds a user by its id.
-     * @param token the user token.
      * @param id of an user.
      * @return the user.
      * @return ApiError if an error occurs.
@@ -60,10 +58,12 @@ interface UserService {
 
     /**
      * Logs out a user.
-     * @param token the user token.
      * @return Unit.
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
      */
     suspend fun logout(): Either<ApiError, Unit>
+
+
+    suspend fun findUserByUsername(query: String): Either<ApiError, List<User>>
 }

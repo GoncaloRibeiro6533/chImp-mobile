@@ -6,10 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.repository.UserInfoRepository
-import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.http.utils.ApiError
 import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.ChImpService
@@ -17,8 +15,7 @@ import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
 
 sealed class MenuScreenState {
-    data object LoadFromUserInfo : MenuScreenState()
-    data class Idle(val user: User) : MenuScreenState()
+    data object Idle : MenuScreenState()
     data object LoggingOut : MenuScreenState()
     data object LoggedOut : MenuScreenState()
     data class Error(val error: ApiError) : MenuScreenState()
@@ -28,7 +25,7 @@ class MenuViewModel(
     private val userInfo: UserInfoRepository,
     private val service: ChImpService,
     private val repo: ChImpRepo,
-    initialState: MenuScreenState = MenuScreenState.LoadFromUserInfo
+    initialState: MenuScreenState = MenuScreenState.Idle
 ) : ViewModel() {
 
     var state: MenuScreenState by mutableStateOf(initialState)
@@ -41,6 +38,7 @@ class MenuViewModel(
            state =  try {
                  when (val result = service.userService.logout()) {
                     is Success -> {
+                        repo.invitationRepo.deleteAllInvitations()
                         repo.messageRepo.clear()
                         repo.channelRepo.clear()
                         repo.userRepo.clear()
@@ -48,29 +46,26 @@ class MenuViewModel(
                         //Destroy the work manager
                         MenuScreenState.LoggedOut
                     }
-                    is Failure -> MenuScreenState.Error(result.value)
+                    is Failure -> {
+                        userInfo.clearUserInfo()
+                        repo.invitationRepo.deleteAllInvitations()
+                        repo.messageRepo.clear()
+                        repo.channelRepo.clear()
+                        repo.userRepo.clear()
+                        MenuScreenState.LoggedOut
+                    }
                 }
             } catch (e: Exception) {
                userInfo.clearUserInfo()
+               repo.invitationRepo.deleteAllInvitations()
                repo.messageRepo.clear()
                repo.channelRepo.clear()
                repo.userRepo.clear()
-               //TODO
-               MenuScreenState.Error(ApiError("Error logging out"))
+               MenuScreenState.LoggedOut
             }
         }
     }
 
-    fun getUserInfo() : Job {
-        return viewModelScope.launch {
-            try {
-                val user = userInfo.getUserInfo() ?: throw Exception("User not found")
-                state = MenuScreenState.Idle(user)
-            } catch (e: Exception) {
-                state = MenuScreenState.Error(ApiError("Error getting user info"))
-            }
-        }
-    }
 
 
 }

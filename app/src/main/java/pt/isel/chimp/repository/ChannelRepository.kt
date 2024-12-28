@@ -15,7 +15,7 @@ class ChannelRepository(
     private val db: ChImpClientDB
 ) {
     fun getChannels(): Flow<Map<Channel, Role>> {
-        return db.channelDao().getAllChannels().map { channels ->
+        return db.channelDao().getChannels().map { channels ->
             channels.map { channel ->
                 Channel(
                     channel.channel.id,
@@ -44,15 +44,15 @@ class ChannelRepository(
                 channel.id,
                 channel.name,
                 channel.creator.id,
-                channel.visibility.value,
-                channels[channel]?.value ?: Role.READ_WRITE.value
+                channel.visibility.name,
+                channels[channel]?.name ?: Role.READ_WRITE.name
             )
         }.toTypedArray())
         db.channelDao().insertUserInChannel(*channels.map { (channel, role) ->
             UserInChannel(
                 userId,
                 channel.id,
-                role.value
+                role.name
             )
         }.toTypedArray())
 
@@ -63,14 +63,44 @@ class ChannelRepository(
     }
 
     suspend fun insertUserInChannel(userId: Int, channelId: Int, role: Role) {
-        db.channelDao().insertUserInChannel(UserInChannel(userId, channelId, role.value))
+        db.channelDao().insertUserInChannel(UserInChannel(userId, channelId, role.name))
     }
 
     suspend fun removeUserFromChannel(userId: Int, channelId: Int) {
         db.channelDao().deleteUserInChannel(userId, channelId)
+        db.channelDao().deleteChannel(channelId)
     }
     suspend fun clear() {
         db.channelDao().clearUserInChannel()
         db.channelDao().clear()
+    }
+
+    fun getChannelMembers(channel: Channel) : Flow<Map<User, Role>> {
+        return db.channelDao().getChannelMembers(channel.id).map { users ->
+            users.map { user ->
+                User(
+                    user.user.id,
+                    user.user.username,
+                    user.user.email
+                ) to Role.valueOf(user.userInChannel.role)
+            }.toMap()
+        }
+    }
+
+    fun getAllChannels(): Flow<List<Channel>> {
+        return db.channelDao().getAllChannels().map { channels ->
+            channels.map { channel ->
+                Channel(
+                    channel.channel.id,
+                    channel.channel.name,
+                    User(
+                        channel.creator.id,
+                        channel.creator.username,
+                        channel.creator.email
+                    ),
+                    Visibility.valueOf(channel.channel.visibility)
+                )
+            }
+        }
     }
 }

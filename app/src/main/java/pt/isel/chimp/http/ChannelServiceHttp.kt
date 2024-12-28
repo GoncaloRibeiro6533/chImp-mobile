@@ -101,7 +101,7 @@ class ChannelServiceHttp(private val client: HttpClient) : ChannelService {
         userID: Int
     ): Either<ApiError, Channel> {
         return when(val response = client.put<ChannelOutputModel>(
-            url = "/channels/$channelId/leave/$userID",
+            url = "/channels/$channelId/leave",
         )) {
             is Success -> success(response.value.toChannel())
             is Failure -> failure(response.value)

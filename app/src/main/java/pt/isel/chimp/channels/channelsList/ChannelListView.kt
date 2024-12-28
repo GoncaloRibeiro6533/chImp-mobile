@@ -25,7 +25,6 @@ fun ChannelListView(
     channels: StateFlow<Map<Channel,Role>>,
     onChannelSelected: (ChannelParcelable) -> Unit
 ) {
-    //val channels = channels.collectAsState(emptyMap()).value
     val channelsState = channels.collectAsState().value
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),

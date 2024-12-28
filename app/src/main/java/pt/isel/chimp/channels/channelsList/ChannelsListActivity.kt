@@ -43,6 +43,7 @@ class ChannelsListActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -56,12 +57,13 @@ class ChannelsListActivity : ComponentActivity() {
                 workRequest)
         /* val intent = Intent(this, SseForegroundService::class.java)
          startService(intent)*/
+        viewModel.loadLocalData()
         setContent {
-            viewModel.loadLocalData()
             ChannelsListScreen(
                 viewModel = viewModel,
                 onMenuRequested = {
                     navigateTo(this, MenuActivity::class.java)
+                    finish()
                 },
                 onChannelSelected = { channel ->
                     navigateToChannel(channel)

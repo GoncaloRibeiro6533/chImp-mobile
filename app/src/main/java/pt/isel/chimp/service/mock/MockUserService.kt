@@ -107,4 +107,10 @@ class MockUserService(
             if (userToFind == null) return@interceptRequest failure(ApiError("User not found"))
             success(userToFind)
         }
+
+    override suspend fun findUserByUsername(username: String): Either<ApiError, List<User>> =
+        interceptRequest<List<User>> { user ->
+            delay(1000)
+            success(repoMock.userRepoMock.findUserByUsername(username))
+        }
 }

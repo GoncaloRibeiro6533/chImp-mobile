@@ -3,13 +3,11 @@ package pt.isel.chimp
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.ServiceInfo
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
-import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import io.ktor.client.HttpClient
@@ -26,7 +24,6 @@ import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.repository.ChImpRepo
 
 class SseWorkItem (client: HttpClient, repo: ChImpRepo, context: Context, params: WorkerParameters) : Worker(context, params) {
@@ -47,24 +44,37 @@ class CoroutineSseWorkItem(
                 NotificationManager
 
 
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "SSE Service"
+            val descriptionText = "Service to listen for SSE events"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel("SSE_CHANNEL_ID", name, importance).apply {
+                description = descriptionText
+            }
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
     override suspend fun doWork(): Result {
         val client = (applicationContext as DependenciesContainer).client
         val repo = (applicationContext as DependenciesContainer).repo
         val userInfo = (applicationContext as DependenciesContainer).userInfoRepository
-        //setForeground(createForegroundInfo("Listening for events"))
+        setForeground(createForegroundInfo("Listening for events"))
         return withContext(Dispatchers.IO) {
-            while(true) {
+           // while(!isStopped) {
                 try {
                     client.sse("${ChImpApplication.NGROK}/api/sse/listen") {
                         incoming.collect { event ->
                             eventHandler(event, repo, userInfo)
                         }
+                        delay(5000)
                     }
                 } catch (e: Exception) {
                     println("Error: $e")
-                    delay(5000)
+                    return@withContext Result.retry()
                 }
-            }
+            //}
             Result.success()
         }
 
@@ -78,7 +88,7 @@ class CoroutineSseWorkItem(
         // val intent = Intent
 
         // Create a Notification channel if necessary
-        createChannel()
+        createNotificationChannel()
 
         val notification = NotificationCompat.Builder(applicationContext, id)
             .setContentTitle(title)
@@ -90,7 +100,7 @@ class CoroutineSseWorkItem(
             //.addAction(android.R.drawable.ic_delete, anchor, intent)
             .build()
 
-        return ForegroundInfo(1, notification)
+        return ForegroundInfo(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
     }
 
     private fun sendNotification(title: String, content: String) {
@@ -101,7 +111,7 @@ class CoroutineSseWorkItem(
             .setSmallIcon(R.drawable.logo_icon) // Ícone da notificação
             .setContentTitle(title) // Título da notificação
             .setContentText(content) // Conteúdo da notificação
-            .setVibrate(longArrayOf(1000, 1000, 1000, 1000, 1000)) // Vibração
+            .setVibrate(longArrayOf(500, 500)) // Vibração
             .setPriority(NotificationCompat.PRIORITY_HIGH) // Prioridade alta para visibilidade imediata
             .build()
 
@@ -110,16 +120,16 @@ class CoroutineSseWorkItem(
     }
 
 
-    private fun createChannel() {
-        val channel = NotificationChannel(
-            "SSE_CHANNEL_ID", "SSE Service",
-            NotificationManager.IMPORTANCE_LOW
-        ).apply {
-            this.description = description
-        }
-        val notificationManager = (applicationContext).getSystemService(NotificationManager::class.java)
-        notificationManager?.createNotificationChannel(channel)
-    }
+   /* private fun createChannel() {
+            val channel = NotificationChannel(
+                "SSE_CHANNEL_ID", "SSE Service",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                this.description = description
+            }
+            val notificationManager = (applicationContext).getSystemService(NotificationManager::class.java)
+            notificationManager?.createNotificationChannel(channel)
+    }*/
 
 
     private suspend fun eventHandler(event: ServerSentEvent, repo: ChImpRepo, userInfo: UserInfoRepository) {
@@ -129,26 +139,18 @@ class CoroutineSseWorkItem(
         when (eventC) {
             "NewChannelMessage" -> {
                 val message = messageMapper(data)
-                //repo.messageRepo.getMessages(message.channel).collect { stream ->
-                  //  if (stream.isNotEmpty()) {
+                   if (repo.messageRepo.channelHasMessages(message.channel)) {
                         repo.messageRepo.insertMessage(listOf(message))
-                   // }
+                    }
                     val notificationTitle = "New Message"
                     val notificationContent = "New message from:${message.sender.username} at channel:${message.channel.name}"
                     if (message.sender != user ) sendNotification(notificationTitle, notificationContent)
-                //}
-
-            }
-            "ChannelNameUpdate" -> {
-                repo.channelRepo.getChannels().collect { stream ->
-                    val channel = channelNameUpdateMapper(data)
-                    if (stream.isNotEmpty() && stream.any { it.key.id == channelNameUpdateMapper(data).id }) {
-                        repo.channelRepo.updateChannel(channel)
-                    }
                 }
+            "ChannelNameUpdate" -> {
+                    val channel = channelNameUpdateMapper(data)
+                    repo.channelRepo.updateChannel(channel)
             }
             "ChannelNewMemberUpdate" -> {
-
                 val newMember = channelNewMemberUpdateMapper(data)
                 repo.userRepo.insertUser(listOf(newMember.newMember))
                 repo.channelRepo.insertUserInChannel(newMember.newMember.id, newMember.channel.id, newMember.role)
@@ -159,11 +161,11 @@ class CoroutineSseWorkItem(
             }
             "NewInvitationUpdate" -> {
                 val invitation = invitationMapper(data)
-                // repo.invitationRepo.insertInvitations(listOf(invitation))
+                repo.invitationRepo.insertInvitations(listOf(invitation))
             }
             "InvitationAcceptedUpdate" -> {
                 val invitation = invitationAcceptedMapper(data)
-                //   repo.invitationRepo.deleteInvitation(invitation)
+                repo.invitationRepo.deleteInvitation(invitation.id)
             }
             else -> {
                 println("Unknown event: ${event.event}")
@@ -187,18 +189,18 @@ class CoroutineSseWorkItem(
     }
 
     private fun channelMemberExitedUpdateMapper(data: String): RemovedMember {
-        val eventData = Json.decodeFromString<ChannelMemberExitedUpdate>(data)
-        return eventData.removedMember
+        val eventData = Json.decodeFromString<RemovedMember>(data)
+        return eventData
     }
 
     private fun invitationMapper(data: String): Invitation {
-        val eventData = Json.decodeFromString<NewInvitationUpdate>(data)
-        return eventData.invitation
+        val eventData = Json.decodeFromString<Invitation>(data)
+        return eventData
     }
 
     private fun invitationAcceptedMapper(data: String): Invitation {
-        val eventData = Json.decodeFromString<InvitationAcceptedUpdate>(data)
-        return eventData.invitation
+        val eventData = Json.decodeFromString<Invitation>(data)
+        return eventData
     }
 
 }

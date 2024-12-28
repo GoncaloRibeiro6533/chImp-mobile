@@ -31,7 +31,7 @@ class InvitationRepoMock {
     }
 
     fun acceptInvitation(invitationId: Int): Channel {
-        val invitation = invitations.first { it.invitationId == invitationId}
+        val invitation = invitations.first { it.id == invitationId}
         val newInv = invitation.copy(isUsed = true)
         invitations.remove(invitation)
         invitations.add(newInv)
@@ -39,13 +39,13 @@ class InvitationRepoMock {
     }
 
     fun declineInvitation(invitationId: Int): Boolean {
-        val invitation = invitations.first { it.invitationId == invitationId}
+        val invitation = invitations.first { it.id == invitationId}
         invitations.remove(invitation)
         return true
     }
 
     fun findInvitationById(invitationId: Int): Invitation? {
-        return invitations.find { it.invitationId == invitationId }
+        return invitations.find { it.id == invitationId }
     }
 
     //todo implement findInvitationByChannelId here?

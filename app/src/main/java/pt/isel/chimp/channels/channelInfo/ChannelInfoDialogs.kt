@@ -167,3 +167,18 @@ fun PreviewTextFieldDialogExample() {
         Modifier
     )
 }
+
+
+@Preview
+@Composable
+fun PreviewTextFieldDialogExample2() {
+
+    ChannelDialog(
+        "Invite Member +", "Enter Member Username:", "Invite", "username",
+        Color(0xFF32cd32),
+        Color.Black,
+        { },
+        Modifier
+    )
+}
+

@@ -74,17 +74,18 @@ class SearchChannelsViewModel(
     }
 
 
-    fun addUserToChannel(userId: Int, channel: Channel) {
+    fun addUserToChannel(channel: Channel) {
         viewModelScope.launch {
             try {
+                val user =  userInfo.getUserInfo() ?: throw Exception("User not found")
                 val channelKey = _channels.value.keys.find { it.id == channel.id }
                 val role = _channels.value[channel] ?: Role.READ_WRITE
                 if (channelKey != null) {
                     _state.value = SearchChannelsScreenState.EnteringChannel(channel, role)
                     return@launch
                 }
-                service.channelService.joinChannel(userId, channel.id, Role.READ_WRITE)
-                repository.channelRepo.insertChannels(userId, mapOf(channel to Role.READ_WRITE))
+                service.channelService.joinChannel(user.id, channel.id, Role.READ_WRITE)
+                repository.channelRepo.insertChannels(user.id, mapOf(channel to Role.READ_WRITE))
                 _state.value = SearchChannelsScreenState.EnteringChannel(channel, Role.READ_WRITE)
             } catch (e: Exception) {
                 _state.value = SearchChannelsScreenState.Error(ApiError("Error adding user to channel"))

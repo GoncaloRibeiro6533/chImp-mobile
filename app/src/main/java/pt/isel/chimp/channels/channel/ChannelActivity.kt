@@ -29,6 +29,7 @@ class ChannelActivity : ComponentActivity() {
     private fun navigateToChannelInfo(channel: ChannelParcelable){
         val intent = Intent(this, ChannelInfoActivity::class.java).putExtra("channel", channel)
         this.startActivity(intent)
+        finish()
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)

@@ -12,7 +12,6 @@ import pt.isel.chimp.http.models.user.UserDTO
 
 @Serializable
 data class InvitationInputModelChannel(
-    val senderId: Int,
     val receiverId: Int,
     val channelId: Int,
     val role: Role,
@@ -41,6 +40,6 @@ data class InvitationOutputModelChannel(
 
 @Serializable
 data class InvitationsList(
-    val nInvitations: Int,
+    val ninvitations: Int,
     val invitations: List<InvitationOutputModelChannel>,
 )

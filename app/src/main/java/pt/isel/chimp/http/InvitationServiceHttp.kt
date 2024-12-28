@@ -21,14 +21,13 @@ import pt.isel.chimp.utils.success
 
 class InvitationServiceHttp(private val client: HttpClient) : InvitationService {
     override suspend fun createChannelInvitation(
-        senderId: Int,
         receiverId: Int,
         channelId: Int,
         role: Role,
     ): Either<ApiError, Invitation> {
         return when (val response = client.post<InvitationOutputModelChannel>(
             url = "/invitation/channel",
-            body = InvitationInputModelChannel(senderId, receiverId, channelId, role)
+            body = InvitationInputModelChannel(receiverId, channelId, role)
         )) {
             is Success -> success(response.value.toInvitation())
             is Failure -> failure(response.value)

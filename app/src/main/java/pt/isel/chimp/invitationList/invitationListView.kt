@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,6 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
@@ -27,11 +30,11 @@ import java.time.LocalDateTime
 
 @Composable
 fun InvitationListView(
-    invitationsList: List<Invitation>,
-    onAccept: (Int) -> Unit,
-    onDecline: (Int) -> Unit
+    invitations: StateFlow<List<Invitation>>,
+    onAccept: (Invitation) -> Unit,
+    onDecline: (Invitation) -> Unit
 ) {
-
+    val invitationsList = invitations.collectAsState().value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,8 +79,8 @@ fun InvitationListView(
                 items(invitationsList) { invitation ->
                     InvitationCard(
                         invitation = invitation,
-                        onAccept = { onAccept },
-                        onDecline = { onDecline }
+                        onAccept = { onAccept(invitation) },
+                        onDecline = { onDecline(invitation) }
                     )
                 }
             }
@@ -111,7 +114,7 @@ fun InvitationListPreview() {
     )
 
     val inv1 = Invitation(
-        invitationId = 1,
+        id = 1,
         sender = user1,
         receiver = user3,
         channel = channel1,
@@ -121,7 +124,7 @@ fun InvitationListPreview() {
     )
 
     val inv2 = Invitation(
-        invitationId = 2,
+        id = 2,
         sender = user2,
         receiver = user3,
         channel = channel2,
@@ -130,11 +133,11 @@ fun InvitationListPreview() {
         timestamp = LocalDateTime.now()
     )
 
-    val invList = listOf(inv1, inv2)
+    val invList =  listOf(inv1, inv2)
     //val invList = listOf<Invitation>()
 
     InvitationListView(
-        invitationsList = invList,
+        invitations = MutableStateFlow(invList),
         onAccept = { },
         onDecline = { }
     )

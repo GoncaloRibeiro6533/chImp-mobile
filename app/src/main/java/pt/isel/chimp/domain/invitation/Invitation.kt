@@ -1,7 +1,6 @@
 package pt.isel.chimp.domain.invitation
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.message.LocalDateTimeSerializer
@@ -10,7 +9,7 @@ import java.time.LocalDateTime
 
 /**
  * Represents an invitation to a channel.
- * @property invitationId the invitation id.
+ * @property id the invitation id.
  * @property sender the user that sent the invitation.
  * @property receiver the user that received the invitation.
  * @property channel the channel to which the invitation is for.
@@ -20,7 +19,7 @@ import java.time.LocalDateTime
  */
 @Serializable
 data class Invitation(
-    val invitationId: Int,
+    val id: Int,
     val sender: User,
     val receiver: User,
     val channel: Channel,
@@ -30,9 +29,8 @@ data class Invitation(
     val timestamp: LocalDateTime,
 ){
     init {
-        require(invitationId >= 0) { "id must be greater than 0" }
+        require(id >= 0) { "id must be greater than 0" }
         require(role in Role.entries.toTypedArray()) { "Invalid role" }
         require(sender != receiver) { "Sender and receiver must be different" }
-        require(timestamp <= LocalDateTime.now()) { "Invalid timestamp" }
     }
 }

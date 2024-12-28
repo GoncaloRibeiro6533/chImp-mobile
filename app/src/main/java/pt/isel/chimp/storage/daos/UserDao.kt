@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.storage.entities.UserEntity
 
 @Dao
@@ -24,7 +23,7 @@ interface UserDao {
     fun getUserByUsername(username: String): Flow<UserEntity>
 
     @Query("Update user SET username = :username WHERE id = :id")
-    fun updateUsername(id: Int, username: String)
+    suspend fun updateUsername(id: Int, username: String)
 
     @Query("SELECT * FROM user")
     fun getAllUsers(): Flow<List<UserEntity>>

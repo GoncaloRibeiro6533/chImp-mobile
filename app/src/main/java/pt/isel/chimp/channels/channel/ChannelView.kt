@@ -27,7 +27,10 @@ import java.time.LocalDateTime
 fun ChannelView(
     messages: StateFlow<List<Message>>,
     onMessageSend: (String) -> Unit,
-    userRole: Role
+    userRole: Role,
+    onLoadMore: (Int) -> Unit,
+    loadingMoreMessages: Boolean = false,
+    loadedAll : Boolean = false
 ) {
     val messagesList = messages.collectAsState().value
     Column(
@@ -40,6 +43,9 @@ fun ChannelView(
         ) {
             MessagesView(
                 messagesList,
+                loadMore = { size -> onLoadMore(size)},
+                loadingMore = loadingMoreMessages,
+                loadedAll = loadedAll
             )
         }
 
@@ -94,7 +100,8 @@ fun ChannelViewPreview() {
     ChannelView(
         messages = MutableStateFlow(messages),
         onMessageSend = { },
-        userRole = Role.READ_WRITE
+        userRole = Role.READ_WRITE,
+        onLoadMore = {}
     )
 }
 
@@ -105,6 +112,7 @@ fun ChannelViewPreviewReadOnly() {
     ChannelView(
         messages = MutableStateFlow(messages),
         onMessageSend = { },
-        userRole = Role.READ_ONLY
+        userRole = Role.READ_ONLY,
+        onLoadMore = {}
     )
 }

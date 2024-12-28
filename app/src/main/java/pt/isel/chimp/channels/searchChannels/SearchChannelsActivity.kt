@@ -7,13 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 import pt.isel.chimp.DependenciesContainer
 import pt.isel.chimp.channels.ChannelParcelable
-import pt.isel.chimp.channels.UserParcelable
 import pt.isel.chimp.channels.channel.ChannelActivity
-import pt.isel.chimp.channels.channelsList.ChannelsListActivity
 import pt.isel.chimp.menu.MenuActivity
 import pt.isel.chimp.utils.navigateTo
 
@@ -32,6 +28,15 @@ class SearchChannelsActivity : ComponentActivity() {
         }
     )
 
+    private fun onNavigationBack() {
+        navigateTo(
+            this,
+            MenuActivity::class.java
+        )
+        finish()
+    }
+
+
     private fun navigateToChannel(channel: ChannelParcelable){
         val intent = Intent(this, ChannelActivity::class.java)
             .putExtra("channel", channel)
@@ -42,17 +47,6 @@ class SearchChannelsActivity : ComponentActivity() {
     @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(!intent.hasExtra("user")) {
-            navigateTo(this, MenuActivity::class.java)
-            finish()
-            return
-        }
-        val user = intent.getParcelableExtra("user", UserParcelable::class.java)
-        if (user == null) {
-            navigateTo(this, MenuActivity::class.java)
-            finish()
-            return
-        }
         viewModel.loadChannels()
         setContent {
             SearchChannelsScreen(
@@ -61,7 +55,6 @@ class SearchChannelsActivity : ComponentActivity() {
                     navigateTo(this@SearchChannelsActivity, MenuActivity::class.java)
                     finish()
                 },
-                user= user.toUser(),
                 onChannelSelected = { channel ->
                     navigateToChannel(channel)
 

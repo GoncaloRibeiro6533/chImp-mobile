@@ -5,5 +5,4 @@ interface ChImpRepo {
     val userRepo: UserRepository
     val messageRepo: MessageRepository
     val invitationRepo: InvitationRepository
-
 }

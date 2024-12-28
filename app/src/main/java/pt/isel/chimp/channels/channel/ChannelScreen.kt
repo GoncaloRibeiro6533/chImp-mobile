@@ -59,18 +59,30 @@ fun ChannelScreen(
                     is ChannelScreenState.LoadFromRemote,
                     is ChannelScreenState.SaveData
                         -> {
-                        LoadingView()
+                        if (state !is ChannelScreenState.SaveData )LoadingView()
                         if (state is ChannelScreenState.LoadFromRemote) viewModel.loadRemoteData(channel)
                         if (state is ChannelScreenState.SaveData) viewModel.saveData(
                             state.messages
                         )
                     }
 
-                    is ChannelScreenState.Success -> {
+                    is ChannelScreenState.LoadingMoreMessages,
+                    is ChannelScreenState.SaveMore,
+                    is ChannelScreenState.Success,
+                    is ChannelScreenState.SendingMessage,
+                    is ChannelScreenState.LoadedAll
+                         -> {
+                        if (state is ChannelScreenState.SaveMore) viewModel.saveData(
+                            state.messages
+                        )
                         ChannelView(
-                            messages = state.messages,
+                            messages = viewModel.messages,
                             onMessageSend = { content -> viewModel.sendMessage(channel, content) },
-                            userRole = role
+                            userRole = role,
+                            onLoadMore = { size -> viewModel.loadRemoteData(channel, skip = size) },
+                            loadingMoreMessages = state is ChannelScreenState.LoadingMoreMessages
+                                    || state is ChannelScreenState.SaveMore,
+                            loadedAll = state is ChannelScreenState.LoadedAll
                         )
                     }
 

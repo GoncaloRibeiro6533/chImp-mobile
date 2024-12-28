@@ -10,6 +10,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import pt.isel.chimp.R
+import pt.isel.chimp.menu.MenuActivity
+import pt.isel.chimp.utils.navigateTo
 
 
 /**
@@ -19,17 +21,28 @@ import pt.isel.chimp.R
 class AboutActivity : ComponentActivity() {
     private val viewModel by viewModels<AboutScreenViewModel>()
 
+    private fun onNavigationBack() {
+        navigateTo(
+            this,
+            MenuActivity::class.java
+        )
+        finish()
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             AboutScreen(
-                onNavigateBack = { finish() },
+                onNavigateBack = { onNavigationBack() },
                 onSendEmailRequested = { openSendEmail(it) },
                 onOpenUrlRequested = { openURL(it) }
             )
         }
     }
+
+
 
     private fun openSendEmail(email: String) {
         try {

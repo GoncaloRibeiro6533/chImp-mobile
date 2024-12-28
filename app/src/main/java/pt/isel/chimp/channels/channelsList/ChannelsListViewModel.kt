@@ -22,104 +22,12 @@ import pt.isel.chimp.utils.Success
 
 sealed interface ChannelsListScreenState {
     data object Uninitialized : ChannelsListScreenState
-    data object LoadingUserInfo: ChannelsListScreenState
-    data class LoadFromRemote(val userInfo: User) : ChannelsListScreenState
+    data object LoadFromRemote: ChannelsListScreenState
     data class SaveData(val user: User, val channels: Map<Channel,Role>) : ChannelsListScreenState
-    //data object Loading : ChannelsListScreenState
     data class Success(val channels: StateFlow<Map<Channel,Role>>) : ChannelsListScreenState
     data class Error(val error: ApiError) : ChannelsListScreenState
 }
-/*
-class ChannelsListViewModel(
-    private val userInfo: UserInfoRepository,
-    private val channelService: ChannelService,
-    private val repo: ChImpRepo,
-    initialState: ChannelsListScreenState = ChannelsListScreenState.Uninitialized
-) : ViewModel() {
 
-    private val _state = MutableStateFlow<ChannelsListScreenState>(initialState)
-    val state = _state.asStateFlow()
-    //  private val _channels = MutableSharedFlow<Map<Channel,Role>>()
-//    val channels: SharedFlow<Map<Channel,Role>> = _channels.asSharedFlow()
-    private val _channels = MutableStateFlow<Map<Channel,Role>>(emptyMap())
-    val channels: StateFlow<Map<Channel,Role>> = _channels.asStateFlow()
-
-    fun loadUserInfoData() : Job? {
-        if(_state.value !is ChannelsListScreenState.Uninitialized) return null
-        return viewModelScope.launch {
-            try {
-                val user = userInfo.getUserInfo() ?: throw ChImpException(message = "User not found", null)
-                _state.value = ChannelsListScreenState.Initialized(user)
-            } catch (e: Exception) {
-                _state.value = ChannelsListScreenState.Error(ApiError("Error getting user info"))
-            }
-        }
-    }
-
-    fun loadData() : Job? {
-        if(_state.value !is ChannelsListScreenState.Initialized) return null
-
-        _state.value = ChannelsListScreenState.Loading
-        return viewModelScope.launch {
-            repo.channelRepo.getChannels().collect{ stream ->
-                if(stream.isNotEmpty()) {
-                    _channels.value = stream
-                    _state.value = ChannelsListScreenState.Success(channels)
-                    return@collect
-                }
-                _state.value =
-                    try {
-                        when(val result = channelService.getChannelsOfUser(userId = _){ {
-                            is Success -> {
-                                repo.channelRepo.insertChannels(user.id, result.value)
-                                _channels.value = stream
-                                ChannelsListScreenState.Success(channels)
-                            }
-                            is Failure ->ChannelsListScreenState.Error(result.value)
-                        }
-                    } catch (e: Throwable) {
-                        ChannelsListScreenState.Error(ApiError("Error getting channels"))
-                    }
-            }
-        }
-    }
-
-    fun getChannels(){
-
-    }
-    /*fun getChannels() {
-        if (_state.value != ChannelsListScreenState.Loading) {
-            _state.value = ChannelsListScreenState.Loading
-            viewModelScope.launch {
-                repo.channelRepo.getChannels().collect { stream ->
-                    if (stream.isNotEmpty()) {
-                        Log.d("ChannelsListViewModel", "ChannelsListViewModel: getChannels: stream is not empty")
-                        _channels.emit(stream)
-                        _state.value = ChannelsListScreenState.Success(channels)
-                        return@collect
-                    }
-                    _state.value = try {
-                        Log.d("ChannelsListViewModel", "ChannelsListViewModel: gettingChannels")
-                        val user =   userInfo.getUserInfo() ?: throw ChImpException(message = "User not found", null)
-                        when (val result = channelService.getChannelsOfUser(user.id)) {
-                            is Success -> {
-                                repo.channelRepo.insertChannels(user.id, result.value)
-                                _channels.emit(stream)
-                                if (stream.isNotEmpty()) ChannelsListScreenState.Success(channels)
-                                else ChannelsListScreenState.Loading
-                            }
-                            is Failure -> ChannelsListScreenState.Error(result.value)
-                        }
-                    } catch (e: Throwable) {
-                        ChannelsListScreenState.Error(ApiError("Error getting channels"))
-                    }
-                }
-            }
-        }
-    }*/
-
-}
-*/
 class ChannelsListViewModel(
     private val userInfo: UserInfoRepository,
     private val channelService: ChannelService,
@@ -134,37 +42,24 @@ class ChannelsListViewModel(
     val channels: StateFlow<Map<Channel, Role>> = _channels.asStateFlow()
 
 
-    fun loadUserInfoData(){
-        if (_state.value is ChannelsListScreenState.LoadingUserInfo) {
-            viewModelScope.launch {
-                try {
-
-                    val user =
-                        userInfo.getUserInfo() ?: throw ChImpException(message = "User not found", null)
-                    _state.value = ChannelsListScreenState.LoadFromRemote(user)
-
-                } catch (e: Exception) {
-                    _state.value = ChannelsListScreenState.Error(ApiError("Error getting user info"))
-                }
-            }
-        }
-    }
-
     fun onFatalError() {
         viewModelScope.launch {
             try {
+                repo.invitationRepo.deleteAllInvitations()
                 repo.messageRepo.clear()
                 repo.channelRepo.clear()
                 repo.userRepo.clear()
                 userInfo.clearUserInfo()
             } catch (e: Exception) {
                 userInfo.clearUserInfo()
+                repo.invitationRepo.deleteAllInvitations()
                 repo.messageRepo.clear()
                 repo.channelRepo.clear()
                 repo.userRepo.clear()
             }
         }
     }
+
 
     fun loadLocalData(): Job? {
         if (_state.value !is ChannelsListScreenState.Uninitialized) return null
@@ -176,27 +71,32 @@ class ChannelsListViewModel(
                         _state.value = ChannelsListScreenState.Success(_channels)
                     }
                     if (stream.isEmpty() && _state.value is ChannelsListScreenState.Uninitialized) {
-                        _state.value = ChannelsListScreenState.LoadingUserInfo
+                        _state.value = ChannelsListScreenState.LoadFromRemote
                     }
                 }
             } catch (e: Throwable) {
-                _state.value = ChannelsListScreenState.Error(ApiError("Error getting channels: ${e.message}"))
+                _state.value =
+                    ChannelsListScreenState.Error(ApiError("Error getting channels: ${e.message}"))
             }
         }
     }
 
 
-    fun loadRemoteData(user: User) {
+    fun loadRemoteData() {
         if (_state.value is ChannelsListScreenState.LoadFromRemote) {
             viewModelScope.launch {
                 try {
+                    val user =
+                        userInfo.getUserInfo() ?: throw ChImpException("User not found", null)
                     when (val result = channelService.getChannelsOfUser(user.id)) {
-                        is Success -> _state.value = ChannelsListScreenState.SaveData(user, result.value)
+                        is Success -> _state.value =
+                            ChannelsListScreenState.SaveData(user, result.value)
+
                         is Failure -> {
                             _state.value = ChannelsListScreenState.Error(result.value)
                         }
                     }
-                }catch (e: Throwable) {
+                } catch (e: Throwable) {
                     _state.value =
                         ChannelsListScreenState.Error(ApiError("Error getting channels: ${e.message}"))
                 }
@@ -204,26 +104,26 @@ class ChannelsListViewModel(
         }
     }
 
-    fun saveData(user: User, channels: Map<Channel, Role>) {
+    fun saveData(user: User, channelsMap: Map<Channel, Role>) {
         if (_state.value is ChannelsListScreenState.SaveData) {
             viewModelScope.launch {
                 try {
-                    repo.channelRepo.insertChannels(user.id, channels)
-                    _state.value = ChannelsListScreenState.Success(_channels)
+                    repo.channelRepo.insertChannels(user.id, channelsMap)
+                    _channels.value = channelsMap
+                    _state.value = ChannelsListScreenState.Success(channels)
                 } catch (e: Throwable) {
-                    _state.value = ChannelsListScreenState.Error(ApiError("Error saving channels: ${e.message}"))
+                    _state.value =
+                        ChannelsListScreenState.Error(ApiError("Error saving channels: ${e.message}"))
                 }
             }
         }
     }
 }
 
-
 @Suppress("UNCHECKED_CAST")
 class ChannelsListViewModelFactory(
     private val userInfo: UserInfoRepository,
     private val service: ChImpService,
-    //private val db: ChImpClientDB
     private val repo: ChImpRepo
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>):  T {

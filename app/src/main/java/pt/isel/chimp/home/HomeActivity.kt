@@ -47,6 +47,7 @@ class HomeActivity : ComponentActivity() {
                         onLoginRequested = { navigateTo(this, LoginActivity::class.java) },
                         onRegisterRequested = { navigateTo(this, RegisterActivity::class.java) },
                         onLoggedIntent = {
+                            finish()
                             navigateTo(this, ChannelsListActivity::class.java)
                         }
                     )

@@ -3,6 +3,7 @@ package pt.isel.chimp.http
 import io.ktor.client.HttpClient
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.http.models.user.UserDTO
+import pt.isel.chimp.http.models.user.UserList
 import pt.isel.chimp.http.models.user.UserLoginCredentialsInput
 import pt.isel.chimp.http.models.user.UserRegisterInput
 import pt.isel.chimp.http.models.user.UsernameUpdateInput
@@ -70,6 +71,14 @@ class UserServiceHttp(private val client: HttpClient) : UserService {
         return when(val response = client.post<Unit>(
             url = "/user/logout")) {
             is Success -> success(Unit)
+            is Failure -> failure(response.value)
+        }
+    }
+
+    override suspend fun findUserByUsername(query: String): Either<ApiError, List<User>> {
+        return when(val response = client.get<UserList>(
+            url = "/user/search/$query")) {
+            is Success -> success(response.value.users.map { it.toUser() })
             is Failure -> failure(response.value)
         }
     }

@@ -93,6 +93,12 @@
             android:label="InvitationListActivity"
             android:theme="@style/Theme.ChImp"
             />
+        <activity android:name=".channels.createInvitation.CreateInvitationActivity"
+            android:exported="true"
+            android:label="CreateInvitationActivity"
+            android:theme="@style/Theme.ChImp"
+            />
+
     </application>
 
 </manifest>

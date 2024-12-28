@@ -1,6 +1,5 @@
 package pt.isel.chimp.repository
 
-import androidx.room.RoomDatabase
 import pt.isel.chimp.storage.ChImpClientDB
 
 class ChImpRepoImp(

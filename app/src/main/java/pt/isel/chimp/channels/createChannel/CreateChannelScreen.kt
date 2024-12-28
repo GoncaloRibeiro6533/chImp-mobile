@@ -9,16 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import pt.isel.chimp.components.LoadingView
-import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.profile.ErrorAlert
-import pt.isel.chimp.service.mock.MockChannelService
-import pt.isel.chimp.service.repo.RepoMockImpl
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -71,6 +64,7 @@ fun CreateChannelScreen(
     }
 }
 
+/*
 @Suppress("UNCHECKED_CAST")
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -84,4 +78,4 @@ fun CreateChannelScreenPreview() {
         onNavigateBack = { },
         onChannelCreated = { }
     )
-}
+}*/

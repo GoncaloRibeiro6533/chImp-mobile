@@ -10,7 +10,6 @@ interface InvitationService {
 
     /**
      * Creates a new invitation.
-     * @param senderId the id of the sender user.
      * @param receiverId the id of the receiver user.
      * @param channelId the id of the channel to invite.
      * @param role attributed role to the receiver user if accepted.
@@ -18,7 +17,6 @@ interface InvitationService {
      * @return ApiError if an error occurs.
      */
     suspend fun createChannelInvitation(
-        senderId: Int,
         receiverId: Int,
         channelId: Int,
         role: Role,

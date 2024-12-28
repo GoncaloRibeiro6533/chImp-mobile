@@ -43,12 +43,7 @@ class ProfileScreenViewModel(
             viewModelScope.launch {
                 _screenState.value = try {
                     val userInfo = repo.getUserInfo() ?: throw Exception("User not authenticated")
-                    val user = userServices.findUserById(userInfo.id)
-                    when (user) {
-                        is Success ->
-                            ProfileScreenState.Success(Profile(user.value.username, user.value.email))
-                        is Failure -> ProfileScreenState.Error(user.value)
-                    }
+                    ProfileScreenState.Success(Profile(userInfo.username, userInfo.email))
                 } catch (e: Throwable) {
                     ProfileScreenState.Error(ApiError("Error fetching user"))
                 }
@@ -61,12 +56,11 @@ class ProfileScreenViewModel(
             _screenState.value = ProfileScreenState.Loading
             viewModelScope.launch {
                 _screenState.value = try {
-                    val userInfo = repo.getUserInfo() ?: throw Exception("User not authenticated")
                     val user = userServices.updateUsername(newUsername)
                     when (user) {
                         is Success -> {
                             repo.updateUserInfo(user.value)
-                            //TODO: update local storage
+                            db.userRepo.updateUser(user.value)
                             ProfileScreenState.Success(Profile(user.value.username, user.value.email))
                         }
                         is Failure -> ProfileScreenState.Error(user.value)

@@ -29,6 +29,7 @@ import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.ui.theme.ChImpTheme
+import pt.isel.chimp.utils.RoundedRectangleWithText
 import java.time.LocalDateTime
 
 @Composable
@@ -65,17 +66,19 @@ fun InvitationCard(
                     Text(text = invitation.channel.name)
                     Text(text = "From: $sender", fontSize = 10.sp)
                 }
-
-
             }
-
             Row(
                 modifier = Modifier,
                 horizontalArrangement = Arrangement.End
             ) {
 
+                RoundedRectangleWithText(
+                    text = invitation.role.value,
+                    backgroundColor = if (invitation.role == Role.READ_WRITE) Color.Red else Color.Green,
+                )
+                Spacer(Modifier.width(16.dp))
                 IconButton(
-                    onClick = { onDecline(invitation.invitationId) },
+                    onClick = { onDecline(invitation.id) },
                     modifier = Modifier.size(24.dp)
                 ) {
                     Icon(
@@ -88,7 +91,7 @@ fun InvitationCard(
                 Spacer(Modifier.width(8.dp))
 
                 IconButton(
-                    onClick = { onAccept(invitation.invitationId) },
+                    onClick = { onAccept(invitation.id) },
                     modifier = Modifier.size(24.dp)
                 ) {
                     Icon(
@@ -114,7 +117,7 @@ fun InvitationCardPreview() {
     )
 
     val inv1 = Invitation(
-        invitationId = 1,
+        id = 1,
         sender = User(1, "Bob", "bob@example.com"),
         receiver = User(2, "Alice", "alice@example.com"),
         channel = channel,

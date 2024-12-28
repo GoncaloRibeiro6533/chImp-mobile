@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,7 +37,8 @@ const val  LEAVE_CHANNEL_BUTTON = "leave_channel_button"
 fun ChannelInfoView(
     channelInfo: ChannelInfo,
     onUpdateChannel : (String) -> Unit,
-    onLeaveChannel : () -> Unit
+    onLeaveChannel : () -> Unit,
+    onInviteMember : () -> Unit
 ){
 
 
@@ -62,17 +65,18 @@ fun ChannelInfoView(
 
             ) {
 
-            ChannelDialog(
-                "Invite Member +",
-                "Enter Member Username:",
-                "Invite",
-                "username",
-                Color(0xFF32cd32),
-                Color.Black,
-                { TODO() },
-                Modifier.testTag(ADD_MEMBER_BUTTON)
-            )
+            if (channelInfo.channel.visibility == Visibility.PRIVATE){
+            Button(
 
+                onClick = { onInviteMember() },
+                colors = ButtonColors(Color(0xFF32cd32),
+                    Color.Black, Color.Green, Color.Green),
+                modifier = Modifier.testTag(DIALOG_BUTTON)
+            ) {
+                Text("Invite Member +")
+            }
+            }
+            if (channelInfo.channel.creator == channelInfo.user) {
             ChannelDialog(
                 "Edit Channel Name",
                 "Enter new channel name:",
@@ -83,6 +87,7 @@ fun ChannelInfoView(
                 { newName -> onUpdateChannel(newName)},
                 Modifier.testTag(EDIT_CHANNEL_BUTTON)
             )
+            }
 
         }
 
@@ -154,9 +159,10 @@ fun ChannelInfoViewPreview() {
 
     val channel = Channel(1, "Channel 1 long", user1, Visibility.PUBLIC)
     ChannelInfoView(
-        channelInfo = ChannelInfo(channel, list),
+        channelInfo = ChannelInfo(User(1,"Bob", "bob@example.com"), channel, list),
         onUpdateChannel = { },
-        onLeaveChannel = { }
+        onLeaveChannel = { },
+        onInviteMember = { }
     )
 }
 
