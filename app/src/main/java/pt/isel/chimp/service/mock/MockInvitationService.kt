@@ -8,9 +8,9 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.service.InvitationService
-import pt.isel.chimp.service.repo.RepoMock
+import pt.isel.chimp.service.mock.repo.RepoMock
 import pt.isel.chimp.utils.Either
 import pt.isel.chimp.utils.failure
 import pt.isel.chimp.utils.success

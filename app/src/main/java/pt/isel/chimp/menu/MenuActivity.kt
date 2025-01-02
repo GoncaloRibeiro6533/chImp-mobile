@@ -48,18 +48,16 @@ class MenuActivity : ComponentActivity() {
                 this,
                 AboutActivity::class.java
             )
-            finish()
         },
         MenuItem("Profile", "profile screen", Icons.Default.Person) {
             navigateTo(
                 this,
                 ProfileActivity::class.java
             )
-            finish()
         },
         MenuItem("My Channels", "my channels screen", Icons.AutoMirrored.Filled.List) {
-            /*navigateTo(this,
-                ChannelsListActivity::class.java)*/
+            navigateTo(this,
+                ChannelsListActivity::class.java)
             finish()
         },
 

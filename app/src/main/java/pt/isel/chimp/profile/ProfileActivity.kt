@@ -6,8 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import pt.isel.chimp.DependenciesContainer
-import pt.isel.chimp.menu.MenuActivity
-import pt.isel.chimp.utils.navigateTo
 
 class ProfileActivity : ComponentActivity() {
 
@@ -26,10 +24,6 @@ class ProfileActivity : ComponentActivity() {
     )
 
     private fun onNavigationBack() {
-        navigateTo(
-            this,
-            MenuActivity::class.java
-        )
         finish()
     }
 

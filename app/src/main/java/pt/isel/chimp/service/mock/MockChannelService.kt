@@ -8,10 +8,10 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.service.ChannelService
-import pt.isel.chimp.service.repo.ChannelRepoMock.Companion.channels
-import pt.isel.chimp.service.repo.RepoMock
+import pt.isel.chimp.service.mock.repo.ChannelRepoMock.Companion.channels
+import pt.isel.chimp.service.mock.repo.RepoMock
 import pt.isel.chimp.utils.Either
 import pt.isel.chimp.utils.failure
 import pt.isel.chimp.utils.success

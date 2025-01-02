@@ -9,9 +9,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import pt.isel.chimp.DependenciesContainer
 import pt.isel.chimp.R
-import pt.isel.chimp.menu.MenuActivity
-import pt.isel.chimp.utils.navigateTo
 
 
 /**
@@ -19,13 +18,8 @@ import pt.isel.chimp.utils.navigateTo
  * In this case ee don't need one because the screen is static and doesn't have any dynamic data.
  */
 class AboutActivity : ComponentActivity() {
-    private val viewModel by viewModels<AboutScreenViewModel>()
 
     private fun onNavigationBack() {
-        navigateTo(
-            this,
-            MenuActivity::class.java
-        )
         finish()
     }
 

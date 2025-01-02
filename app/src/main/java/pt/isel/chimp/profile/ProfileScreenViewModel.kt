@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.profile.Profile
 import pt.isel.chimp.domain.repository.UserInfoRepository
-import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.UserService

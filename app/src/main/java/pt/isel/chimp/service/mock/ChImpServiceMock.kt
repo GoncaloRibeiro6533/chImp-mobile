@@ -7,7 +7,7 @@ import pt.isel.chimp.service.ChannelService
 import pt.isel.chimp.service.InvitationService
 import pt.isel.chimp.service.MessageService
 import pt.isel.chimp.service.UserService
-import pt.isel.chimp.service.repo.RepoMockImpl
+import pt.isel.chimp.service.mock.repo.RepoMockImpl
 
 class ChImpServiceMock(
     private val cookieStorage: CookiesRepo,

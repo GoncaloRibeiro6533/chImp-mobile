@@ -3,7 +3,7 @@ package pt.isel.chimp.service
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.invitation.Invitation
-import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.utils.Either
 
 interface InvitationService {

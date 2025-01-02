@@ -14,12 +14,13 @@ import io.ktor.client.plugins.sse.SSE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import pt.isel.chimp.domain.repository.UserInfoRepository
-import pt.isel.chimp.http.ChImpServiceHttp
 import pt.isel.chimp.infrastructure.CookiesRepo
 import pt.isel.chimp.infrastructure.UserInfoRepo
 import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.repository.ChImpRepoImp
 import pt.isel.chimp.service.ChImpService
+import pt.isel.chimp.service.http.ChImpServiceHttp
+import pt.isel.chimp.service.mock.ChImpServiceMock
 import pt.isel.chimp.storage.ChImpClientDB
 import kotlin.time.Duration.Companion.seconds
 
@@ -49,11 +50,17 @@ class ChImpApplication : Application(), DependenciesContainer {
         }
     }
 
-    override val chImpService: ChImpService by lazy {
-       // ChImpServiceMock(cookieRep as CookiesRepo, repo)
-        ChImpServiceHttp(client = client)
+    private val mockService: ChImpService by lazy {
+        ChImpServiceMock(cookieRep as CookiesRepo, repo)
     }
+    private val httpService: ChImpService by lazy {
+        ChImpServiceHttp(client)
+    }
+    private val service by lazy { mockService }
 
+    override val chImpService: ChImpService by lazy {
+        service
+    }
 
     override val preferencesDataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
 
@@ -79,7 +86,7 @@ class ChImpApplication : Application(), DependenciesContainer {
 
     //While using with mock service, it needs to be equal to "/"
     companion object { //TODO: improve this
-        const val NGROK = "https://9913-2001-8a0-7efc-e400-cdfa-77dd-d415-62f9.ngrok-free.app"
+        const val NGROK = "/"//"https://0f8f-2001-8a0-7efc-e400-8952-b1f6-b323-f546.ngrok-free.app"
     }
 
 }

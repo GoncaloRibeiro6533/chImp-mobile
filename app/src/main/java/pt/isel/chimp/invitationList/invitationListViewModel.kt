@@ -10,8 +10,8 @@ import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.domain.repository.UserInfoRepository
-import pt.isel.chimp.http.utils.ApiError
-import pt.isel.chimp.http.utils.ChImpException
+import pt.isel.chimp.domain.ApiError
+import pt.isel.chimp.service.http.utils.ChImpException
 import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.service.InvitationService

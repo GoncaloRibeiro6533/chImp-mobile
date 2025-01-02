@@ -6,10 +6,10 @@ import kotlinx.coroutines.delay
 import pt.isel.chimp.ChImpApplication
 import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.MessageService
-import pt.isel.chimp.service.repo.RepoMock
+import pt.isel.chimp.service.mock.repo.RepoMock
 import pt.isel.chimp.utils.Either
 import pt.isel.chimp.utils.failure
 import pt.isel.chimp.utils.success

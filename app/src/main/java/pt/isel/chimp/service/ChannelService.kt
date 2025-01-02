@@ -4,7 +4,7 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.utils.Either
 import kotlinx.coroutines.CancellationException
 
@@ -30,7 +30,6 @@ interface ChannelService {
     /**
      * Gets a channel by its id.
      * @param id the channel id.
-     * @param token the user token.
      * @return the channel.
      * @return ApiError if an error occurs.
      * @throws kotlin.coroutines.CancellationException if the operation was cancelled.
@@ -62,7 +61,6 @@ interface ChannelService {
 
     /**
      * Gets the members of a channel.
-     * @param token the user token.
      * @param channelId the channel.
      * @return the members of the channel.
      * @return ApiError if an error occurs.
@@ -74,7 +72,6 @@ interface ChannelService {
 
     /**
      * Creates a channel.
-     * @param token the user token.
      * @param channelId the channel id.
      * @return the created channel.
      * @return ApiError if an error occurs.

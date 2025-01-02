@@ -10,8 +10,8 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.http.utils.ApiError
-import pt.isel.chimp.http.utils.ChImpException
+import pt.isel.chimp.domain.ApiError
+import pt.isel.chimp.service.http.utils.ChImpException
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success

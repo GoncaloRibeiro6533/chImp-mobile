@@ -2,7 +2,7 @@ package pt.isel.chimp.service
 
 
 import pt.isel.chimp.domain.message.Message
-import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.utils.Either
 
 

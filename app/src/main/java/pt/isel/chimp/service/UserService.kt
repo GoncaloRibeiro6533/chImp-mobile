@@ -1,7 +1,7 @@
 package pt.isel.chimp.service
 
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.http.utils.ApiError
+import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.utils.Either
 
 
