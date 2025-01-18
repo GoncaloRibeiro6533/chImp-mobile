@@ -11,6 +11,7 @@ import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.domain.ApiError
+import pt.isel.chimp.domain.Role
 import pt.isel.chimp.service.http.utils.ChImpException
 import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.ChImpService
@@ -24,8 +25,7 @@ sealed interface InvitationListScreenState {
     data object Loading: InvitationListScreenState
     data class Success(val invitations: StateFlow<List<Invitation>>): InvitationListScreenState
     data class SavingData(val invitations: List<Invitation>): InvitationListScreenState
-    data class SuccessOnAccept(val channel: Channel): InvitationListScreenState
-    data class  SuccessOnDecline(val check: Boolean): InvitationListScreenState
+    data class SuccessOnAccept(val channelRole: Pair<Channel, Role>): InvitationListScreenState
     data class Error(val error: ApiError): InvitationListScreenState
 
 }
@@ -102,17 +102,25 @@ class InvitationListViewModel (
             viewModelScope.launch {
                 _state.value = try {
                     val user = userInfoRepo.getUserInfo() ?: throw ChImpException("User not found", null)
-                    when(val channel = invitationService.acceptInvitation(invitation.id)) {
+                    when(val updatedInvitation = invitationService.acceptInvitation(invitation.id)) {
                         is Success -> {
+
+                            val channel = updatedInvitation.value.channel
+                            val role = updatedInvitation.value.role
+
+                            repo.invitationRepo.deleteInvitation(invitation.id)
+
                             repo.channelRepo.insertChannels(
-                                user.id, mapOf(channel.value to invitation.role))
-                            InvitationListScreenState.SuccessOnAccept(channel.value)
+                                user.id, mapOf(channel to role))
+
+
+                            InvitationListScreenState.SuccessOnAccept(Pair(channel, role))
                         }
                         is Failure -> {
-                            if (channel.value == ApiError("Invitation expired")) {
+                            if (updatedInvitation.value == ApiError("Invitation expired")) {
                                 repo.invitationRepo.deleteInvitation(invitation.id)
                             }
-                            InvitationListScreenState.Error(channel.value)
+                            InvitationListScreenState.Error(updatedInvitation.value)
                         }
                     }
                 } catch (e: Throwable) {

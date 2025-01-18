@@ -8,7 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import pt.isel.chimp.channels.ChannelParcelable
+import pt.isel.chimp.channels.UserParcelable
 import pt.isel.chimp.components.LoadingView
+import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
@@ -18,9 +21,9 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 fun InvitationScreen(
     viewModel: InvitationListViewModel,
     onNavigationBack: () -> Unit,
-    onAccept: () -> Unit,
-    onDecline: (Int) -> Unit
-) {
+    onAccept: (ChannelParcelable) -> Unit = { },
+
+    ) {
     ChImpTheme {
         val state =viewModel.state.collectAsState().value
         Scaffold(
@@ -62,11 +65,25 @@ fun InvitationScreen(
                     }
 
                     is InvitationListScreenState.SuccessOnAccept -> {
-                        onAccept
-                    }
 
-                    is InvitationListScreenState.SuccessOnDecline -> {
-                        onDecline
+                        val channel = state.channelRole.first
+                        val role = state.channelRole.second
+                        val creator = channel.creator
+
+                        val userParcelable = UserParcelable(
+                            creator.id,
+                            creator.username,
+                            creator.email
+                        )
+
+                        val parcelable = ChannelParcelable(
+                            channel.id,
+                            channel.name,
+                            userParcelable,
+                            channel.visibility,
+                            role
+                        )
+                        onAccept(parcelable)
                     }
 
                     is InvitationListScreenState.Error -> {
