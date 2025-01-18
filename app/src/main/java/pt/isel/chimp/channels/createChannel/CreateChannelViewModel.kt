@@ -36,7 +36,7 @@ class CreateChannelViewModel (
     val state = _state.asStateFlow()
 
 
-    fun createChannel(name: String, creatorId: Int, visibility: String) {
+    fun createChannel(name: String, visibility: String) {
         if (_state.value != CreateChannelScreenState.Loading) {
             _state.value = CreateChannelScreenState.Loading
             viewModelScope.launch {
@@ -44,7 +44,7 @@ class CreateChannelViewModel (
                     val userInfo = userInfo.getUserInfo() ?: throw ChImpException("User not found", null)
                     val channel = channelService.createChannel(
                         name,
-                        creatorId,
+                        userInfo.id,
                         Visibility.valueOf(visibility)
                     )
                     when (channel) {

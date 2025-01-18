@@ -40,8 +40,8 @@ fun CreateChannelScreen(
             ) {
                 when (val currentState = viewModel.state.collectAsState().value) {
                     is CreateChannelScreenState.Idle -> {
-                        CreateChannelView(onSubmit = { channelName, visibility, creatorId ->
-                            viewModel.createChannel(channelName, creatorId, visibility,)
+                        CreateChannelView(onSubmit = { channelName, visibility ->
+                            viewModel.createChannel(channelName, visibility)
                         })
                     }
                     is CreateChannelScreenState.Loading -> {

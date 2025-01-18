@@ -54,7 +54,6 @@ class CoroutineSseWorkItem(
         val userInfo = (applicationContext as DependenciesContainer).userInfoRepository
         setForeground(createForegroundInfo("Listening for events"))
         return withContext(Dispatchers.IO) {
-           // while(!isStopped) {
                 try {
                     client.sse("${ChImpApplication.Companion.NGROK}/api/sse/listen") {
                         incoming.collect { event ->
@@ -66,7 +65,6 @@ class CoroutineSseWorkItem(
                     println("Error: $e")
                     return@withContext Result.retry()
                 }
-            //}
             Result.success()
         }
 
@@ -76,10 +74,6 @@ class CoroutineSseWorkItem(
         val id = ("SSE_CHANNEL_ID")
         val title = ("Chimp")
         val anchor = ("See")
-        // This PendingIntent can be used to cancel the worker
-        // val intent = Intent
-
-        // Create a Notification channel if necessary
         createNotificationChannel()
 
         val notification = NotificationCompat.Builder(applicationContext, id)

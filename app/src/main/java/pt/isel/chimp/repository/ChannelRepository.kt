@@ -6,6 +6,7 @@ import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.repository.interfaces.ChannelRepositoryInterface
 import pt.isel.chimp.storage.ChImpClientDB
 import pt.isel.chimp.storage.entities.ChannelEntity
 import pt.isel.chimp.storage.entities.UserEntity
@@ -13,8 +14,8 @@ import pt.isel.chimp.storage.entities.UserInChannel
 
 class ChannelRepository(
     private val db: ChImpClientDB
-) {
-    fun getChannels(): Flow<Map<Channel, Role>> {
+) : ChannelRepositoryInterface {
+    override fun getChannels(): Flow<Map<Channel, Role>> {
         return db.channelDao().getChannels().map { channels ->
             channels.map { channel ->
                 Channel(
@@ -31,7 +32,7 @@ class ChannelRepository(
         }
     }
 
-    suspend fun insertChannels(userId: Int, channels: Map<Channel, Role>) {
+    override suspend fun insertChannels(userId: Int, channels: Map<Channel, Role>) {
         db.userDao().insertUsers(*channels.keys.map{ channel ->
             UserEntity(
                 channel.creator.id,
@@ -58,24 +59,24 @@ class ChannelRepository(
 
     }
 
-    suspend fun updateChannel(channel: Channel) {
+    override suspend fun updateChannel(channel: Channel) {
         db.channelDao().updateChannelName(channel.id, channel.name)
     }
 
-    suspend fun insertUserInChannel(userId: Int, channelId: Int, role: Role) {
+    override suspend fun insertUserInChannel(userId: Int, channelId: Int, role: Role) {
         db.channelDao().insertUserInChannel(UserInChannel(userId, channelId, role.name))
     }
 
-    suspend fun removeUserFromChannel(userId: Int, channelId: Int) {
+    override suspend fun removeUserFromChannel(userId: Int, channelId: Int) {
         db.channelDao().deleteUserInChannel(userId, channelId)
         db.channelDao().deleteChannel(channelId)
     }
-    suspend fun clear() {
+    override suspend fun clear() {
         db.channelDao().clearUserInChannel()
         db.channelDao().clear()
     }
 
-    fun getChannelMembers(channel: Channel) : Flow<Map<User, Role>> {
+    override fun getChannelMembers(channel: Channel) : Flow<Map<User, Role>> {
         return db.channelDao().getChannelMembers(channel.id).map { users ->
             users.map { user ->
                 User(
@@ -87,7 +88,7 @@ class ChannelRepository(
         }
     }
 
-    fun getAllChannels(): Flow<List<Channel>> {
+    override fun getAllChannels(): Flow<List<Channel>> {
         return db.channelDao().getAllChannels().map { channels ->
             channels.map { channel ->
                 Channel(

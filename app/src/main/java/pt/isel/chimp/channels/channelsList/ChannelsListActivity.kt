@@ -1,11 +1,13 @@
 package pt.isel.chimp.channels.channelsList
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -18,6 +20,7 @@ import pt.isel.chimp.channels.channel.ChannelActivity
 import pt.isel.chimp.channels.createChannel.CreateChannelActivity
 import pt.isel.chimp.menu.MenuActivity
 import pt.isel.chimp.utils.navigateTo
+import android.Manifest
 
 class ChannelsListActivity : ComponentActivity() {
 
@@ -43,7 +46,13 @@ class ChannelsListActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    0
+                )
+            }
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -55,8 +64,6 @@ class ChannelsListActivity : ComponentActivity() {
                 "SseWork",
                 ExistingWorkPolicy.KEEP,
                 workRequest)
-        /* val intent = Intent(this, SseForegroundService::class.java)
-         startService(intent)*/
         viewModel.loadLocalData()
         setContent {
             ChannelsListScreen(

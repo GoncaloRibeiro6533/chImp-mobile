@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +21,9 @@ import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
 
+const val CHANNEL_LIST_TEST_TAG = "ChannelList"
+const val NO_CHANNELS_TAG = "NoChannels"
+
 @Composable
 fun ChannelListView(
     channels: StateFlow<Map<Channel,Role>>,
@@ -28,7 +32,7 @@ fun ChannelListView(
     val channelsState = channels.collectAsState().value
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().testTag(CHANNEL_LIST_TEST_TAG)
     ) {
         items(channelsState.keys.toList()) { channel ->
             ChannelItem(
@@ -42,7 +46,7 @@ fun ChannelListView(
             item {
                 Text(
                     text = "You don't have any channels yet",
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp).testTag(NO_CHANNELS_TAG)
                 )
             }
         }

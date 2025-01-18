@@ -35,7 +35,7 @@ class ChannelInfoViewTests {
         Pair(user3, Role.READ_ONLY)
     )
 
-    val channel = Channel(1, "Channel 1 long", user1, Visibility.PUBLIC)
+    val channel = Channel(1, "Channel 1 long", user1, Visibility.PRIVATE)
 
 
     @Test
@@ -43,9 +43,10 @@ class ChannelInfoViewTests {
 
         composeTree.setContent {
             ChannelInfoView(
-                channelInfo = ChannelInfo(channel, list) ,
+                channelInfo = ChannelInfo(user1, channel, list),
                 onUpdateChannel = { _ -> },
-                onLeaveChannel = {  }
+                onLeaveChannel = { },
+                onInviteMember = { },
             )
         }
         composeTree.onNodeWithTag(CHANNEL_LIST).assertIsDisplayed()

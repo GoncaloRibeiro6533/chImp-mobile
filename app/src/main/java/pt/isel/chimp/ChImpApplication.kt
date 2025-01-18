@@ -54,9 +54,10 @@ class ChImpApplication : Application(), DependenciesContainer {
         ChImpServiceMock(cookieRep as CookiesRepo, repo)
     }
     private val httpService: ChImpService by lazy {
-        ChImpServiceHttp(client)
+       // ChImpServiceHttp(client)
+        mockService
     }
-    private val service by lazy { mockService }
+    private val service by lazy { httpService }
 
     override val chImpService: ChImpService by lazy {
         service
@@ -86,7 +87,7 @@ class ChImpApplication : Application(), DependenciesContainer {
 
     //While using with mock service, it needs to be equal to "/"
     companion object { //TODO: improve this
-        const val NGROK = "/"//"https://0f8f-2001-8a0-7efc-e400-8952-b1f6-b323-f546.ngrok-free.app"
+        const val NGROK = "/"
     }
 
 }

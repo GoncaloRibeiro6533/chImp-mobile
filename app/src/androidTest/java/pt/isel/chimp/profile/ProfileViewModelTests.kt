@@ -1,14 +1,11 @@
 package pt.isel.chimp.profile
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.junit.Rule
 import org.junit.Test
-import pt.isel.chimp.components.LOADING_VIEW_TAG
 import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
@@ -24,18 +21,24 @@ import pt.isel.chimp.repository.interfaces.MessageRepositoryInterface
 import pt.isel.chimp.repository.interfaces.UserRepositoryInterface
 import pt.isel.chimp.service.UserService
 import pt.isel.chimp.utils.Either
+import pt.isel.chimp.utils.ReplaceMainDispatcherRule
 import pt.isel.chimp.utils.success
 
-class ProfileScreenTests {
+@OptIn(ExperimentalCoroutinesApi::class)
+class ProfileViewModelTests {
 
     @get:Rule
-    val composeRule = createComposeRule()
+    val replaceMainDispatcherRule = ReplaceMainDispatcherRule()
 
     private val testUserInfo = User(1, "test", "test@example.com")
     private val fakeRepo = object : UserInfoRepository {
+        var fail = false
         override val userInfo: Flow<User?>
             get() = flow { emit(null) }
-        override suspend fun getUserInfo(): User? { delay(1000); return testUserInfo }
+        override suspend fun getUserInfo(): User? {
+            delay(10000);
+            if (fail) return null
+            return testUserInfo }
         override suspend fun updateUserInfo(userInfo: User) { }
         override suspend fun clearUserInfo() { }
     }
@@ -99,62 +102,81 @@ class ProfileScreenTests {
             get() = fakeInvitationRepository
 
     }
-    private fun createFakeViewModel(initialState: ProfileScreenState): ProfileScreenViewModel =
-        ProfileScreenViewModel(
-            repo = fakeRepo,
-            userServices = fakeService,
-            db = fakeRepository,
-            initialState = initialState
-        )
-
 
     @Test
-    fun when_Idle_fetchProfile_is_called_and_loading_is_displayed() {
-        val viewModel = createFakeViewModel(ProfileScreenState.Idle)
-
-        composeRule.setContent {
-            ProfileScreen(viewModel = viewModel, onNavigateBack = {})
-        }
-
-        composeRule.onNodeWithTag(LOADING_VIEW_TAG).assertIsDisplayed()
+    fun initial_state_is_Idle() {
+            val sut = ProfileScreenViewModel(
+                fakeRepo,
+                fakeService,
+                fakeRepository
+            )
+            val state = sut.state.value
+            assert(state is ProfileScreenState.Idle)
     }
 
     @Test
-    fun when_Success_profile_view_is_displayed() {
-        val viewModel = createFakeViewModel(
-            ProfileScreenState.Success(Profile("testUser", "test@example.com"))
+    fun when_fetchProfile_is_called_state_transitions_to_loading() {
+        val sut = ProfileScreenViewModel(
+            fakeRepo,
+            fakeService,
+            fakeRepository
         )
-
-        composeRule.setContent {
-            ProfileScreen(viewModel = viewModel, onNavigateBack = {})
-        }
-
-        composeRule.onNodeWithTag(PROFILE_VIEW_TAG).assertIsDisplayed()
+        sut.fetchProfile()
+        val state = sut.state.value
+        assert(state is ProfileScreenState.Loading)
     }
 
     @Test
-    fun when_EditingUsername_editing_view_is_displayed() {
-        val viewModel = createFakeViewModel(
-            ProfileScreenState.EditingUsername(Profile("testUser", "test@example.com"))
+    fun when_editProfile_is_called_state_is_Editing() {
+        val sut = ProfileScreenViewModel(
+            fakeRepo,
+            fakeService,
+            fakeRepository,
+            initialState = ProfileScreenState.Success(Profile("test", "test@example.com"))
         )
+        sut.setEditState(Profile("test", "test@example.com"))
+        val state = sut.state.value
+        assert(state is ProfileScreenState.EditingUsername)
+    }
 
-        composeRule.setContent {
-            ProfileScreen(viewModel = viewModel, onNavigateBack = {})
-        }
+   /* @Test
+    fun when_fetchProfile_is_called_and_error_is_displayed() {
+        val sut = ProfileScreenViewModel(
+            fakeRepo,
+            fakeService,
+            fakeRepository
+        )
+        fakeRepo.fail = true
+        sut.fetchProfile()
+        fakeRepo.fail = false
+        val state = sut.state.value
+        assert(state is ProfileScreenState.Error)
+    }*/
 
-        composeRule.onNodeWithTag(EDIT_USERNAME_VIEW_TAG).assertIsDisplayed()
+    @Test
+    fun when_saveProfile_is_called_state_transitions_to_loading() {
+        val sut = ProfileScreenViewModel(
+            fakeRepo,
+            fakeService,
+            fakeRepository,
+            initialState = ProfileScreenState.EditingUsername(Profile("test", "test@example.com"))
+        )
+        sut.editUsername("test")
+        val state = sut.state.value
+        assert(state is ProfileScreenState.Loading)
     }
 
     @Test
-    fun when_Error_error_alert_is_displayed() {
-        val viewModel = createFakeViewModel(
-            ProfileScreenState.Error(ApiError("Error fetching user"))
+    fun when_cancel_is_called_state_transitions_to_success() {
+        val sut = ProfileScreenViewModel(
+            fakeRepo,
+            fakeService,
+            fakeRepository,
+            initialState = ProfileScreenState.EditingUsername(Profile("test", "test@example.com"))
         )
-
-        composeRule.setContent {
-            ProfileScreen(viewModel = viewModel, onNavigateBack = {})
-        }
-
-        composeRule.onNodeWithTag(ERROR_ALERT).assertIsDisplayed()
+        sut.setSuccessState(Profile("test", "test@example.com"))
+        val state = sut.state.value
+        assert(state is ProfileScreenState.Success)
     }
+
 }

@@ -1,9 +1,11 @@
 package pt.isel.chimp.channels.channelInfo
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,12 +39,36 @@ const val  LEAVE_CHANNEL_BUTTON = "leave_channel_button"
 @Composable
 fun ChannelInfoView(
     channelInfo: ChannelInfo,
-    onUpdateChannel : (String) -> Unit,
-    onLeaveChannel : () -> Unit,
-    onInviteMember : () -> Unit
-){
+    onUpdateChannel: (String) -> Unit,
+    onLeaveChannel: () -> Unit,
+    onInviteMember: () -> Unit
+) {
+    val orientation = LocalConfiguration.current.orientation
 
+    if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+        ChannelInfoPortraitLayout(
+            channelInfo = channelInfo,
+            onUpdateChannel = onUpdateChannel,
+            onLeaveChannel = onLeaveChannel,
+            onInviteMember = onInviteMember
+        )
+    } else {
+        ChannelInfoLandscapeLayout(
+            channelInfo = channelInfo,
+            onUpdateChannel = onUpdateChannel,
+            onLeaveChannel = onLeaveChannel,
+            onInviteMember = onInviteMember
+        )
+    }
+}
 
+@Composable
+fun ChannelInfoPortraitLayout(
+    channelInfo: ChannelInfo,
+    onUpdateChannel: (String) -> Unit,
+    onLeaveChannel: () -> Unit,
+    onInviteMember: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,100 +76,143 @@ fun ChannelInfoView(
             .testTag(CHANNEL_LIST),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ChannelLogo(channelInfo.channel.name, 135)
+        ChannelHeader(channelInfo, onUpdateChannel, onInviteMember)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag(CHANNELS)
+        ) {
+            items(channelInfo.members) { member ->
+                MemberView(member.first, member.second, channelInfo.channel.creator)
+            }
+            item {
+                ChannelDialog(
+                    "Leave Channel",
+                    "Do you want to leave this Channel?",
+                    "Leave",
+                    "",
+                    Color.Red,
+                    Color.White,
+                    { onLeaveChannel() },
+                    Modifier.testTag(LEAVE_CHANNEL_BUTTON)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ChannelInfoLandscapeLayout(
+    channelInfo: ChannelInfo,
+    onUpdateChannel: (String) -> Unit,
+    onLeaveChannel: () -> Unit,
+    onInviteMember: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .testTag(CHANNEL_LIST),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(end = 5.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            ChannelHeader(channelInfo, onUpdateChannel, onInviteMember, 80, 25,0)
+            ChannelDialog(
+                "Leave Channel",
+                "Do you want to leave this Channel?",
+                "Leave",
+                "",
+                Color.Red,
+                Color.White,
+                { onLeaveChannel() },
+                Modifier.testTag(LEAVE_CHANNEL_BUTTON)
+            )
+        }
+
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+                .weight(2f)
+                .fillMaxHeight()
+                .testTag(CHANNELS)
+        ) {
+            items(channelInfo.members) { member ->
+                MemberView(member.first, member.second, channelInfo.channel.creator)
+            }
+        }
+    }
+}
+
+@Composable
+fun ChannelHeader(
+    channelInfo: ChannelInfo,
+    onUpdateChannel: (String) -> Unit,
+    onInviteMember: () -> Unit,
+    imageSize: Int = 135,
+    fontSize: Int = 30,
+    padding: Int = 10
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ChannelLogo(channelInfo.channel.name, imageSize)
         Text(
             text = channelInfo.channel.name,
-            modifier = Modifier.padding(10.dp),
-            fontSize = 30.sp
+            modifier = Modifier.padding(padding.dp),
+            fontSize = fontSize.sp
         )
         Text(
             text = "Channel - ${channelInfo.members.size} members",
             modifier = Modifier.padding(6.dp)
         )
 
-        Row (
-            horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally),
-
-            ) {
-
-            if (channelInfo.channel.visibility == Visibility.PRIVATE){
-            Button(
-
-                onClick = { onInviteMember() },
-                colors = ButtonColors(Color(0xFF32cd32),
-                    Color.Black, Color.Green, Color.Green),
-                modifier = Modifier.testTag(DIALOG_BUTTON)
-            ) {
-                Text("Invite Member +")
-            }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)
+        ) {
+            if (channelInfo.channel.visibility == Visibility.PRIVATE) {
+                Button(
+                    onClick = { onInviteMember() },
+                    colors = ButtonColors(
+                        containerColor = Color(0xFF32cd32),
+                        contentColor = Color.Black,
+                        disabledContainerColor = Color(0xFF32cd32),
+                        disabledContentColor = Color.Black
+                    ),
+                    modifier = Modifier.testTag(ADD_MEMBER_BUTTON)
+                ) {
+                    Text("Invite Member +")
+                }
             }
             if (channelInfo.channel.creator == channelInfo.user) {
-            ChannelDialog(
-                "Edit Channel Name",
-                "Enter new channel name:",
-                "OK",
-                channelInfo.channel.name,
-                Color.LightGray,
-                Color.Black,
-                { newName -> onUpdateChannel(newName)},
-                Modifier.testTag(EDIT_CHANNEL_BUTTON)
-            )
-            }
-
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        LazyColumn(
-            /*
-            contentPadding = PaddingValues(
-                top = 0.dp,
-                bottom = innerPadding.calculateBottomPadding(),
-                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr)
-            ),
-
-             */
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize().testTag(CHANNELS)
-        ) {
-            items(channelInfo.members) { member ->
-                MemberView(member.first, member.second, channelInfo.channel.creator)
-            }
-            item {
-
                 ChannelDialog(
-                    "Leave Channel",
-                    "Do you want to leave this Channel?",
-                    "Leave", "",
-                    Color.Red,
-                    Color.White,
-                    { onLeaveChannel() },
-                    Modifier.testTag(LEAVE_CHANNEL_BUTTON)
+                    "Edit Channel Name",
+                    "Enter new channel name:",
+                    "OK",
+                    channelInfo.channel.name,
+                    Color.LightGray,
+                    Color.Black,
+                    { newName -> onUpdateChannel(newName) },
+                    Modifier.testTag(EDIT_CHANNEL_BUTTON)
                 )
-
-
-                /*
-                Button(
-                    onClick = {
-                        viewModel.leaveChannel(token, channel, user)
-                    },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(8.dp)
-                        .align(Alignment.CenterHorizontally),
-                    colors = ButtonColors(Color.Red, Color.White, Color.Green, Color.Green)
-                ) {
-                    Text("Leave Group")
-
-
-                }*/
             }
         }
     }
-
 }
+
 
 
 @Preview(showBackground = true, showSystemUi = true)

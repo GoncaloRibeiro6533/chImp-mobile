@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.map
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.repository.interfaces.MessageRepositoryInterface
 import pt.isel.chimp.storage.ChImpClientDB
 import pt.isel.chimp.storage.entities.MessageEntity
 import pt.isel.chimp.storage.entities.UserEntity
@@ -14,9 +15,9 @@ import java.time.ZoneOffset
 
 class MessageRepository(
     private val db: ChImpClientDB
-) {
+) : MessageRepositoryInterface {
 
-    suspend fun insertMessage(messages: List<Message>) {
+    override suspend fun insertMessage(messages: List<Message>) {
         val users = messages.map { it.sender }.distinct()
         db.userDao().insertUsers(*users.map { user ->
             UserEntity(
@@ -37,7 +38,7 @@ class MessageRepository(
         }.toTypedArray())
     }
 
-    fun getMessages(channel: Channel): Flow<List<Message>> {
+    override fun getMessages(channel: Channel): Flow<List<Message>> {
         val a= db.messageDao().getMessagesByChannelId(channel.id).map { list ->
             list.map { it ->
                 Message(
@@ -58,16 +59,16 @@ class MessageRepository(
         return a.distinctUntilChanged()
     }
 
-    suspend fun channelHasMessages(channel: Channel): Boolean {
+    override suspend fun channelHasMessages(channel: Channel): Boolean {
         return db.messageDao().nMessagesOfChannel(channel.id) > 0
     }
 
 
-    suspend fun deleteMessages(channel: Channel) {
+    override suspend fun deleteMessages(channel: Channel) {
         db.messageDao().deleteMessagesOfChannel(channel.id)
     }
 
-    suspend fun clear() {
+    override suspend fun clear() {
         db.messageDao().clear()
     }
 }

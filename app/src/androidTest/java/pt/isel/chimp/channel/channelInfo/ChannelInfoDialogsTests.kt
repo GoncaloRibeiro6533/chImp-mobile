@@ -1,4 +1,4 @@
-package pt.isel.chimp.channel.channelInfo.views
+package pt.isel.chimp.channel.channelInfo
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color

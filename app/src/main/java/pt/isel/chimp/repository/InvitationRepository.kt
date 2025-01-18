@@ -7,6 +7,7 @@ import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.domain.user.User
+import pt.isel.chimp.repository.interfaces.InvitationRepositoryInterface
 import pt.isel.chimp.storage.ChImpClientDB
 import pt.isel.chimp.storage.entities.ChannelEntity
 import pt.isel.chimp.storage.entities.InvitationEntity
@@ -17,9 +18,10 @@ import java.time.ZoneOffset
 
 class InvitationRepository(
     private val db: ChImpClientDB
-) {
+): InvitationRepositoryInterface
+{
 
-    suspend fun insertInvitations(invitations: List<Invitation>) {
+    override suspend fun insertInvitations(invitations: List<Invitation>) {
         val channels = invitations.map { it.channel }.distinct()
         val senders = invitations.map { it.sender }.distinct()
         val creators = channels.map { it.creator }.distinct()
@@ -55,7 +57,7 @@ class InvitationRepository(
     }
 
 
-    fun getInvitations(receiver: User) : Flow<List<Invitation>> {
+    override fun getInvitations(receiver: User) : Flow<List<Invitation>> {
         return db.invitationDao().getAllInvitations().map { list ->
             list.map { it ->
                 Invitation(
@@ -72,11 +74,11 @@ class InvitationRepository(
         }
     }
 
-    suspend fun deleteInvitation(invitationId: Int) {
+    override suspend fun deleteInvitation(invitationId: Int) {
         db.invitationDao().deleteInvitation(invitationId)
     }
 
-    suspend fun deleteAllInvitations() {
+    override suspend fun deleteAllInvitations() {
         db.invitationDao().deleteAllInvitations()
     }
 }

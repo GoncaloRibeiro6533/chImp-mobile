@@ -6,7 +6,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
@@ -20,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +57,8 @@ fun AboutScreen(
     onSendEmailRequested: (String) -> Unit = { },
     onOpenUrlRequested: (Uri) -> Unit = { }
 ) {
+    val orientation = LocalConfiguration.current.orientation
+
     ChImpTheme {
         Scaffold(
             modifier = Modifier
@@ -63,17 +68,68 @@ fun AboutScreen(
                 TopBar(NavigationHandlers(onBackRequested = onNavigateBack))
             },
         ) { innerPadding ->
-            Column(
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-            ) {
-                Text(text ="About", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                defaultAuthors.forEach { author ->
-                    Author(author, onSendEmailRequested, onOpenUrlRequested)
-                }
+            if (orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
+                AboutPortraitLayout(
+                    innerPadding = innerPadding,
+                    onSendEmailRequested = onSendEmailRequested,
+                    onOpenUrlRequested = onOpenUrlRequested
+                )
+            } else {
+                AboutLandscapeLayout(
+                    innerPadding = innerPadding,
+                    onSendEmailRequested = onSendEmailRequested,
+                    onOpenUrlRequested = onOpenUrlRequested
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AboutPortraitLayout(
+    innerPadding: PaddingValues,
+    onSendEmailRequested: (String) -> Unit,
+    onOpenUrlRequested: (Uri) -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.SpaceEvenly,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize(),
+    ) {
+        Text(text = "About", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+        defaultAuthors.forEach { author ->
+            Author(author, onSendEmailRequested, onOpenUrlRequested)
+        }
+    }
+}
+
+@Composable
+fun AboutLandscapeLayout(
+    innerPadding: PaddingValues,
+    onSendEmailRequested: (String) -> Unit,
+    onOpenUrlRequested: (Uri) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize(),
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Text(text = "About", fontSize = 15.sp, fontWeight = FontWeight.Bold)
+        }
+        Row(
+            modifier = Modifier
+                .weight(2f)
+                .fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            defaultAuthors.forEach { author ->
+                Author(author, onSendEmailRequested, onOpenUrlRequested)
             }
         }
     }

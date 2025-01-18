@@ -1,20 +1,20 @@
-package pt.isel.chimp.profile
+package pt.isel.chimp.channel.channelList
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
+import android.util.Log
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.junit.Rule
 import org.junit.Test
-import pt.isel.chimp.components.LOADING_VIEW_TAG
+import pt.isel.chimp.channels.channelsList.ChannelsListScreenState
+import pt.isel.chimp.channels.channelsList.ChannelsListViewModel
 import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.domain.message.Message
-import pt.isel.chimp.domain.profile.Profile
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.repository.ChImpRepo
@@ -22,14 +22,16 @@ import pt.isel.chimp.repository.interfaces.ChannelRepositoryInterface
 import pt.isel.chimp.repository.interfaces.InvitationRepositoryInterface
 import pt.isel.chimp.repository.interfaces.MessageRepositoryInterface
 import pt.isel.chimp.repository.interfaces.UserRepositoryInterface
-import pt.isel.chimp.service.UserService
+import pt.isel.chimp.service.ChannelService
 import pt.isel.chimp.utils.Either
+import pt.isel.chimp.utils.ReplaceMainDispatcherRule
 import pt.isel.chimp.utils.success
 
-class ProfileScreenTests {
+@OptIn(ExperimentalCoroutinesApi::class)
+class ChannelListViewModelTests {
 
     @get:Rule
-    val composeRule = createComposeRule()
+    val replaceMainDispatcherRule = ReplaceMainDispatcherRule()
 
     private val testUserInfo = User(1, "test", "test@example.com")
     private val fakeRepo = object : UserInfoRepository {
@@ -40,20 +42,56 @@ class ProfileScreenTests {
         override suspend fun clearUserInfo() { }
     }
 
-    private val fakeService = object : UserService {
-        override suspend fun fetchUser(): Either<ApiError, User> = success(testUserInfo)
-        override suspend fun updateUsername(username: String) = success(testUserInfo)
-        override suspend fun login(username: String, password: String) = success(testUserInfo)
-        override suspend fun register(username: String, email: String, password: String) = success(testUserInfo)
-        override suspend fun findUserById(id: Int): Either<ApiError, User> = success(testUserInfo)
-        override suspend fun logout() = success(Unit)
-        override suspend fun findUserByUsername(query: String): Either<ApiError, List<User>> =
-            success(listOf(testUserInfo))
+    private val creator = User(1, "test", "test@example.com")
+    private val fakeService = object : ChannelService {
+        override suspend fun createChannel(
+            name: String,
+            creatorId: Int,
+            visibility: Visibility
+        ): Either<ApiError, Channel> = success(Channel(1, "name", creator, visibility))
+        override suspend fun getChannelById(id: Int) = success(Channel(1, "name", creator, Visibility.PUBLIC))
+        override suspend fun getChannelsOfUser(
+            userId: Int,
+            limit: Int,
+            skip: Int
+        ): Either<ApiError, Map<Channel, Role>> {
+            delay(1000)
+            return success(mapOf(Channel(1, "name", creator, Visibility.PUBLIC) to Role.READ_WRITE))
+        }
+        override suspend fun joinChannel(
+            userToAdd: Int,
+            channelId: Int,
+            role: Role
+        ): Either<ApiError, Channel> = success(Channel(1, "name", creator, Visibility.PUBLIC))
+
+        override suspend fun getChannelMembers(channelId: Int): Either<ApiError, List<Pair<User, Role>>> =
+            success(listOf(Pair(creator, Role.READ_WRITE)))
+
+        override suspend fun updateChannelName(
+            channelId: Int,
+            newName: String
+        ): Either<ApiError, Channel> = success(Channel(1, "name", creator, Visibility.PUBLIC))
+
+        override suspend fun removeUserFromChannel(
+            channelId: Int,
+            userID: Int
+        ): Either<ApiError, Channel> = success(Channel(1, "name", creator, Visibility.PUBLIC))
+        override suspend fun searchChannelByName(
+            name: String,
+            limit: Int,
+            skip: Int
+        ): Either<ApiError, List<Channel>> = success(listOf(Channel(1, "name", creator, Visibility.PUBLIC)))
+
     }
 
+
     private val fakeChannelRepository = object : ChannelRepositoryInterface {
-        override fun getChannels(): Flow<Map<Channel, Role>> = flow { }
-        override suspend fun insertChannels(userId: Int, channels: Map<Channel, Role>) { }
+        override fun getChannels(): Flow<Map<Channel, Role>> = flow {
+            emit(emptyMap())
+        }
+        override suspend fun insertChannels(userId: Int, channels: Map<Channel, Role>) {
+            delay(1000)
+        }
         override suspend fun updateChannel(channel: Channel) { }
         override suspend fun insertUserInChannel(
             userId: Int,
@@ -99,62 +137,26 @@ class ProfileScreenTests {
             get() = fakeInvitationRepository
 
     }
-    private fun createFakeViewModel(initialState: ProfileScreenState): ProfileScreenViewModel =
-        ProfileScreenViewModel(
-            repo = fakeRepo,
-            userServices = fakeService,
-            db = fakeRepository,
+    private fun createFakeViewModel(initialState: ChannelsListScreenState): ChannelsListViewModel =
+        ChannelsListViewModel(
+            userInfo = fakeRepo,
+            channelService = fakeService,
+            repo = fakeRepository,
             initialState = initialState
         )
 
-
     @Test
-    fun when_Idle_fetchProfile_is_called_and_loading_is_displayed() {
-        val viewModel = createFakeViewModel(ProfileScreenState.Idle)
-
-        composeRule.setContent {
-            ProfileScreen(viewModel = viewModel, onNavigateBack = {})
-        }
-
-        composeRule.onNodeWithTag(LOADING_VIEW_TAG).assertIsDisplayed()
+    fun initial_state_is_uninitialized() {
+        val sut = createFakeViewModel(ChannelsListScreenState.Uninitialized)
+        val state = sut.state.value
+        assert(state is ChannelsListScreenState.Uninitialized)
     }
 
-    @Test
-    fun when_Success_profile_view_is_displayed() {
-        val viewModel = createFakeViewModel(
-            ProfileScreenState.Success(Profile("testUser", "test@example.com"))
-        )
-
-        composeRule.setContent {
-            ProfileScreen(viewModel = viewModel, onNavigateBack = {})
-        }
-
-        composeRule.onNodeWithTag(PROFILE_VIEW_TAG).assertIsDisplayed()
-    }
-
-    @Test
-    fun when_EditingUsername_editing_view_is_displayed() {
-        val viewModel = createFakeViewModel(
-            ProfileScreenState.EditingUsername(Profile("testUser", "test@example.com"))
-        )
-
-        composeRule.setContent {
-            ProfileScreen(viewModel = viewModel, onNavigateBack = {})
-        }
-
-        composeRule.onNodeWithTag(EDIT_USERNAME_VIEW_TAG).assertIsDisplayed()
-    }
-
-    @Test
-    fun when_Error_error_alert_is_displayed() {
-        val viewModel = createFakeViewModel(
-            ProfileScreenState.Error(ApiError("Error fetching user"))
-        )
-
-        composeRule.setContent {
-            ProfileScreen(viewModel = viewModel, onNavigateBack = {})
-        }
-
-        composeRule.onNodeWithTag(ERROR_ALERT).assertIsDisplayed()
-    }
+    /*@Test
+    fun when_fetchChannels_is_called_state_transitions_to_loading() {
+        val sut = createFakeViewModel(ChannelsListScreenState.Uninitialized)
+        sut.loadLocalData()
+        val state = sut.state.value
+        assert(state is ChannelsListScreenState.LoadFromRemote)
+    }*/
 }
