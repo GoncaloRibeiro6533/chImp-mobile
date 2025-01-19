@@ -66,6 +66,9 @@ class ChannelRepoMock {
     }
 
     fun findChannelsOfUser(user: User): Map<Channel,Role> {
+        if (!userInChannel.values.any { value-> value.any{it-> it.first.id == user.id } }) {
+            return emptyMap()
+        }
         val channels: Map<Channel,Role> =
             userInChannel.filter { it.value.any { it.first.id == user.id } }
                 .map { it.key to it.value.find { it.first.id == user.id }!!.second }

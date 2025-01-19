@@ -104,4 +104,12 @@ class ChannelRepository(
             }
         }
     }
+
+    override suspend fun markChannelAsLoaded(channelId: Int) {
+        db.channelDao().markChannelAsLoaded(channelId)
+    }
+
+    override suspend fun isLoaded(channelId: Int): Boolean {
+        return db.channelDao().isLoaded(channelId)
+    }
 }

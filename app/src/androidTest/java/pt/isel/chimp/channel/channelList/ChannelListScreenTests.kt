@@ -1,7 +1,6 @@
 package pt.isel.chimp.channel.channelList
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import kotlinx.coroutines.delay
@@ -103,6 +102,8 @@ class ChannelListScreenTests {
         override suspend fun clear() {}
         override fun getChannelMembers(channel: Channel): Flow<Map<User, Role>>  = flow { }
         override fun getAllChannels(): Flow<List<Channel>> = flow { }
+        override suspend fun markChannelAsLoaded(channelId: Int) { }
+        override suspend fun isLoaded(channelId: Int): Boolean = false
     }
 
     private val fakeMessageRepository = object : MessageRepositoryInterface {

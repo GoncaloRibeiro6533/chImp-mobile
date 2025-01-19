@@ -15,6 +15,7 @@ import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
+import kotlin.collections.first
 
 sealed interface ChannelScreenState {
     data object Uninitialized : ChannelScreenState
@@ -73,17 +74,14 @@ class ChannelViewModel(
             try {
                 repo.messageRepo.getMessages(channel).collect { stream ->
                     _messages.value = stream
-                    if (stream.isNotEmpty() &&
-                        (_state.value !is ChannelScreenState.SaveData ||
-                                _state.value !is ChannelScreenState.SaveMore ||
-                                _state.value !is ChannelScreenState.LoadedAll ||
-                                _state.value !is ChannelScreenState.Success
-                            )) {
-                        if (_messages.value.size >= MESSAGES_LIMIT) _state.value = ChannelScreenState.Success(_messages)
-                        else _state.value = ChannelScreenState.LoadedAll(_messages)
-                    }
-                    if (stream.isEmpty() && _state.value is ChannelScreenState.Uninitialized){
-                        _state.value = ChannelScreenState.LoadFromRemote(channel)
+                    if (_state.value is ChannelScreenState.Uninitialized) {
+                        if (stream.isNotEmpty() || repo.channelRepo.isLoaded(channel.id)) {
+                            if (_messages.value.size >= MESSAGES_LIMIT) _state.value = ChannelScreenState.Success(_messages)
+                            else _state.value = ChannelScreenState.LoadedAll(_messages)
+                        } else {
+                            repo.channelRepo.markChannelAsLoaded(channel.id)
+                            _state.value = ChannelScreenState.LoadFromRemote(channel)
+                        }
                     }
                 }
             } catch (e: Throwable) {

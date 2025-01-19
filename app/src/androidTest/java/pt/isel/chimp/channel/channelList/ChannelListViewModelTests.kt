@@ -1,6 +1,5 @@
 package pt.isel.chimp.channel.channelList
 
-import android.util.Log
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -102,6 +101,8 @@ class ChannelListViewModelTests {
         override suspend fun clear() {}
         override fun getChannelMembers(channel: Channel): Flow<Map<User, Role>>  = flow { }
         override fun getAllChannels(): Flow<List<Channel>> = flow { }
+        override suspend fun markChannelAsLoaded(channelId: Int) { }
+        override suspend fun isLoaded(channelId: Int): Boolean = false
     }
 
     private val fakeMessageRepository = object : MessageRepositoryInterface {

@@ -54,17 +54,17 @@ class CoroutineSseWorkItem(
         val userInfo = (applicationContext as DependenciesContainer).userInfoRepository
         setForeground(createForegroundInfo("Listening for events"))
         return withContext(Dispatchers.IO) {
-                try {
-                    client.sse("${ChImpApplication.Companion.NGROK}/api/sse/listen") {
-                        incoming.collect { event ->
-                            eventHandler(event, repo, userInfo)
-                        }
-                        delay(5000)
+            try {
+                client.sse("${ChImpApplication.Companion.NGROK}/api/sse/listen") {
+                    incoming.collect { event ->
+                        eventHandler(event, repo, userInfo)
                     }
-                } catch (e: Exception) {
-                    println("Error: $e")
-                    return@withContext Result.retry()
+                    delay(5000)
                 }
+            } catch (e: Exception) {
+                println("Error: $e")
+                return@withContext Result.retry()
+            }
             Result.success()
         }
 
@@ -112,29 +112,41 @@ class CoroutineSseWorkItem(
         when (eventC) {
             "NewChannelMessage" -> {
                 val message = messageMapper(data)
-                   if (repo.messageRepo.channelHasMessages(message.channel)) {
-                        repo.messageRepo.insertMessage(listOf(message))
-                    }
-                    val notificationTitle = "New Message"
-                    val notificationContent = "New message from:${message.sender.username} at channel:${message.channel.name}"
-                    if (message.sender != user ) sendNotification(notificationTitle, notificationContent)
+                if (repo.channelRepo.isLoaded(message.channel.id)) {
+                    repo.messageRepo.insertMessage(listOf(message))
                 }
+                val notificationTitle = "New Message"
+                val notificationContent = "New message from:${message.sender.username} at channel:${message.channel.name}"
+                if (message.sender != user ) sendNotification(notificationTitle, notificationContent)
+            }
             "ChannelNameUpdate" -> {
-                    val channel = channelNameUpdateMapper(data)
-                    repo.channelRepo.updateChannel(channel)
+                val channel = channelNameUpdateMapper(data)
+                repo.channelRepo.updateChannel(channel)
+                val notificationTitle = "Channel Name Update"
+                val notificationContent = "Channel name updated to:${channel.name}"
+                sendNotification(notificationTitle, notificationContent)
             }
             "ChannelNewMemberUpdate" -> {
                 val newMember = channelNewMemberUpdateMapper(data)
                 repo.userRepo.insertUser(listOf(newMember.newMember))
                 repo.channelRepo.insertUserInChannel(newMember.newMember.id, newMember.channel.id, newMember.role)
+                val notificationTitle = "New Member"
+                val notificationContent = "New member at channel:${newMember.channel.name}"
+                sendNotification(notificationTitle, notificationContent)
             }
             "ChannelMemberExitedUpdate" -> {
                 val removedMember = channelMemberExitedUpdateMapper(data)
                 repo.channelRepo.removeUserFromChannel(removedMember.removedMember.id, removedMember.channel.id)
+                val notificationTitle = "Member Exited"
+                val notificationContent = "Member exited:${removedMember.channel.name} at channel:${removedMember.channel.name}"
+                sendNotification(notificationTitle, notificationContent)
             }
             "NewInvitationUpdate" -> {
                 val invitation = invitationMapper(data)
                 repo.invitationRepo.insertInvitations(listOf(invitation))
+                val notificationTitle = "New Invitation"
+                val notificationContent = "New invitation from:${invitation.sender.username}"
+                sendNotification(notificationTitle, notificationContent)
             }
             "InvitationAcceptedUpdate" -> {
                 val invitation = invitationAcceptedMapper(data)

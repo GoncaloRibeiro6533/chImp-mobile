@@ -22,7 +22,8 @@ data class ChannelEntity(
     val name: String,
     val creatorId: Int,
     val visibility: String,
-    val role: String
+    val role: String,
+    val loaded: Boolean = false,
 )
 
 data class ChannelWithCreator(

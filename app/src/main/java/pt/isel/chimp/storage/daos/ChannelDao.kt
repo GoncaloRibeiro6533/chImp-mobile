@@ -15,6 +15,11 @@ import pt.isel.chimp.storage.entities.UserInChannelWithUser
 @Dao
 interface ChannelDao {
 
+    @Query("SELECT loaded FROM channel WHERE id = :channelId")
+    suspend fun isLoaded(channelId: Int): Boolean
+
+    @Query("Update channel SET loaded = 1 WHERE id = :channelId")
+    suspend fun markChannelAsLoaded(channelId: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertChannels(vararg channels :ChannelEntity)

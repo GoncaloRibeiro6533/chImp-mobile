@@ -36,7 +36,7 @@ class ProfileViewModelTests {
         override val userInfo: Flow<User?>
             get() = flow { emit(null) }
         override suspend fun getUserInfo(): User? {
-            delay(10000);
+            delay(10000)
             if (fail) return null
             return testUserInfo }
         override suspend fun updateUserInfo(userInfo: User) { }
@@ -67,6 +67,8 @@ class ProfileViewModelTests {
         override suspend fun clear() {}
         override fun getChannelMembers(channel: Channel): Flow<Map<User, Role>>  = flow { }
         override fun getAllChannels(): Flow<List<Channel>> = flow { }
+        override suspend fun markChannelAsLoaded(channelId: Int) { }
+        override suspend fun isLoaded(channelId: Int): Boolean = false
     }
 
     private val fakeMessageRepository = object : MessageRepositoryInterface {

@@ -14,6 +14,6 @@ interface ChannelRepositoryInterface {
     suspend fun clear()
     fun getChannelMembers(channel: Channel) : Flow<Map<User, Role>>
     fun getAllChannels(): Flow<List<Channel>>
-
-
+    suspend fun markChannelAsLoaded(channelId: Int)
+    suspend fun isLoaded(channelId: Int): Boolean
 }
