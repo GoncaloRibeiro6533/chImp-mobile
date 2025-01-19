@@ -53,14 +53,14 @@ class MockInvitationService(
 
     override suspend fun acceptInvitation(
         invitationId: Int,
-    ): Either<ApiError, Invitation> =
-        interceptRequest<Invitation> { user ->
+    ): Either<ApiError, Channel> =
+        interceptRequest<Channel> { user ->
             val invitation = repoMock.invitationRepoMock.findInvitationById(invitationId)
                 ?: return@interceptRequest failure(ApiError("Invitation not found"))
             if (invitation.isUsed) return@interceptRequest failure(ApiError("Invitation already used"))
             val updatedInvitation = repoMock.invitationRepoMock.acceptInvitation(invitationId)
             repoMock.channelRepoMock.addUserToChannel(user, invitation.channel, invitation.role)
-            return@interceptRequest success(updatedInvitation)
+            return@interceptRequest success(updatedInvitation.channel)
         }
 
     override suspend fun declineInvitation(

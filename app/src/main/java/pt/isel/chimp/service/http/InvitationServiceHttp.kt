@@ -7,6 +7,7 @@ import pt.isel.chimp.service.http.models.InvitationInputModelChannel
 import pt.isel.chimp.service.http.models.InvitationOutputModelChannel
 import pt.isel.chimp.service.http.models.InvitationsList
 import pt.isel.chimp.domain.ApiError
+import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.service.http.utils.get
 import pt.isel.chimp.service.http.utils.post
 import pt.isel.chimp.service.http.utils.put
@@ -43,8 +44,8 @@ class InvitationServiceHttp(private val client: HttpClient) : InvitationService 
 
     override suspend fun acceptInvitation(
         invitationId: Int,
-    ): Either<ApiError, Invitation> {
-        return when (val response = client.put<Invitation>(
+    ): Either<ApiError, Channel> {
+        return when (val response = client.put<Channel>(
             url = "/invitation/accept/$invitationId",
         )) {
             is Success -> success(response.value)

@@ -102,25 +102,21 @@ class InvitationListViewModel (
             viewModelScope.launch {
                 _state.value = try {
                     val user = userInfoRepo.getUserInfo() ?: throw ChImpException("User not found", null)
-                    when(val updatedInvitation = invitationService.acceptInvitation(invitation.id)) {
+                    when(val channel = invitationService.acceptInvitation(invitation.id)) {
                         is Success -> {
-
-                            val channel = updatedInvitation.value.channel
-                            val role = updatedInvitation.value.role
-
                             repo.invitationRepo.deleteInvitation(invitation.id)
 
                             repo.channelRepo.insertChannels(
-                                user.id, mapOf(channel to role))
+                                user.id, mapOf(channel.value to invitation.role))
 
 
-                            InvitationListScreenState.SuccessOnAccept(Pair(channel, role))
+                            InvitationListScreenState.SuccessOnAccept(Pair(channel.value, invitation.role))
                         }
                         is Failure -> {
-                            if (updatedInvitation.value == ApiError("Invitation expired")) {
+                            if (channel.value == ApiError("Invitation expired")) {
                                 repo.invitationRepo.deleteInvitation(invitation.id)
                             }
-                            InvitationListScreenState.Error(updatedInvitation.value)
+                            InvitationListScreenState.Error(channel.value)
                         }
                     }
                 } catch (e: Throwable) {

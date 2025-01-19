@@ -36,7 +36,7 @@ interface InvitationService {
      * @return the joined channel.
      * @return ApiError if an error occurs.
      */
-    suspend fun acceptInvitation(invitationId: Int): Either<ApiError, Invitation>
+    suspend fun acceptInvitation(invitationId: Int): Either<ApiError, Channel>
 
     /**
      * Declines an invitation to join a channel.
