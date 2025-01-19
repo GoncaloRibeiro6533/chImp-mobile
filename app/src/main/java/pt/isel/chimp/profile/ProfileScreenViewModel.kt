@@ -31,7 +31,7 @@ class ProfileScreenViewModel(
     private val userServices: UserService,
     private val db: ChImpRepo,
     initialState: ProfileScreenState = ProfileScreenState.Idle
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val _screenState = MutableStateFlow<ProfileScreenState>(initialState)
     val state: StateFlow<ProfileScreenState> = _screenState
@@ -39,7 +39,7 @@ class ProfileScreenViewModel(
 
     fun fetchProfile() {
         if (_screenState.value != ProfileScreenState.Loading) {
-                _screenState.value = ProfileScreenState.Loading
+            _screenState.value = ProfileScreenState.Loading
             viewModelScope.launch {
                 _screenState.value = try {
                     val userInfo = repo.getUserInfo() ?: throw Exception("User not authenticated")

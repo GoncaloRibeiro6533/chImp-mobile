@@ -63,7 +63,7 @@ fun MenuScreen(
     menuItems: List<MenuItem>,
     onNavigateBack: () -> Unit,
     onLogout: () -> Unit
-    ) {
+) {
     val state = viewModel.state
     ChImpTheme {
         Scaffold(
@@ -78,55 +78,55 @@ fun MenuScreen(
                 modifier = Modifier.fillMaxSize().padding(innerPadding)
             ) {
                 HorizontalDivider()
-            when (state) {
-                is MenuScreenState.Idle -> {
-                    LazyColumn {
-                        items(menuItems) { item ->
-                            MenuItemView(item)
-                            HorizontalDivider()
+                when (state) {
+                    is MenuScreenState.Idle -> {
+                        LazyColumn {
+                            items(menuItems) { item ->
+                                MenuItemView(item)
+                                HorizontalDivider()
+                            }
                         }
                     }
-                }
-                is MenuScreenState.LoggingOut -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                    is MenuScreenState.LoggingOut -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            // Texto de logout
-                            Text(
-                                text = "Exiting...",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            // Indicador de progresso
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(48.dp),
-                                color = MaterialTheme.colorScheme.primary
-                            )
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                // Texto de logout
+                                Text(
+                                    text = "Exiting...",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                // Indicador de progresso
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(48.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
-                }
-                is MenuScreenState.LoggedOut -> {
-                    onLogout()
-                }
-                is MenuScreenState.Error -> {
-                    ErrorAlert(
-                        title = "Error",
-                        message = state.error.message,
-                        buttonText = "Ok",
-                        onDismiss = { onLogout() }
-                    )
+                    is MenuScreenState.LoggedOut -> {
+                        onLogout()
+                    }
+                    is MenuScreenState.Error -> {
+                        ErrorAlert(
+                            title = "Error",
+                            message = state.error.message,
+                            buttonText = "Ok",
+                            onDismiss = { onLogout() }
+                        )
+                    }
                 }
             }
-        }
         }
     }
 }
@@ -189,7 +189,7 @@ fun MenuScreenPreview() {
         menuItems = listOf(
             MenuItem("About", "about screen", Icons.Default.Info, { }),
             MenuItem("Profile", "profile screen", Icons.Default.Person, { }),
-            ),
+        ),
         onNavigateBack ={},
         onLogout = {}
     )

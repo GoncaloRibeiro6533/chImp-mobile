@@ -38,7 +38,7 @@ class ChannelInfoActivity: ComponentActivity() {
             finish()
             return
         }
-       // viewModel.loadMembers(channel.id)
+        // viewModel.loadMembers(channel.id)
         setContent{
             ChannelInfoScreen(
                 viewModel = viewModel,

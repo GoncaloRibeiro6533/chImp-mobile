@@ -57,25 +57,25 @@ fun MessagesView(
         EmptyConversationMessage()
     } else {
         Column {
-        LazyColumn(
-            modifier = modifier.weight(1f).fillMaxWidth().fillMaxHeight(),
-            verticalArrangement = Arrangement.Bottom,
-            state = listState,
-            reverseLayout = true,
-        ) {
-            itemsIndexed(messages) { index, message ->
-                MessageView(user = message.sender, message = message)
-                if (shouldShowDateSeparator(messages, index)) {
-                    DateSeparator(message.timestamp)
-                }
-                if (index == messages.lastIndex) {
-                    FooterMessage(
-                        isLoading = loadingMore,
-                        showStartMessage = messages.size < 40 || loadedAll
-                    )
+            LazyColumn(
+                modifier = modifier.weight(1f).fillMaxWidth().fillMaxHeight(),
+                verticalArrangement = Arrangement.Bottom,
+                state = listState,
+                reverseLayout = true,
+            ) {
+                itemsIndexed(messages) { index, message ->
+                    MessageView(user = message.sender, message = message)
+                    if (shouldShowDateSeparator(messages, index)) {
+                        DateSeparator(message.timestamp)
+                    }
+                    if (index == messages.lastIndex) {
+                        FooterMessage(
+                            isLoading = loadingMore,
+                            showStartMessage = messages.size < 40 || loadedAll
+                        )
+                    }
                 }
             }
-        }
         }
     }
 }

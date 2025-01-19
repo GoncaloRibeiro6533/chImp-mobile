@@ -49,7 +49,7 @@ class MessageRepository(
                         channel.name,
                         channel.creator,
                         channel.visibility
-                        ),
+                    ),
                     content = it.message.content,
                     timestamp = LocalDateTime.ofEpochSecond(it.message.timestamp, 0, ZoneOffset.UTC)
                 )

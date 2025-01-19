@@ -26,8 +26,6 @@ import kotlin.time.Duration.Companion.seconds
 
 class ChImpApplication : Application(), DependenciesContainer {
 
-
-
     override val client: HttpClient by lazy {
         HttpClient(OkHttp) {
             install(ContentNegotiation) {
@@ -57,7 +55,7 @@ class ChImpApplication : Application(), DependenciesContainer {
         ChImpServiceHttp(client)
     }
     private val service by lazy {
-    //    httpService
+        //    httpService
         mockService
     }
 

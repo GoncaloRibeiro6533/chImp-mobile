@@ -46,24 +46,24 @@ class ChannelsListActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                    0
-                )
-            }
-            val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
-            val workRequest = OneTimeWorkRequestBuilder<CoroutineSseWorkItem>()
-                .setConstraints(constraints)
-                .addTag("sse")
-                .build()
-            WorkManager.getInstance(applicationContext).enqueueUniqueWork(
-                "SseWork",
-                ExistingWorkPolicy.KEEP,
-                workRequest)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                0
+            )
+        }
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+        val workRequest = OneTimeWorkRequestBuilder<CoroutineSseWorkItem>()
+            .setConstraints(constraints)
+            .addTag("sse")
+            .build()
+        WorkManager.getInstance(applicationContext).enqueueUniqueWork(
+            "SseWork",
+            ExistingWorkPolicy.KEEP,
+            workRequest)
         viewModel.loadLocalData()
         setContent {
             ChannelsListScreen(

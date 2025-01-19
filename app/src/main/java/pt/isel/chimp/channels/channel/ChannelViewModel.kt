@@ -8,14 +8,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.message.Message
-import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
-import kotlin.collections.first
 
 sealed interface ChannelScreenState {
     data object Uninitialized : ChannelScreenState
@@ -52,18 +51,18 @@ class ChannelViewModel(
             val state = _state.value
             _state.value = ChannelScreenState.SendingMessage(_messages)
             viewModelScope.launch {
-                    _state.value = try {
-                        val result = service.messageService.createMessage(channel.id, content)
-                        when (result) {
-                            is Success ->
-                                if (state is ChannelScreenState.LoadedAll) ChannelScreenState.LoadedAll(_messages)
-                                else ChannelScreenState.Success(_messages)
-                            is Failure -> ChannelScreenState.Error(result.value)
-                        }
-                    } catch (e: Throwable) {
-                        ChannelScreenState.Error(ApiError("Error sending message"))
+                _state.value = try {
+                    val result = service.messageService.createMessage(channel.id, content)
+                    when (result) {
+                        is Success ->
+                            if (state is ChannelScreenState.LoadedAll) ChannelScreenState.LoadedAll(_messages)
+                            else ChannelScreenState.Success(_messages)
+                        is Failure -> ChannelScreenState.Error(result.value)
                     }
+                } catch (e: Throwable) {
+                    ChannelScreenState.Error(ApiError("Error sending message"))
                 }
+            }
         }
     }
 

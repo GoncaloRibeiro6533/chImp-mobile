@@ -30,7 +30,7 @@ class CreateChannelViewModel (
     private val repo: ChImpRepo,
     private val userInfo: UserInfoRepository,
     initialState: CreateChannelScreenState = CreateChannelScreenState.Idle
-    ) : ViewModel(){
+) : ViewModel(){
 
     private val _state = MutableStateFlow<CreateChannelScreenState>(initialState)
     val state = _state.asStateFlow()
@@ -74,7 +74,7 @@ class CreateChannelViewModelFactory(
     private val service: ChImpService,
     private val repo: ChImpRepo,
     private val userInfo: UserInfoRepository
-    ): ViewModelProvider.Factory {
+): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>):  T {
         return CreateChannelViewModel(service.channelService, repo, userInfo) as T
     }

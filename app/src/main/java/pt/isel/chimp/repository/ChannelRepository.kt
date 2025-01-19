@@ -41,7 +41,7 @@ class ChannelRepository(
             )
         }.toTypedArray())
         db.channelDao().insertChannels(*channels.keys.map { channel ->
-                ChannelEntity(
+            ChannelEntity(
                 channel.id,
                 channel.name,
                 channel.creator.id,

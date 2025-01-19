@@ -6,10 +6,6 @@ import pt.isel.chimp.service.ChannelService
 import pt.isel.chimp.service.InvitationService
 import pt.isel.chimp.service.MessageService
 import pt.isel.chimp.service.UserService
-import pt.isel.chimp.service.service.http.ChannelServiceHttp
-import pt.isel.chimp.service.service.http.InvitationServiceHttp
-import pt.isel.chimp.service.service.http.MessageServiceHttp
-import pt.isel.chimp.service.service.http.UserServiceHttp
 
 class ChImpServiceHttp(private val client: HttpClient): ChImpService {
 

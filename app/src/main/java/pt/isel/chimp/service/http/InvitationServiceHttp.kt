@@ -1,13 +1,11 @@
-package pt.isel.chimp.service.service.http
+package pt.isel.chimp.service.http
 
 import io.ktor.client.HttpClient
 import pt.isel.chimp.domain.Role
-import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.service.http.models.InvitationInputModelChannel
 import pt.isel.chimp.service.http.models.InvitationOutputModelChannel
 import pt.isel.chimp.service.http.models.InvitationsList
-import pt.isel.chimp.service.http.models.channel.ChannelOutputModel
 import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.service.http.utils.get
 import pt.isel.chimp.service.http.utils.post

@@ -61,7 +61,7 @@ fun ChatBoxView(
                     }
                 },
                 modifier = Modifier.align(Alignment.Bottom)
-                ) {
+            ) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Send Message to Channel")
 
             }
@@ -74,6 +74,6 @@ fun ChatBoxView(
 @Composable
 fun ChatBoxViewPreview() {
     ChImpTheme {
-         ChatBoxView({}, true)
+        ChatBoxView({}, true)
     }
 }

@@ -64,7 +64,7 @@ fun ChannelView(
                 ChatBoxView( enabled = false)
                 Text(
                     text = "You don't have permission to send messages"
-                    )
+                )
             }
         }
     }
@@ -77,22 +77,22 @@ private val  userAlice = User(2, "Alice", "alice@example.com")
 private val channel = Channel(1, "Channel 1", userBob, Visibility.PUBLIC)
 
 private val messages =
-        listOf(
-            Message(
-                1,
-                sender = userBob,
-                channel = channel,
-                content = "Hello, Alice!",
-                timestamp = LocalDateTime.of(2021, 10, 1, 10, 0)
-            ),
-            Message(
-                2,
-                sender = userAlice,
-                channel = channel,
-                content = "Hello, Bob!",
-                timestamp = LocalDateTime.of(2021, 10, 1, 10, 1)
-            )
+    listOf(
+        Message(
+            1,
+            sender = userBob,
+            channel = channel,
+            content = "Hello, Alice!",
+            timestamp = LocalDateTime.of(2021, 10, 1, 10, 0)
+        ),
+        Message(
+            2,
+            sender = userAlice,
+            channel = channel,
+            content = "Hello, Bob!",
+            timestamp = LocalDateTime.of(2021, 10, 1, 10, 1)
         )
+    )
 
 @Preview(showBackground = true)
 @Composable

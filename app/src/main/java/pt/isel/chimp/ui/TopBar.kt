@@ -46,7 +46,7 @@ fun TopBar(
             modifier = Modifier,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight(500),
-            )
+        )
     }
 ) {
     TopAppBar(

@@ -67,7 +67,7 @@ class ChannelInfoViewModel(
         channel: ChannelInfo,
         newName: String,
         onDismiss: () -> Unit
-        ) {
+    ) {
         if (_state.value != ChannelInfoScreenState.Loading) {
             _state.value = ChannelInfoScreenState.Loading
             viewModelScope.launch {

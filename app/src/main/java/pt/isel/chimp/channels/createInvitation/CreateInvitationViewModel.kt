@@ -43,7 +43,7 @@ class CreateInvitationViewModel(
 
     fun searchUsers(query: String) {
         if (_state.value != CreateInvitationScreenState.Loading) {
-        //    _state.value = CreateInvitationScreenState.Loading
+            //    _state.value = CreateInvitationScreenState.Loading
             viewModelScope.launch {
                 _state.value = try {
                     val user = repo.getUserInfo() ?: throw ChImpException("User not found", null)
@@ -68,21 +68,21 @@ class CreateInvitationViewModel(
         }
         /*if (_state.value != CreateInvitationScreenState.Loading) {
             _state.value = CreateInvitationScreenState.Loading*/
-            viewModelScope.launch {
-                _state.value = try {
-                    when (val result = service.invitationService.createChannelInvitation(
-                        user.id,
-                        channel.id,
-                        role
-                    )) {
-                        is Success -> CreateInvitationScreenState.Success
-                        is Failure -> CreateInvitationScreenState.Error(result.value)
-                    }
-                } catch (e: Throwable) {
-                    CreateInvitationScreenState.Error(ApiError("Error inviting user to Channel"))
+        viewModelScope.launch {
+            _state.value = try {
+                when (val result = service.invitationService.createChannelInvitation(
+                    user.id,
+                    channel.id,
+                    role
+                )) {
+                    is Success -> CreateInvitationScreenState.Success
+                    is Failure -> CreateInvitationScreenState.Error(result.value)
                 }
+            } catch (e: Throwable) {
+                CreateInvitationScreenState.Error(ApiError("Error inviting user to Channel"))
             }
         }
+    }
     //}
 
     fun setIdle() {

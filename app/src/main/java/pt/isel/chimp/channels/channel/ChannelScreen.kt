@@ -71,7 +71,7 @@ fun ChannelScreen(
                     is ChannelScreenState.Success,
                     is ChannelScreenState.SendingMessage,
                     is ChannelScreenState.LoadedAll
-                         -> {
+                        -> {
                         if (state is ChannelScreenState.SaveMore) viewModel.saveData(
                             state.messages
                         )

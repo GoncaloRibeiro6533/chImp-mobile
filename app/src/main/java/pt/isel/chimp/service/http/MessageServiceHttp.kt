@@ -1,4 +1,4 @@
-package pt.isel.chimp.service.service.http
+package pt.isel.chimp.service.http
 
 import io.ktor.client.HttpClient
 import pt.isel.chimp.domain.message.Message

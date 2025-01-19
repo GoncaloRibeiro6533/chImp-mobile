@@ -206,6 +206,6 @@ private fun InfoScreenPreview() {
             email = "A48305@alunos.isel.pt"
         ),
 
-    )
+        )
     AboutScreen()
 }

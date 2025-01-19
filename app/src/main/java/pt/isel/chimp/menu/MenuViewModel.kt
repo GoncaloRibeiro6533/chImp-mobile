@@ -35,8 +35,8 @@ class MenuViewModel(
         if (state == MenuScreenState.LoggingOut) return
         state = MenuScreenState.LoggingOut
         viewModelScope.launch {
-           state =  try {
-                 when (val result = service.userService.logout()) {
+            state =  try {
+                when (val result = service.userService.logout()) {
                     is Success -> {
                         repo.invitationRepo.deleteAllInvitations()
                         repo.messageRepo.clear()
@@ -56,12 +56,12 @@ class MenuViewModel(
                     }
                 }
             } catch (e: Exception) {
-               userInfo.clearUserInfo()
-               repo.invitationRepo.deleteAllInvitations()
-               repo.messageRepo.clear()
-               repo.channelRepo.clear()
-               repo.userRepo.clear()
-               MenuScreenState.LoggedOut
+                userInfo.clearUserInfo()
+                repo.invitationRepo.deleteAllInvitations()
+                repo.messageRepo.clear()
+                repo.channelRepo.clear()
+                repo.userRepo.clear()
+                MenuScreenState.LoggedOut
             }
         }
     }

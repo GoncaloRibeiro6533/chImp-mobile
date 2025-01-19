@@ -50,7 +50,7 @@ fun ChannelDialog(
             onDismissRequest = { openDialog = false },
             title = {
                 Text(text = message)
-                    },
+            },
             text = {
                 Column {
 

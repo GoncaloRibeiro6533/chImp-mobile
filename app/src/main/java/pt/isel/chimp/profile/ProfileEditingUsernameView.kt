@@ -48,7 +48,7 @@ fun EditingUsernameView(
             onValueChange = { currentUsername = it.trim() },
             singleLine = true,
             supportingText = {
-                    Text(text = stringResource(R.string.username_label))
+                Text(text = stringResource(R.string.username_label))
             },
             modifier = Modifier.testTag(USERNAME_TEXT_TAG)
         )
@@ -62,7 +62,7 @@ fun EditingUsernameView(
                 onClick = {
                     onCancelIntent() },
             ) {
-            Text(text = stringResource(R.string.editing_username_cancel_button))
+                Text(text = stringResource(R.string.editing_username_cancel_button))
             }
             Spacer(modifier = Modifier.padding(horizontal = 8.dp))
             Button(

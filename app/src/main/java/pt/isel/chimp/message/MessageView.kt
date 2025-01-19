@@ -40,7 +40,7 @@ fun MessageView(
                 .fillMaxWidth()
                 .padding(vertical = 4.dp),
             shape = RoundedCornerShape(8.dp),
-            colors = MessageColor(isCurrentUser)
+            colors = messageColor(isCurrentUser)
         )
         {
             Row(
@@ -69,7 +69,7 @@ fun MessageView(
 }
 
 @Composable
-private fun MessageColor(isCurrentUser: Boolean) : CardColors =
+private fun messageColor(isCurrentUser: Boolean) : CardColors =
     if (isCurrentUser) {
         CardColors(
             contentColor = Color.White,
@@ -150,12 +150,12 @@ fun MViewPreview() {
     ChImpTheme {
         Column {
             MessageView(
-               user,
+                user,
                 message,
             )
             MessageView(
-               user,
-               longMessage
+                user,
+                longMessage
             )
         }
     }
