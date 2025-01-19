@@ -30,12 +30,12 @@ class InvitationRepoMock {
         return invitations.filter { it.receiver.id == userId }
     }
 
-    fun acceptInvitation(invitationId: Int): Channel {
+    fun acceptInvitation(invitationId: Int): Invitation {
         val invitation = invitations.first { it.id == invitationId}
         val newInv = invitation.copy(isUsed = true)
         invitations.remove(invitation)
         invitations.add(newInv)
-        return invitation.channel
+        return invitation
     }
 
     fun declineInvitation(invitationId: Int): Boolean {
