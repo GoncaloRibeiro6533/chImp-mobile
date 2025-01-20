@@ -4,6 +4,7 @@
 
  - 48305 - Gonçalo Ribeiro
  - 48252 - Tiago Silva
+ - 48297 - João Marques
 
 ## Links
 - [documentation](https://github.com/isel-leic-pdm/project-2024-g15/tree/main/app/docs)
