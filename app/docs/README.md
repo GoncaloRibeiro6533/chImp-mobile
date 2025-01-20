@@ -1,7 +1,5 @@
 # ChImp - Instant Messaging Application
 
-# ChImp - Instant Messaging Application
-
 ## Index
 
 1. [Introduction](#introduction)  
