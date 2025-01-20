@@ -4,7 +4,7 @@
 
 1. [Introduction](#introduction)  
 2. [Features](#features)  
-   - 2.1 [User Authentication](#user-authentication)  
+   - 2.1 [User Authentication](#User-Authentication)  
    - 2.2 [Messaging Channels](#messaging-channels)  
    - 2.3 [Profile Management](#profile-management)  
    - 2.4 [Invitation Management](#invitation-management)  
@@ -76,7 +76,7 @@
 
 This diagram illustrates the overall architecture of the ChImp application, including the main components and their interactions.
 
-![Architecture Diagram](<architecture.drawio (1).png>)
+![Architecture Diagram](<architecture.drawio%20(1).png>)
 
 ---
 
@@ -120,7 +120,7 @@ This diagram illustrates the overall architecture of the ChImp application, incl
 
 ## ChImp Activity and Screen Diagram
 
-![](<pdm.drawio (2).png>)
+![](<pdm.drawio%20(2).png>)
 
 ## General Overview
 

@@ -23,8 +23,8 @@ class UserRepository(
     }
 
     override fun getUsers(): Flow<List<User>> {
-        return db.userDao().getAllUsers().map {
-            it.map {
+        return db.userDao().getAllUsers().map { user ->
+            user.map {
                 User(
                     it.id,
                     it.username,
