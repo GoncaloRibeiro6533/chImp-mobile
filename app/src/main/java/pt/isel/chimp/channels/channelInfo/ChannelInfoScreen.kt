@@ -8,7 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import pt.isel.chimp.channels.ChannelParcelable
+import pt.isel.chimp.channels.UserParcelable
 import pt.isel.chimp.components.LoadingView
+import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.ui.NavigationHandlers
@@ -19,7 +22,8 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 fun ChannelInfoScreen(
     viewModel: ChannelInfoViewModel,
     channel: Channel,
-    onNavigationBack: () -> Unit,
+    role: Role,
+    onNavigationBack: (channelP: ChannelParcelable) -> Unit,
     onCreateInvitation: () -> Unit,
     onChannelLeave: () -> Unit
 ) {
@@ -32,7 +36,32 @@ fun ChannelInfoScreen(
             topBar = {
                 TopBar(
                     NavigationHandlers(
-                        onBackRequested = onNavigationBack
+                        onBackRequested = {
+                            val channelP = if (state is ChannelInfoScreenState.Success) {
+                                ChannelParcelable(
+                                    id = state.channelInfo.channel.id,
+                                    name = state.channelInfo.channel.name,
+                                    creator = UserParcelable(state.channelInfo.channel.creator.id,
+                                        state.channelInfo.channel.creator.username,
+                                        state.channelInfo.channel.creator.email
+                                    ),
+                                    visibility = state.channelInfo.channel.visibility,
+                                    role = role
+                                )
+                            } else {
+                                ChannelParcelable(
+                                    id = channel.id,
+                                    name = channel.name,
+                                    creator = UserParcelable(channel.creator.id,
+                                        channel.creator.username,
+                                        channel.creator.email
+                                    ),
+                                    visibility = channel.visibility,
+                                    role = role
+                                )
+                            }
+                            onNavigationBack(channelP)
+                        }
                     ),
                     content = {Text(text = "")}
                 )

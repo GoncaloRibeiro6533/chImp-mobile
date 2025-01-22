@@ -40,6 +40,7 @@ class InvitationListActivity: ComponentActivity() {
     private fun navigateToChannel(channel: ChannelParcelable){
         val intent = Intent(this, ChannelActivity::class.java).putExtra("channel", channel)
         this.startActivity(intent)
+        finish()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

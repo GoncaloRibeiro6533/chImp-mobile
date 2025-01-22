@@ -74,6 +74,7 @@ class ChannelsListActivity : ComponentActivity() {
                 },
                 onChannelSelected = { channel ->
                     navigateToChannel(channel)
+                    finish()
                 },
                 onNavigateToCreateChannel = { navigateTo(this, CreateChannelActivity::class.java) },
                 onFatalError = {

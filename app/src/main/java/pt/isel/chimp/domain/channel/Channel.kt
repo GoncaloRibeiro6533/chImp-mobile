@@ -1,6 +1,8 @@
 package pt.isel.chimp.domain.channel
 
 import kotlinx.serialization.Serializable
+import pt.isel.chimp.channels.ChannelParcelable
+import pt.isel.chimp.channels.UserParcelable
 import pt.isel.chimp.domain.user.User
 
 @Serializable

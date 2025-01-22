@@ -52,19 +52,6 @@ class InvitationServiceHttp(private val client: HttpClient) : InvitationService 
             is Failure -> failure(response.value)
         }
     }
-/*
-    override suspend fun acceptInvitation(
-        invitationId: Int,
-    ): Either<ApiError, Channel> {
-        return when (val response = client.put<ChannelOutputModel>(
-            url = "/invitation/accept/$invitationId",
-        )) {
-            is Success -> success(Pair(response.value.toChannel())
-                    is Failure -> failure(response.value)
-        }
-    }
-
- */
 
     override suspend fun declineInvitation(
         invitationId: Int,

@@ -55,3 +55,9 @@ data class RemovedMember(
     val channel: Channel, // Channel with updated members
     val removedMember: User
 )
+
+@Serializable
+data class MemberUsernameUpdate(
+    val id: Long,
+    val updatedMember: User
+)

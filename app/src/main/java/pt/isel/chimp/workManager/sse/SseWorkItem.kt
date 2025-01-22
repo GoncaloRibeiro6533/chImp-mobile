@@ -22,6 +22,7 @@ import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.domain.repository.UserInfoRepository
+import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.repository.ChImpRepo
 
 //https://developer.android.com/develop/background-work/background-tasks/persistent/how-to/long-running?hl=pt-br
@@ -59,10 +60,12 @@ class CoroutineSseWorkItem(
                     incoming.collect { event ->
                         eventHandler(event, repo, userInfo)
                     }
-                    delay(5000)
                 }
             } catch (e: Exception) {
                 println("Error: $e")
+               /* val notificationTitle = "Disconnected"
+                val notificationContent = "Reason: ${e.message}"
+                sendNotification(notificationTitle, notificationContent)*/
                 return@withContext Result.retry()
             }
             Result.success()
@@ -122,21 +125,23 @@ class CoroutineSseWorkItem(
             "ChannelNameUpdate" -> {
                 val channel = channelNameUpdateMapper(data)
                 repo.channelRepo.updateChannel(channel)
-                val notificationTitle = "Channel Name Update"
-                val notificationContent = "Channel name updated to:${channel.name}"
-                sendNotification(notificationTitle, notificationContent)
+                if(channel.creator != user){
+                    val notificationTitle = "Channel Name Update"
+                    val notificationContent = "Channel name updated to:${channel.name}"
+                    sendNotification(notificationTitle, notificationContent)
+                }
             }
             "ChannelNewMemberUpdate" -> {
-                val newMember = channelNewMemberUpdateMapper(data)
-                repo.userRepo.insertUser(listOf(newMember.newMember))
-                repo.channelRepo.insertUserInChannel(newMember.newMember.id, newMember.channel.id, newMember.role)
+               val newMember = channelNewMemberUpdateMapper(data)
+               /* repo.userRepo.insertUser(listOf(newMember.newMember))
+                repo.channelRepo.insertUserInChannel(newMember.newMember.id, newMember.channel.id, newMember.role)*/
                 val notificationTitle = "New Member"
                 val notificationContent = "New member at channel:${newMember.channel.name}"
                 sendNotification(notificationTitle, notificationContent)
             }
             "ChannelMemberExitedUpdate" -> {
                 val removedMember = channelMemberExitedUpdateMapper(data)
-                repo.channelRepo.removeUserFromChannel(removedMember.removedMember.id, removedMember.channel.id)
+              //  repo.channelRepo.removeUserFromChannel(removedMember.removedMember.id, removedMember.channel.id)
                 val notificationTitle = "Member Exited"
                 val notificationContent = "Member exited:${removedMember.channel.name} at channel:${removedMember.channel.name}"
                 sendNotification(notificationTitle, notificationContent)
@@ -152,10 +157,19 @@ class CoroutineSseWorkItem(
                 val invitation = invitationAcceptedMapper(data)
                 repo.invitationRepo.deleteInvitation(invitation.id)
             }
+            "MemberUsernameUpdate" -> {
+                val updatedMember = memberUsernameUpdateMapper(data)
+                repo.userRepo.updateUser(updatedMember)
+            }
             else -> {
                 println("Unknown event: ${event.event}")
             }
         }
+    }
+
+    private fun memberUsernameUpdateMapper(data: String): User {
+        val eventData = Json.decodeFromString<User>(data)
+        return eventData
     }
 
     private fun messageMapper(data: String): Message {
@@ -169,8 +183,8 @@ class CoroutineSseWorkItem(
     }
 
     private fun channelNewMemberUpdateMapper(data: String): NewMember {
-        val eventData = Json.decodeFromString<ChannelNewMemberUpdate>(data)
-        return eventData.newMember
+        val eventData = Json.decodeFromString<NewMember>(data)
+        return eventData
     }
 
     private fun channelMemberExitedUpdateMapper(data: String): RemovedMember {
@@ -188,7 +202,8 @@ class CoroutineSseWorkItem(
         return eventData
     }
 
-}
 
+
+}
 
 

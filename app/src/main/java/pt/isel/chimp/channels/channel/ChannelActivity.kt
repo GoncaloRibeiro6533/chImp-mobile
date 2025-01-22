@@ -54,7 +54,8 @@ class ChannelActivity : ComponentActivity() {
                 role = channel.role,
                 onNavigationBack = {
                     navigateTo(this, ChannelsListActivity::class.java)
-                    finish() },
+                    finish()
+                },
                 onNavigationChannelInfo = {
                     navigateToChannelInfo(channel)
                 }

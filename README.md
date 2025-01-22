@@ -9,3 +9,6 @@
 ## Links
 - [documentation](https://github.com/isel-leic-pdm/project-2024-g15/tree/main/app/docs)
 - [API](https://github.com/isel-leic-daw/2024-daw-leic53d-g06-53d)
+
+## Demo
+[![IMAGE ALT TEXT HERE](https://github.com/isel-leic-pdm/project-2024-g15/tree/main/docs/demo.jpg)](https://www.youtube.com/watch?v=REzTkMhVgWw)

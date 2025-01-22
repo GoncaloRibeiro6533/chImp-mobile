@@ -43,8 +43,9 @@ class ChannelInfoActivity: ComponentActivity() {
             ChannelInfoScreen(
                 viewModel = viewModel,
                 channel = channel.toChannel(),
-                onNavigationBack = {
-                    val intent = Intent(this, ChannelActivity::class.java).putExtra("channel", channel)
+                role = channel.role,
+                onNavigationBack = { channelP ->
+                    val intent = Intent(this, ChannelActivity::class.java).putExtra("channel", channelP)
                     this.startActivity(intent)
                     finish()
                 },
@@ -52,7 +53,10 @@ class ChannelInfoActivity: ComponentActivity() {
                     val intent = Intent(this, CreateInvitationActivity::class.java).putExtra("channel", channel)
                     this.startActivity(intent)
                 },
-                onChannelLeave = { finish() },
+                onChannelLeave = {
+                    navigateTo(this, ChannelsListActivity::class.java)
+                    finish()
+                },
             )
         }
     }

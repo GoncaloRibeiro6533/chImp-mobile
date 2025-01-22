@@ -105,11 +105,8 @@ class InvitationListViewModel (
                     when(val channel = invitationService.acceptInvitation(invitation.id)) {
                         is Success -> {
                             repo.invitationRepo.deleteInvitation(invitation.id)
-
                             repo.channelRepo.insertChannels(
                                 user.id, mapOf(channel.value to invitation.role))
-
-
                             InvitationListScreenState.SuccessOnAccept(Pair(channel.value, invitation.role))
                         }
                         is Failure -> {
