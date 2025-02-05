@@ -34,18 +34,19 @@ class MockUserService(
 
     override suspend fun fetchUser(): Either<ApiError, User> =
         interceptRequest<User> { user ->
-            success(user)
+            return@interceptRequest success(user)
         }
 
 
     override suspend fun updateUsername(newUsername: String): Either<ApiError, User> =
         interceptRequest <User> { user ->
             delay(1000)
-            if(repoMock.userRepoMock.findUserByUsername(newUsername).any { it.username == newUsername }){
-                failure(ApiError("Username already exists"))
+            val users = repoMock.userRepoMock.findUserByUsername(newUsername)
+            if(users.any { it.username == newUsername }){
+                return@interceptRequest failure(ApiError("Username already exists"))
             }
             val newUser = repoMock.userRepoMock.updateUser(user.id, newUsername)
-            success(newUser)
+            return@interceptRequest success(newUser)
         }
 
     override suspend fun login(username: String, password: String): Either<ApiError, User> {
@@ -110,7 +111,7 @@ class MockUserService(
 
     override suspend fun findUserByUsername(username: String): Either<ApiError, List<User>> =
         interceptRequest<List<User>> { user ->
-            delay(1000)
+            delay(2000)
             success(repoMock.userRepoMock.findUserByUsername(username))
         }
 }

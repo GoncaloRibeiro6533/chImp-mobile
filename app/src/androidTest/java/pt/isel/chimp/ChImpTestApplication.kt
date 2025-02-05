@@ -33,7 +33,10 @@ class ChImpTestApplication : Application(), DependenciesContainer {
         ).build()
     }
     override val repo: ChImpRepo by lazy {
-        ChImpRepoImp(clientDB)
+        ChImpRepoImp(
+            clientDB,
+            remote = chImpService
+        )
     }
     override val client: HttpClient by lazy {
         HttpClient(OkHttp) {
@@ -57,7 +60,7 @@ class ChImpTestApplication : Application(), DependenciesContainer {
         }
     }
     override val chImpService: ChImpService by lazy {
-        ChImpServiceMock(cookieRep as CookiesRepo, repo)
+        ChImpServiceMock(cookieRep as CookiesRepo)
     }
     override val cookieRep: CookiesStorage by lazy {
         CookiesRepo(preferencesDataStore)

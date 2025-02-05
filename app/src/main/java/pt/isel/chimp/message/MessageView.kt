@@ -152,6 +152,7 @@ fun MViewPreview() {
             MessageView(
                 user,
                 message,
+                true
             )
             MessageView(
                 user,

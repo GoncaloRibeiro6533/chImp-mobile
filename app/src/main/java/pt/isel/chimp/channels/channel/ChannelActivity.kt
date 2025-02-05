@@ -8,7 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import pt.isel.chimp.DependenciesContainer
-import pt.isel.chimp.channels.ChannelParcelable
+import pt.isel.chimp.domain.ChannelParcelable
 import pt.isel.chimp.channels.channelInfo.ChannelInfoActivity
 import pt.isel.chimp.channels.channelsList.ChannelsListActivity
 import pt.isel.chimp.utils.navigateTo
@@ -46,7 +46,7 @@ class ChannelActivity : ComponentActivity() {
             finish()
             return
         }
-        viewModel.loadLocalData(channel.toChannel())
+        viewModel.loadMessages(channel.toChannel())
         setContent{
             ChannelScreen(
                 viewModel = viewModel,

@@ -8,9 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import pt.isel.chimp.channels.ChannelParcelable
-import pt.isel.chimp.channels.UserParcelable
 import pt.isel.chimp.components.LoadingView
+import pt.isel.chimp.domain.ChannelParcelable
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.profile.ErrorAlert
@@ -28,6 +27,7 @@ fun ChannelInfoScreen(
     onChannelLeave: () -> Unit
 ) {
     val state = viewModel.state.collectAsState().value
+    val channelF: Channel = viewModel.channelFlow.collectAsState().value
     ChImpTheme {
 
         Scaffold(
@@ -37,30 +37,7 @@ fun ChannelInfoScreen(
                 TopBar(
                     NavigationHandlers(
                         onBackRequested = {
-                            val channelP = if (state is ChannelInfoScreenState.Success) {
-                                ChannelParcelable(
-                                    id = state.channelInfo.channel.id,
-                                    name = state.channelInfo.channel.name,
-                                    creator = UserParcelable(state.channelInfo.channel.creator.id,
-                                        state.channelInfo.channel.creator.username,
-                                        state.channelInfo.channel.creator.email
-                                    ),
-                                    visibility = state.channelInfo.channel.visibility,
-                                    role = role
-                                )
-                            } else {
-                                ChannelParcelable(
-                                    id = channel.id,
-                                    name = channel.name,
-                                    creator = UserParcelable(channel.creator.id,
-                                        channel.creator.username,
-                                        channel.creator.email
-                                    ),
-                                    visibility = channel.visibility,
-                                    role = role
-                                )
-                            }
-                            onNavigationBack(channelP)
+                            onNavigationBack(channelF.toParcelable(role))
                         }
                     ),
                     content = {Text(text = "")}
@@ -75,7 +52,7 @@ fun ChannelInfoScreen(
             ) {
                 when (state) {
                     is ChannelInfoScreenState.Idle -> {
-                        viewModel.getChannelMembers(channel)
+                      // Do nothing
                     }
                     is ChannelInfoScreenState.Loading -> {
                         LoadingView()
@@ -84,11 +61,13 @@ fun ChannelInfoScreen(
                         ChannelInfoView(
                             channelInfo = state.channelInfo,
                             onUpdateChannel = { newName ->
-                                viewModel.updateChannelName(state.channelInfo, newName) {
+                                viewModel.updateChannelName(channel, newName) {
 
                                 }
                             },
-                            onLeaveChannel = { viewModel.leaveChannel(state.channelInfo.channel){} },
+                            onLeaveChannel = {
+                                viewModel.leaveChannel(state.channelInfo.channel.value) {
+                                onNavigationBack(channelF.toParcelable(role)) } },
                             onInviteMember = { onCreateInvitation() }
                         )
                     }
@@ -109,22 +88,3 @@ fun ChannelInfoScreen(
         }
     }
 }
-/*
-@Suppress("UNCHECKED_CAST")
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun ChannelScreenPreview() {
-    val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
-    val cookiesRepo = CookiesRepo(preferences)
-
-    ChannelInfoScreen(
-        viewModel = ChannelInfoViewModel(
-            UserInfoRepo(preferences),
-            ChImpServiceMock(cookiesRepo,
-        ),
-        Channel(1, "Channel 1 long",
-            creator = User(1, "Bob", "bob@example.com"), visibility = Visibility.PUBLIC),
-        onNavigationBack = { },
-        onChannelLeave = { }
-    )
-}*/

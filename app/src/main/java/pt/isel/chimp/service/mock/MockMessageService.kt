@@ -18,7 +18,6 @@ import java.time.LocalDateTime
 class MockMessageService(
     private val repoMock: RepoMock,
     private val cookieStorage: CookiesStorage,
-    private val repo: ChImpRepo
     ) : MessageService {
 
     private suspend fun <T: Any>interceptRequest(block: suspend (User) -> Either<ApiError, T>): Either<ApiError, T> {
@@ -38,7 +37,7 @@ class MockMessageService(
             val channel = repoMock.channelRepoMock.findChannelById(channelId) ?:
             return@interceptRequest failure(ApiError("Channel not found"))
             val message = repoMock.messageRepoMock.createMessage(user, channel, content, LocalDateTime.now())
-            repo.messageRepo.insertMessage(listOf(message))
+            //repo.messageRepo.insertMessage(listOf(message))
             return@interceptRequest success(message)
         }
 

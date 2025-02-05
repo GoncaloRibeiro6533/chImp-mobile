@@ -22,8 +22,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.chimp.channels.ChannelParcelable
-import pt.isel.chimp.channels.UserParcelable
+import pt.isel.chimp.domain.ChannelParcelable
+import pt.isel.chimp.domain.UserParcelable
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User
@@ -47,12 +47,7 @@ fun ChannelItem(
             .padding(horizontal = 16.dp)
             .clickable {
                 onClick(
-                    ChannelParcelable(
-                        channel.id,
-                        channel.name,
-                        UserParcelable(channel.creator.id, channel.creator.username, channel.creator.email),
-                        channel.visibility,
-                        role)
+                    channel.toParcelable(role)
                 )
                        }.testTag(CHANNEL_ITEM_TEST_TAG),
     ) {

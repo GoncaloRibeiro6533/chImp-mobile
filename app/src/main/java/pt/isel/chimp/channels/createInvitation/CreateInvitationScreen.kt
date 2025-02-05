@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.ui.theme.ChImpTheme
@@ -38,6 +39,7 @@ fun CreateInvitationScreen(
                         )
                     }
                     is CreateInvitationScreenState.SearchUser,
+                    CreateInvitationScreenState.Typing,
                     CreateInvitationScreenState.Idle -> {
                         CreateInvitationDialog (
                             "Enter Member Username:",
@@ -48,13 +50,13 @@ fun CreateInvitationScreen(
                             { username -> viewModel.searchUsers(username) },
                             { user, role -> viewModel.inviteMember(channel, user, role) },
                             { onNavigationBack() },
-                            viewModel.users
+                            viewModel.users,
+                            currentState is CreateInvitationScreenState.SearchUser
                         )
                     }
                     CreateInvitationScreenState.Success -> { onNavigationBack() }
-                    CreateInvitationScreenState.Loading -> TODO()
-                    is CreateInvitationScreenState.Submitting -> TODO()
-                    CreateInvitationScreenState.Typing -> TODO()
+                    is CreateInvitationScreenState.Submitting,
+                    CreateInvitationScreenState.Loading -> LoadingView()
                 }
             }
         }

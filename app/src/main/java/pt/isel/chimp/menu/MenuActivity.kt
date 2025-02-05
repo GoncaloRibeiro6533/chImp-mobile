@@ -26,7 +26,6 @@ import pt.isel.chimp.utils.navigateTo
 
 class MenuActivity : ComponentActivity() {
 
-
     private val chImpService by lazy { (application as DependenciesContainer).chImpService }
     private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
     private val chImpRepo by lazy { (application as DependenciesContainer).repo }
@@ -39,8 +38,6 @@ class MenuActivity : ComponentActivity() {
             )
         }
     )
-
-
 
     private val menuItems = listOf(
         MenuItem("About", "about screen", Icons.Default.Info) {
@@ -76,13 +73,11 @@ class MenuActivity : ComponentActivity() {
             finish()
         },
         MenuItem("My Channel Invitations", "my channel invitations screen", Icons.Default.Notifications) {
-
             navigateTo(
                 this,
                 InvitationListActivity::class.java
             )
             finish()
-
         },
         MenuItem("Logout", "logout screen", Icons.AutoMirrored.Filled.ExitToApp) {
             WorkManager.getInstance(applicationContext).cancelAllWork()
@@ -102,9 +97,6 @@ class MenuActivity : ComponentActivity() {
                     finish()
                 },
                 onLogout = {
-                    //
-                    //finishAffinity()
-                    //finish previous activity
                     WorkManager.getInstance(applicationContext).cancelAllWork()
                     finishAffinity()
                     navigateTo(this, HomeActivity::class.java)

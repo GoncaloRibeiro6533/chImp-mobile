@@ -1,12 +1,14 @@
 package pt.isel.chimp.repository
 
+import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.storage.ChImpClientDB
 
 class ChImpRepoImp(
-    db: ChImpClientDB
+    local: ChImpClientDB,
+    remote: ChImpService
 ): ChImpRepo {
-    override val channelRepo = ChannelRepository(db)
-    override val userRepo = UserRepository(db)
-    override val messageRepo = MessageRepository(db)
-    override val invitationRepo = InvitationRepository(db)
+    override val channelRepo = ChannelRepository(local, remote)
+    override val userRepo = UserRepository(local, remote)
+    override val messageRepo = MessageRepository(local, remote)
+    override val invitationRepo = InvitationRepository(local, remote)
 }

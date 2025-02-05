@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.chimp.channels.ChannelParcelable
-import pt.isel.chimp.channels.UserParcelable
+import pt.isel.chimp.domain.ChannelParcelable
+import pt.isel.chimp.domain.UserParcelable
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.ui.NavigationHandlers
@@ -68,6 +68,7 @@ fun SearchChannelsScreen(
                         LoadingView()
                     }
                     is SearchChannelsScreenState.Typing -> {
+                        //Does nothing
                     }
                     is SearchChannelsScreenState.Success -> {
                         SearchChannelListView(state.channels, state.channelsOfUser) {
@@ -77,13 +78,8 @@ fun SearchChannelsScreen(
                     is SearchChannelsScreenState.EnteringChannel -> {
                         LoadingView()
                          onChannelSelected(
-                            ChannelParcelable(
-                                state.channel.id,
-                                state.channel.name,
-                                UserParcelable(state.channel.creator.id, state.channel.creator.username, state.channel.creator.email),
-                                state.channel.visibility,
-                                state.role
-                            ))
+                            state.channel.toParcelable(state.role)
+                         )
                     }
                     is SearchChannelsScreenState.Error -> {
                         ErrorAlert(
@@ -97,23 +93,3 @@ fun SearchChannelsScreen(
         }
     }
 }
-
-
-/*
-@Suppress("UNCHECKED_CAST")
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun SearchChannelPreview() {
-    val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
-    val cookiesRepo = CookiesRepo(preferences)
-    SearchChannelsScreen(
-        viewModel = SearchChannelsViewModel(
-            MockChannelService(RepoMockImpl(cookiesRepo), cookiesRepo),
-        ),
-
-        onMenuRequested = { },
-        onChannelSelected = { }
-    )
-}
-
- */

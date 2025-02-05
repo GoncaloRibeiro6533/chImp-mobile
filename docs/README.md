@@ -1,5 +1,7 @@
 # ChImp - Instant Messaging Application
 
+---
+
 ## Index
 
 1. [Introduction](#introduction)  
@@ -33,7 +35,6 @@
 11. [Conclusions](#conclusions)
 
 ---
-
 
 ## Introduction
 
@@ -76,7 +77,7 @@
 
 This diagram illustrates the overall architecture of the ChImp application, including the main components and their interactions.
 
-![Architecture Diagram](<architecture.drawio%20(1).png>)
+![Architecture Diagram](<architecture.drawio%20(3).png>)
 
 ---
 
@@ -96,7 +97,7 @@ This diagram illustrates the overall architecture of the ChImp application, incl
         - **invitationList/**: Invitation List screen.
         - **menu/**: Menu screen.
         - **profile/**: Profile screen.
-        - **repository/**: Data access.
+        - **repository/**: Data access layer following the Repository Pattern.
         - **service/**: API communication, including the mock service.
         - **storage/**: Local data storage using room.
         - **ui/**: UI classes and themes.
@@ -157,13 +158,11 @@ This diagram illustrates the navigation structure and state flows of the **Activ
   - State and data updates using **Kotlin Flows** for reactive and asynchronous data streams.
 - These integrations ensure seamless data synchronization and responsiveness.
 
-### 5. **Architectural Pattern**
+### 5. **Repository Pattern**
 
-- The diagram adheres to the **MVVM (Model-View-ViewModel)** architecture:
-  - **Model**: Handles domain data and business logic.
-  - **ViewModel**: Manages UI state and integrates data with the UI using **Flows**.
-  - **View (Activity)**: Renders data and facilitates user interactions.
-- This separation of concerns improves maintainability and scalability.
+- The Repository Pattern ensures that business logic is independent of the data sources, making it easier to test and modify data management strategies in the future.
+
+- The Repository Pattern ensures a Single Source of Truth by centralizing data access and maintaining consistency throughout the application. This approach decouples business logic from data sources, making it easier to test, maintain, and adapt to evolving data management strategies.
 
 ---
 

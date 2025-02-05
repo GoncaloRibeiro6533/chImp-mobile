@@ -1,8 +1,7 @@
-package pt.isel.chimp.channels
+package pt.isel.chimp.domain
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.user.User

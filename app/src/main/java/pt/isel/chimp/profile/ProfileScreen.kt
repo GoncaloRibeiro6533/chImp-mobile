@@ -35,9 +35,7 @@ fun ProfileScreen(
                     .padding(innerPadding),
             ) {
                 when (val currentState = viewModel.state.collectAsState().value) {
-                    is ProfileScreenState.Idle -> {
-                        viewModel.fetchProfile()
-                    }
+                    is ProfileScreenState.Idle,
                     is ProfileScreenState.Loading -> {
                         LoadingView()
                     }

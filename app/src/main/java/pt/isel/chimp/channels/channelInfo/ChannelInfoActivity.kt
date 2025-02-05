@@ -8,23 +8,24 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import pt.isel.chimp.DependenciesContainer
-import pt.isel.chimp.channels.ChannelParcelable
+import pt.isel.chimp.domain.ChannelParcelable
 import pt.isel.chimp.channels.channel.ChannelActivity
 import pt.isel.chimp.channels.channelsList.ChannelsListActivity
 import pt.isel.chimp.channels.createInvitation.CreateInvitationActivity
+import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.utils.navigateTo
 
 class ChannelInfoActivity: ComponentActivity() {
 
-    private val chImpService by lazy { (application as DependenciesContainer).chImpService }
     private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
     private val repo by lazy { (application as DependenciesContainer).repo }
+    private lateinit var ch: Channel
     private val viewModel by viewModels< ChannelInfoViewModel>(
         factoryProducer = {
             ChannelInfoViewModelFactory(
                 userInfoRepository,
-                chImpService,
-                repo
+                repo,
+                ch
             )
         }
     )
@@ -38,7 +39,9 @@ class ChannelInfoActivity: ComponentActivity() {
             finish()
             return
         }
-        // viewModel.loadMembers(channel.id)
+        ch = channel.toChannel()
+        viewModel.loadChannel(channel.toChannel())
+        viewModel.getChannelMembers(channel.toChannel())
         setContent{
             ChannelInfoScreen(
                 viewModel = viewModel,

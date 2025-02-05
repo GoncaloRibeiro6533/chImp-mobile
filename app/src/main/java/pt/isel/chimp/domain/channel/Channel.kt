@@ -1,8 +1,9 @@
 package pt.isel.chimp.domain.channel
 
 import kotlinx.serialization.Serializable
-import pt.isel.chimp.channels.ChannelParcelable
-import pt.isel.chimp.channels.UserParcelable
+import pt.isel.chimp.domain.ChannelParcelable
+import pt.isel.chimp.domain.Role
+import pt.isel.chimp.domain.UserParcelable
 import pt.isel.chimp.domain.user.User
 
 @Serializable
@@ -17,4 +18,8 @@ data class Channel(
         require(name.isNotBlank()) { "Channel name must not be blank" }
         require(visibility in Visibility.entries.toTypedArray()) { "Invalid visibility" }
     }
+    fun toParcelable(role: Role): ChannelParcelable {
+        return ChannelParcelable(id, name, creator.toParcelable(), visibility, role)
+    }
+
 }

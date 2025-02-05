@@ -39,12 +39,8 @@ fun InvitationCard(
     onDecline: (Int) -> Unit
 ) {
     val sender = invitation.sender.username
-    val receiver = invitation.receiver
-
     val greenColor = Color(0xFF5CB338)
     val redColor = Color.Red
-
-
     Card(
         modifier = Modifier
             .fillMaxWidth()

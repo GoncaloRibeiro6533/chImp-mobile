@@ -24,6 +24,7 @@ import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.repository.ChImpRepo
+import pt.isel.chimp.service.mock.ChImpServiceMock
 
 //https://developer.android.com/develop/background-work/background-tasks/persistent/how-to/long-running?hl=pt-br
 
@@ -50,6 +51,8 @@ class CoroutineSseWorkItem(
     }
 
     override suspend fun doWork(): Result {
+        val service = (applicationContext as ChImpApplication).chImpService
+        if (service is ChImpServiceMock) return Result.success()
         val client = (applicationContext as DependenciesContainer).client
         val repo = (applicationContext as DependenciesContainer).repo
         val userInfo = (applicationContext as DependenciesContainer).userInfoRepository

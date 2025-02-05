@@ -11,26 +11,19 @@ import kotlinx.coroutines.launch
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.repository.UserInfoRepository
-import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.service.http.utils.ChImpException
 import pt.isel.chimp.repository.ChImpRepo
-import pt.isel.chimp.service.ChImpService
-import pt.isel.chimp.service.ChannelService
-import pt.isel.chimp.utils.Failure
-import pt.isel.chimp.utils.Success
 
 sealed interface ChannelsListScreenState {
     data object Uninitialized : ChannelsListScreenState
-    data object LoadFromRemote: ChannelsListScreenState
-    data class SaveData(val user: User, val channels: Map<Channel,Role>) : ChannelsListScreenState
+    data object Loading: ChannelsListScreenState
     data class Success(val channels: StateFlow<Map<Channel,Role>>) : ChannelsListScreenState
     data class Error(val error: ApiError) : ChannelsListScreenState
 }
 
 class ChannelsListViewModel(
     private val userInfo: UserInfoRepository,
-    private val channelService: ChannelService,
     private val repo: ChImpRepo,
     initialState: ChannelsListScreenState = ChannelsListScreenState.Uninitialized
 ) : ViewModel() {
@@ -62,59 +55,18 @@ class ChannelsListViewModel(
 
 
     fun loadLocalData(): Job? {
-        if (_state.value !is ChannelsListScreenState.Uninitialized) return null
+        if (_state.value is ChannelsListScreenState.Loading) return null
+        _state.value = ChannelsListScreenState.Loading
         return viewModelScope.launch {
             try {
-                repo.channelRepo.getChannels().collect { stream ->
+                val user = userInfo.getUserInfo() ?: throw ChImpException("User not found", null)
+                repo.channelRepo.fetchChannels(user, 100, 0).collect { stream ->
                     _channels.value = stream
-                    if (stream.isNotEmpty() && _state.value !is ChannelsListScreenState.Success) {
-                        _state.value = ChannelsListScreenState.Success(_channels)
-                    }
-                    if (stream.isEmpty() && _state.value is ChannelsListScreenState.Uninitialized) {
-                        _state.value = ChannelsListScreenState.LoadFromRemote
-                    }
+                    _state.value = ChannelsListScreenState.Success(channels)
                 }
             } catch (e: Throwable) {
                 _state.value =
                     ChannelsListScreenState.Error(ApiError("Error getting channels: ${e.message}"))
-            }
-        }
-    }
-
-
-    fun loadRemoteData() {
-        if (_state.value is ChannelsListScreenState.LoadFromRemote) {
-            viewModelScope.launch {
-                try {
-                    val user =
-                        userInfo.getUserInfo() ?: throw ChImpException("User not found", null)
-                    when (val result = channelService.getChannelsOfUser(user.id)) {
-                        is Success -> _state.value =
-                            ChannelsListScreenState.SaveData(user, result.value)
-
-                        is Failure -> {
-                            _state.value = ChannelsListScreenState.Error(result.value)
-                        }
-                    }
-                } catch (e: Throwable) {
-                    _state.value =
-                        ChannelsListScreenState.Error(ApiError("Error getting channels: ${e.message}"))
-                }
-            }
-        }
-    }
-
-    fun saveData(user: User, channelsMap: Map<Channel, Role>) {
-        if (_state.value is ChannelsListScreenState.SaveData) {
-            viewModelScope.launch {
-                try {
-                    repo.channelRepo.insertChannels(user.id, channelsMap)
-                    _channels.value = channelsMap
-                    _state.value = ChannelsListScreenState.Success(channels)
-                } catch (e: Throwable) {
-                    _state.value =
-                        ChannelsListScreenState.Error(ApiError("Error saving channels: ${e.message}"))
-                }
             }
         }
     }
@@ -123,13 +75,11 @@ class ChannelsListViewModel(
 @Suppress("UNCHECKED_CAST")
 class ChannelsListViewModelFactory(
     private val userInfo: UserInfoRepository,
-    private val service: ChImpService,
     private val repo: ChImpRepo
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>):  T {
         return ChannelsListViewModel(
             userInfo,
-            service.channelService,
             repo
         ) as T
     }

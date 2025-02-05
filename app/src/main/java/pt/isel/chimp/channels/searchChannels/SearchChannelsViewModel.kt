@@ -18,7 +18,6 @@ import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
 
 sealed interface SearchChannelsScreenState {
-    //data object Idle : SearchChannelsScreenState
     data object Loading : SearchChannelsScreenState
     data object Typing : SearchChannelsScreenState
     data class EnteringChannel(val channel: Channel, val role: Role) : SearchChannelsScreenState
@@ -27,9 +26,8 @@ sealed interface SearchChannelsScreenState {
 }
 
 class SearchChannelsViewModel(
-    private val service: ChImpService,
+    private val userInfoRepository: UserInfoRepository,
     private val repository: ChImpRepo,
-    private val userInfo : UserInfoRepository,
     initialState: SearchChannelsScreenState = SearchChannelsScreenState.Typing
 ) : ViewModel() {
 
@@ -44,7 +42,8 @@ class SearchChannelsViewModel(
     fun loadChannels(): Job? {
         return viewModelScope.launch {
             try {
-                repository.channelRepo.getChannels().collect { stream ->
+                val user = userInfoRepository.getUserInfo() ?: throw Exception("User not found")
+                repository.channelRepo.fetchChannels(user, 100, 0).collect { stream ->
                     _channels.value = stream
                 }
             } catch (e: Throwable) {
@@ -61,7 +60,7 @@ class SearchChannelsViewModel(
                     _state.value = SearchChannelsScreenState.Typing
                 } else {
                     _state.value = try {
-                        when (val channels = service.channelService.searchChannelByName(name, limit, skip)) {
+                        when (val channels = repository.channelRepo.findByName(name, limit, skip)) {
                             is Success -> SearchChannelsScreenState.Success(channels.value, _channels)
                             is Failure -> SearchChannelsScreenState.Error(channels.value)
                         }
@@ -73,19 +72,16 @@ class SearchChannelsViewModel(
         }
     }
 
-
     fun addUserToChannel(channel: Channel) {
         viewModelScope.launch {
             try {
-                val user =  userInfo.getUserInfo() ?: throw Exception("User not found")
-                val channelKey = _channels.value.keys.find { it.id == channel.id }
-                val role = _channels.value[channel] ?: Role.READ_WRITE
-                if (channelKey != null) {
+                val user =  userInfoRepository.getUserInfo() ?: throw Exception("User not found")
+                val role = _channels.value[channel]
+                if (role != null) {
                     _state.value = SearchChannelsScreenState.EnteringChannel(channel, role)
                     return@launch
                 }
-                service.channelService.joinChannel(user.id, channel.id, Role.READ_WRITE)
-                repository.channelRepo.insertChannels(user.id, mapOf(channel to Role.READ_WRITE))
+                repository.channelRepo.joinChannel(user, channel, Role.READ_WRITE)
                 _state.value = SearchChannelsScreenState.EnteringChannel(channel, Role.READ_WRITE)
             } catch (e: Exception) {
                 _state.value = SearchChannelsScreenState.Error(ApiError("Error adding user to channel"))
@@ -93,16 +89,14 @@ class SearchChannelsViewModel(
         }
     }
 
-
 }
 
 @Suppress("UNCHECKED_CAST")
 class SearchChannelsViewModelFactory(
-    private val repo: UserInfoRepository,
-    private val service: ChImpService,
+    private val userInfoRepository: UserInfoRepository,
     private val repository: ChImpRepo,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SearchChannelsViewModel(service, repository, repo) as T
+        return SearchChannelsViewModel(userInfoRepository, repository) as T
     }
 }

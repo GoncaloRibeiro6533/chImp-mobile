@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
@@ -49,9 +50,10 @@ fun CreateInvitationDialog(
     buttonColor: Color,
     buttonTextColor: Color,
     onSearch : (String) -> Unit,
-    onInvite: (User?, Role) -> Unit,
+    onInvite: (User, Role) -> Unit,
     onCancel: () -> Unit,
-    users: StateFlow<List<User>>
+    users: StateFlow<List<User>>,
+    isFetching: Boolean = false
 ) {
 
     val users = users.collectAsState().value
@@ -76,7 +78,15 @@ fun CreateInvitationDialog(
                     placeholder = { Text(placeHolderText) },
                     modifier = Modifier.testTag(DIALOG_TEXT_FIELD),
                 )
-                if (users.isNotEmpty() && selectedUser == null && text.text.isNotBlank()) {
+
+                if (isFetching) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else if (users.isNotEmpty() && selectedUser == null && text.text.isNotBlank()) {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -84,7 +94,6 @@ fun CreateInvitationDialog(
                             .border(1.dp, Color.Gray)
                     ) {
                         items(users) { user ->
-                            // Item clicável
                             Text(
                                 text = user.username,
                                 modifier = Modifier
@@ -151,7 +160,10 @@ fun CreateInvitationDialog(
                     }
                     Button(
                         onClick = {
-                            onInvite(selectedUser, Role.entries.first { it.value == selectedOption })
+                            val user = selectedUser
+                            if (user != null && selectedOption != "Select Role") {
+                                onInvite(user, Role.entries.first { it.value == selectedOption })
+                            }
                         },
                         colors = ButtonColors(Color(0xFF32cd32), Color.Black, Color.Gray, Color.Black),
                         modifier = Modifier.testTag(CONFIRM_BUTTON),

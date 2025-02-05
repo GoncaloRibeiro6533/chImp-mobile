@@ -47,7 +47,6 @@ fun HomeScreen(
                 when (viewModel.state) {
                     HomeScreenState.Idle -> {
                         HomePopPup()
-                        viewModel.getSession()
                     }
                     HomeScreenState.Logged -> {
                         onLoggedIntent()
@@ -63,42 +62,3 @@ fun HomeScreen(
         }
     }
 }
-
-/*
-@Composable
-fun HomeS() {
-    ChImpTheme {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize()
-                .testTag("HomeScreenTestTag")
-                .background(MaterialTheme.colorScheme.background)
-        )
-        { innerPadding ->
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-            ) {
-                LoadingView()
-            }
-        }
-    }
-}
- *//*
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun HomeScreenPreview() {
-  //  HomeScreen(HomeScreenViewModel(MockUserService(RepoMockImpl())), onAboutRequested = {})
-    // HomeS()
-}
-
-@Preview(showBackground = true, showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun HomeScreenPreviewDark() {
-   // HomeScreen(HomeScreenViewModel(MockUserService(RepoMockImpl())), onAboutRequested = {})
-    ///   HomeS()
-}*/
-

@@ -32,8 +32,6 @@ interface ChannelDao {
     @Query("SELECT c.*, u.username, u.email FROM channel c JOIN user u ON c.creatorId = u.id WHERE c.name = :name;")
     fun getChannelByName(name: String): Flow<ChannelEntity>
 
-    @Query("SELECT c.*, u.username, u.email FROM channel  c  JOIN user u ON c.creatorId = u.id")
-    fun getAllChannels(): Flow<List<ChannelWithCreator>>
 
     @Transaction
     @RewriteQueriesToDropUnusedColumns
@@ -60,5 +58,15 @@ interface ChannelDao {
     suspend fun clearUserInChannel()
     @Query("DELETE FROM channel")
     suspend fun clear()
+    @Query("SELECT COUNT(*) FROM channel")
+    suspend fun hasChannels(): Boolean
+
+    @Query("SELECT COUNT(*) FROM user_in_channel WHERE channelId = :channelId")
+    suspend fun nMembers(channelId: Int): Int
+
+    @Transaction
+    @RewriteQueriesToDropUnusedColumns
+    @Query("SELECT c.*, u.username, u.email FROM channel  c  JOIN user u ON c.creatorId = u.id JOIN user_in_channel uc ON c.id = uc.channelId")
+    suspend fun getAllChannels(): List<ChannelWithCreator>
 
 }

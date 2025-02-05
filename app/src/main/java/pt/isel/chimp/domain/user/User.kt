@@ -1,6 +1,7 @@
 package pt.isel.chimp.domain.user
 
 import kotlinx.serialization.Serializable
+import pt.isel.chimp.domain.UserParcelable
 
 @Serializable
 data class User(
@@ -22,5 +23,9 @@ data class User(
 
     companion object {
         const val MAX_USERNAME_LENGTH = 50
+    }
+
+    fun toParcelable(): UserParcelable {
+        return UserParcelable(id, username, email)
     }
 }

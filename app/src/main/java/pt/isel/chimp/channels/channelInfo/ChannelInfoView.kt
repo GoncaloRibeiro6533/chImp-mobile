@@ -15,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +24,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import pt.isel.chimp.channels.generalComponents.ChannelLogo
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
@@ -69,6 +72,8 @@ fun ChannelInfoPortraitLayout(
     onLeaveChannel: () -> Unit,
     onInviteMember: () -> Unit
 ) {
+    val members = channelInfo.members.collectAsState().value
+    val channel = channelInfo.channel.collectAsState().value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -87,8 +92,8 @@ fun ChannelInfoPortraitLayout(
                 .fillMaxSize()
                 .testTag(CHANNELS)
         ) {
-            items(channelInfo.members) { member ->
-                MemberView(member.first, member.second, channelInfo.channel.creator)
+            items(members.toList()) { member ->
+                MemberView(member.first, member.second, channel.creator)
             }
             item {
                 ChannelDialog(
@@ -113,6 +118,8 @@ fun ChannelInfoLandscapeLayout(
     onLeaveChannel: () -> Unit,
     onInviteMember: () -> Unit
 ) {
+    val members = channelInfo.members.collectAsState().value
+    val channel = channelInfo.channel.collectAsState().value
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -150,8 +157,8 @@ fun ChannelInfoLandscapeLayout(
                 .fillMaxHeight()
                 .testTag(CHANNELS)
         ) {
-            items(channelInfo.members) { member ->
-                MemberView(member.first, member.second, channelInfo.channel.creator)
+            items(members.toList()) { member ->
+                MemberView(member.first, member.second, channel.creator)
             }
         }
     }
@@ -166,24 +173,26 @@ fun ChannelHeader(
     fontSize: Int = 30,
     padding: Int = 10
 ) {
+    val members = channelInfo.members.collectAsState().value
+    val channel = channelInfo.channel.collectAsState().value
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ChannelLogo(channelInfo.channel.name, imageSize)
+        ChannelLogo(channel.name, imageSize)
         Text(
-            text = channelInfo.channel.name,
+            text = channel.name,
             modifier = Modifier.padding(padding.dp),
             fontSize = fontSize.sp
         )
         Text(
-            text = "Channel - ${channelInfo.members.size} members",
+            text = "Channel - ${members.size} members",
             modifier = Modifier.padding(6.dp)
         )
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(30.dp, Alignment.CenterHorizontally)
         ) {
-            if (channelInfo.channel.visibility == Visibility.PRIVATE) {
+            if (channel.visibility == Visibility.PRIVATE) {
                 Button(
                     onClick = { onInviteMember() },
                     colors = ButtonColors(
@@ -197,12 +206,12 @@ fun ChannelHeader(
                     Text("Invite Member +")
                 }
             }
-            if (channelInfo.channel.creator == channelInfo.user) {
+            if (channel.creator == channelInfo.user) {
                 ChannelDialog(
                     "Edit Channel Name",
                     "Enter new channel name:",
                     "OK",
-                    channelInfo.channel.name,
+                    channel.name,
                     Color.LightGray,
                     Color.Black,
                     { newName -> onUpdateChannel(newName) },
@@ -221,13 +230,13 @@ fun ChannelInfoViewPreview() {
     val user1 = User(1, "Bob", "bob@example.com")
     val user2 = User(2, "Alice", "bob@example.com")
     val user3 = User(3, "Charlie", "bob@example.com")
-    val list = listOf(
-        Pair(user1, Role.READ_WRITE),
-        Pair(user2, Role.READ_WRITE),
-        Pair(user3, Role.READ_ONLY)
-    )
+    val list = MutableStateFlow(mapOf(
+        user1 to Role.READ_WRITE,
+        user2 to Role.READ_WRITE,
+        user3 to Role.READ_ONLY
+    ))
 
-    val channel = Channel(1, "Channel 1 long", user1, Visibility.PUBLIC)
+    val channel = MutableStateFlow(Channel(1, "Channel 1 long", user1, Visibility.PUBLIC))
     ChannelInfoView(
         channelInfo = ChannelInfo(User(1,"Bob", "bob@example.com"), channel, list),
         onUpdateChannel = { },

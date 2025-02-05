@@ -35,6 +35,7 @@ class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        viewModel.getSession()
         setContent {
             ChImpTheme {
                 Surface (

@@ -17,8 +17,8 @@ class UserRepoMock(
             cookies.forEach {
                 if(it.name == "token"){
                     val token = it.value
-                        val u = cookies.first { it.name == "user" }.value
-                        createSession(u.toInt())
+                    val u = cookies.first { it.name == "user" }.value
+                    createSession(u.toInt())
 
                 }
             }

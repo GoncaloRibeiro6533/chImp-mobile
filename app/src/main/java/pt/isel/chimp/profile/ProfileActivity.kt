@@ -9,7 +9,6 @@ import pt.isel.chimp.DependenciesContainer
 
 class ProfileActivity : ComponentActivity() {
 
-    private val chImpService by lazy { (application as DependenciesContainer).chImpService }
     private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
     private val chImpRepository by lazy { (application as DependenciesContainer).repo }
 
@@ -17,23 +16,19 @@ class ProfileActivity : ComponentActivity() {
         factoryProducer = {
             ProfileScreenViewModelFactory(
                 userInfoRepository,
-                chImpService,
                 chImpRepository
             )
         }
     )
 
-    private fun onNavigationBack() {
-        finish()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        viewModel.fetchProfile()
         setContent {
             ProfileScreen(
                 viewModel = viewModel,
-                onNavigateBack = { onNavigationBack() },
+                onNavigateBack = { finish() },
             )
         }
     }

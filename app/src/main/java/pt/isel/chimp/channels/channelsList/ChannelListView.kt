@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import pt.isel.chimp.channels.ChannelParcelable
+import pt.isel.chimp.domain.ChannelParcelable
 import pt.isel.chimp.channels.channelsList.components.ChannelItem
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel

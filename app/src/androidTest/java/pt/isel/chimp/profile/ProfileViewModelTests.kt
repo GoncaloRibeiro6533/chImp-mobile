@@ -9,6 +9,7 @@ import org.junit.Test
 import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
+import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.domain.profile.Profile
@@ -43,19 +44,15 @@ class ProfileViewModelTests {
         override suspend fun clearUserInfo() { }
     }
 
-    private val fakeService = object : UserService {
-        override suspend fun fetchUser(): Either<ApiError, User> = success(testUserInfo)
-        override suspend fun updateUsername(username: String) = success(testUserInfo)
-        override suspend fun login(username: String, password: String) = success(testUserInfo)
-        override suspend fun register(username: String, email: String, password: String) = success(testUserInfo)
-        override suspend fun findUserById(id: Int): Either<ApiError, User> = success(testUserInfo)
-        override suspend fun logout() = success(Unit)
-        override suspend fun findUserByUsername(query: String): Either<ApiError, List<User>> =
-            success(listOf(testUserInfo))
-    }
-
     private val fakeChannelRepository = object : ChannelRepositoryInterface {
-        override fun getChannels(): Flow<Map<Channel, Role>> = flow { }
+        override suspend fun fetchChannels(
+            user: User,
+            limit: Int,
+            skip: Int
+        ): Flow<Map<Channel, Role>> {
+            TODO("Not yet implemented")
+        }
+
         override suspend fun insertChannels(userId: Int, channels: Map<Channel, Role>) { }
         override suspend fun updateChannel(channel: Channel) { }
         override suspend fun insertUserInChannel(
@@ -65,14 +62,64 @@ class ProfileViewModelTests {
         ) { }
         override suspend fun removeUserFromChannel(userId: Int, channelId: Int) {}
         override suspend fun clear() {}
-        override fun getChannelMembers(channel: Channel): Flow<Map<User, Role>>  = flow { }
-        override fun getAllChannels(): Flow<List<Channel>> = flow { }
+        override suspend fun findByName(
+            name: String,
+            limit: Int,
+            skip: Int
+        ): Either<ApiError, List<Channel>> {
+            TODO("Not yet implemented")
+        }
+
         override suspend fun markChannelAsLoaded(channelId: Int) { }
         override suspend fun isLoaded(channelId: Int): Boolean = false
+        override suspend fun createChannel(
+            name: String,
+            creatorId: Int,
+            visibility: Visibility
+        ): Either<ApiError, Channel> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun changeChannelName(
+            channel: Channel,
+            name: String
+        ): Either<ApiError, Channel> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun leaveChannel(
+            channel: Channel,
+            user: User
+        ): Either<ApiError, Channel> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun fetchChannelMembers(channel: Channel): Flow<Map<User, Role>> {
+            TODO("Not yet implemented")
+        }
+
+        override fun getChannel(channel: Channel): Flow<Channel> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun joinChannel(
+            user: User,
+            channel: Channel,
+            role: Role
+        ): Either<ApiError, Channel> {
+            TODO("Not yet implemented")
+        }
     }
 
     private val fakeMessageRepository = object : MessageRepositoryInterface {
-        override fun getMessages(channel: Channel): Flow<List<Message>> = flow { }
+        override suspend fun fetchMessages(
+            channel: Channel,
+            limit: Int,
+            skip: Int
+        ): Flow<List<Message>> {
+            TODO("Not yet implemented")
+        }
+
         override suspend fun insertMessage(messages: List<Message>) { }
         override suspend fun channelHasMessages(channel: Channel): Boolean = false
         override suspend fun deleteMessages(channel: Channel) { }
@@ -80,17 +127,46 @@ class ProfileViewModelTests {
     }
 
     private val fakeInvitationRepository = object : InvitationRepositoryInterface {
-        override fun getInvitations(receiver: User): Flow<List<Invitation>> = flow { }
+        override suspend fun fetchInvitations(receiver: User): Flow<List<Invitation>> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun hasInvitations(): Boolean {
+            TODO("Not yet implemented")
+        }
+
         override suspend fun insertInvitations(invitations: List<Invitation>) {}
         override suspend fun deleteInvitation(invitationId: Int) {}
         override suspend fun deleteAllInvitations() {}
+        override suspend fun acceptInvitation(invitation: Invitation): Either<ApiError, Channel> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun declineInvitation(invitation: Invitation): Either<ApiError, Unit> {
+            TODO("Not yet implemented")
+        }
+
+        override suspend fun createInvitation(
+            receiverId: Int,
+            channelId: Int,
+            role: Role
+        ): Either<ApiError, Unit> {
+            TODO("Not yet implemented")
+        }
     }
 
     private val fakeUserRepository = object : UserRepositoryInterface {
         override suspend fun insertUser(users: List<User>) { }
+        override suspend fun changeUsername(newUsername: String): Either<ApiError, User> {
+            TODO("Not yet implemented")
+        }
+
         override fun getUsers(): Flow<List<User>> = flow { }
         override suspend fun updateUser(user: User) { }
         override suspend fun clear() { }
+        override suspend fun fetchByUsername(username: String): Either<ApiError, List<User>> {
+            TODO("Not yet implemented")
+        }
     }
 
     private val fakeRepository = object : ChImpRepo {
@@ -109,7 +185,6 @@ class ProfileViewModelTests {
     fun initial_state_is_Idle() {
             val sut = ProfileScreenViewModel(
                 fakeRepo,
-                fakeService,
                 fakeRepository
             )
             val state = sut.state.value
@@ -120,7 +195,6 @@ class ProfileViewModelTests {
     fun when_fetchProfile_is_called_state_transitions_to_loading() {
         val sut = ProfileScreenViewModel(
             fakeRepo,
-            fakeService,
             fakeRepository
         )
         sut.fetchProfile()
@@ -132,7 +206,6 @@ class ProfileViewModelTests {
     fun when_editProfile_is_called_state_is_Editing() {
         val sut = ProfileScreenViewModel(
             fakeRepo,
-            fakeService,
             fakeRepository,
             initialState = ProfileScreenState.Success(Profile("test", "test@example.com"))
         )
@@ -159,7 +232,6 @@ class ProfileViewModelTests {
     fun when_saveProfile_is_called_state_transitions_to_loading() {
         val sut = ProfileScreenViewModel(
             fakeRepo,
-            fakeService,
             fakeRepository,
             initialState = ProfileScreenState.EditingUsername(Profile("test", "test@example.com"))
         )
@@ -172,7 +244,6 @@ class ProfileViewModelTests {
     fun when_cancel_is_called_state_transitions_to_success() {
         val sut = ProfileScreenViewModel(
             fakeRepo,
-            fakeService,
             fakeRepository,
             initialState = ProfileScreenState.EditingUsername(Profile("test", "test@example.com"))
         )

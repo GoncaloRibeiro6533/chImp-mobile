@@ -1,23 +1,33 @@
 package pt.isel.chimp.repository
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.invitation.Invitation
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.repository.interfaces.InvitationRepositoryInterface
+import pt.isel.chimp.service.ChImpService
+import pt.isel.chimp.service.http.utils.ChImpException
 import pt.isel.chimp.storage.ChImpClientDB
 import pt.isel.chimp.storage.entities.ChannelEntity
 import pt.isel.chimp.storage.entities.InvitationEntity
-//import pt.isel.chimp.storage.entities.InvitationEntity
 import pt.isel.chimp.storage.entities.UserEntity
+import pt.isel.chimp.utils.Either
+import pt.isel.chimp.utils.Failure
+import pt.isel.chimp.utils.Success
+import pt.isel.chimp.utils.failure
+import pt.isel.chimp.utils.success
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 class InvitationRepository(
-    private val db: ChImpClientDB
+    private val local: ChImpClientDB,
+    private val remote: ChImpService
 ): InvitationRepositoryInterface
 {
 
@@ -37,14 +47,14 @@ class InvitationRepository(
                 it.timestamp.toEpochSecond(ZoneOffset.UTC)
             )
         }
-        db.userDao().insertUsers(*users.map {
+        local.userDao().insertUsers(*users.map {
             UserEntity(
                 it.id,
                 it.username,
                 it.email
             )
         }.toTypedArray())
-        db.channelDao().insertChannels(*channels.map {
+        local.channelDao().insertChannels(*channels.map {
             ChannelEntity(
                 it.id,
                 it.name,
@@ -53,12 +63,15 @@ class InvitationRepository(
                 invitations.first { invitation -> invitation.channel.id == it.id }.role.name
             )
         }.toTypedArray())
-        db.invitationDao().insertInvitations(*invitationsEntity.toTypedArray())
+        local.invitationDao().insertInvitations(*invitationsEntity.toTypedArray())
     }
 
+    override suspend fun hasInvitations(): Boolean {
+        return local.invitationDao().hasInvitations() > 0
+    }
 
-    override fun getInvitations(receiver: User) : Flow<List<Invitation>> {
-        return db.invitationDao().getAllInvitations().map { list ->
+    private fun getInvitations(receiver: User) : Flow<List<Invitation>> {
+        return local.invitationDao().getAllInvitations().map { list ->
             list.map { it ->
                 Invitation(
                     it.invitation.invitationId,
@@ -74,11 +87,64 @@ class InvitationRepository(
         }
     }
 
+    override suspend fun fetchInvitations(receiver: User): Flow<List<Invitation>> {
+        if (!hasInvitations()) {
+            when(val invitations = remote.invitationService.getInvitationsOfUser()) {
+                is Success -> {
+                    insertInvitations(invitations.value)
+                }
+                is Failure -> {
+                    throw ChImpException(invitations.value.message, null)
+                }
+            }
+        }
+        return getInvitations(receiver)
+    }
+
+    override suspend fun acceptInvitation(invitation: Invitation): Either<ApiError,Channel> =
+        when(val result= remote.invitationService.acceptInvitation(invitation.id)){
+            is Success -> {
+                local.invitationDao().deleteInvitation(invitation.id)
+                success(result.value)
+            }
+            is Failure -> {
+                if (result.value == ApiError("Invitation expired")) {
+                    local.invitationDao().deleteInvitation(invitation.id)
+                }
+                failure(result.value)
+            }
+        }
+
+    override suspend fun declineInvitation(invitation: Invitation): Either<ApiError, Unit> =
+        when(val result= remote.invitationService.declineInvitation(invitation.id)){
+            is Success -> {
+                local.invitationDao().deleteInvitation(invitation.id)
+                success(Unit)
+            }
+            is Failure -> {
+                if (result.value == ApiError("Invitation expired")) {
+                    local.invitationDao().deleteInvitation(invitation.id)
+                }
+                failure(result.value)
+            }
+        }
+
     override suspend fun deleteInvitation(invitationId: Int) {
-        db.invitationDao().deleteInvitation(invitationId)
+        local.invitationDao().deleteInvitation(invitationId)
     }
 
     override suspend fun deleteAllInvitations() {
-        db.invitationDao().deleteAllInvitations()
+        local.invitationDao().deleteAllInvitations()
     }
+
+    override suspend fun createInvitation(receiverId: Int, channelId: Int, role: Role): Either<ApiError, Unit> =
+        when (val result = remote.invitationService.createChannelInvitation(receiverId, channelId, role)) {
+            is Success -> {
+                success(Unit)
+            }
+            is Failure -> {
+                failure(result.value)
+            }
+        }
+
 }

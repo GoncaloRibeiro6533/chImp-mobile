@@ -186,26 +186,5 @@ private fun Social(@DrawableRes id: Int, onClick: () -> Unit) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun InfoScreenPreview() {
-    val socialsPreview = listOf(
-        CreatorInfo(
-            name = "Tiago Silva",
-            imageId = R.drawable.ic_user_img,
-            socials = socialsDefault("tiago15ts"),
-            email = "A48252@alunos.isel.pt"
-        ),
-        CreatorInfo(
-            name = "João Marques",
-            imageId = R.drawable.ic_user_img,
-            socials = socialsDefault("joaorvm"),
-            email = "A48297@alunos.isel.pt"
-        ),
-        CreatorInfo(
-            name = "Gonçalo Ribeiro",
-            imageId = R.drawable.ic_user_img,
-            socials = socialsDefault("GoncaloRibeiro6533"),
-            email = "A48305@alunos.isel.pt"
-        ),
-
-        )
     AboutScreen()
 }

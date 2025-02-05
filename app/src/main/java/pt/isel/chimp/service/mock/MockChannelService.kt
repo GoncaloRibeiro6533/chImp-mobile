@@ -104,8 +104,9 @@ class MockChannelService(
             delay(1000)
             if (newName.isBlank()) return@interceptRequest failure(ApiError("Invalid name"))
             val channel = repoMock.channelRepoMock.findChannelById(channelId) ?: return@interceptRequest failure(ApiError("Channel not found"))
-           // repoMock.channelRepoMock.updateChannelName(channelId, newName) TODO
-            return@interceptRequest success(channel)
+            return@interceptRequest success(
+                repoMock.channelRepoMock.updateChannelName(channel, newName)
+            )
         }
 
     override suspend fun removeUserFromChannel(

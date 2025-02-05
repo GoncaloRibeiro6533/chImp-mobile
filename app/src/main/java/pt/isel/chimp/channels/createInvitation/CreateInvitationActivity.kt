@@ -7,19 +7,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import pt.isel.chimp.DependenciesContainer
-import pt.isel.chimp.channels.ChannelParcelable
+import pt.isel.chimp.domain.ChannelParcelable
 import kotlin.getValue
 
 
 class CreateInvitationActivity: ComponentActivity() {
 
-    private val chImpService by lazy { (application as DependenciesContainer).chImpService }
     private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
+    private val repo by lazy { (application as DependenciesContainer).repo }
     private val viewModel by viewModels<CreateInvitationViewModel>(
         factoryProducer = {
             CreateInvitationViewModelFactory(
                 userInfoRepository,
-                chImpService
+                repo
             )
         }
     )

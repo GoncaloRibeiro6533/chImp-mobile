@@ -15,7 +15,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import pt.isel.chimp.workManager.sse.CoroutineSseWorkItem
 import pt.isel.chimp.DependenciesContainer
-import pt.isel.chimp.channels.ChannelParcelable
+import pt.isel.chimp.domain.ChannelParcelable
 import pt.isel.chimp.channels.channel.ChannelActivity
 import pt.isel.chimp.channels.createChannel.CreateChannelActivity
 import pt.isel.chimp.menu.MenuActivity
@@ -24,7 +24,6 @@ import android.Manifest
 
 class ChannelsListActivity : ComponentActivity() {
 
-    private val chImpService by lazy { (application as DependenciesContainer).chImpService }
     private val userInfoRepository by lazy { (application as DependenciesContainer).userInfoRepository }
     private val repo by lazy { (application as DependenciesContainer).repo }
 
@@ -32,7 +31,6 @@ class ChannelsListActivity : ComponentActivity() {
         factoryProducer = {
             ChannelsListViewModelFactory(
                 userInfoRepository,
-                chImpService,
                 repo
             )
         }

@@ -35,6 +35,7 @@ class MockInvitationService(
         role: Role,
     ): Either<ApiError, Invitation> =
         interceptRequest<Invitation> { sender ->
+            delay(1500)
             val receiver = repoMock.userRepoMock.findUserById(receiverId)
                 ?: return@interceptRequest Either.Left(ApiError("Receiver not found"))
             val channel = repoMock.channelRepoMock.findChannelById(channelId)

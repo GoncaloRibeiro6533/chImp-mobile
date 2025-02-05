@@ -11,7 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.StateFlow
-import pt.isel.chimp.channels.ChannelParcelable
+import pt.isel.chimp.domain.ChannelParcelable
 import pt.isel.chimp.channels.channelsList.components.ChannelItem
 import pt.isel.chimp.domain.Role
 import pt.isel.chimp.domain.channel.Channel
@@ -28,7 +28,7 @@ fun SearchChannelListView(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        items(channels) { channel ->
+        items(channels.sortedBy { it.name }) { channel ->
             val isUserInChannel = userC.containsKey(channel)
             ChannelItem(
                 channel = channel,
@@ -42,7 +42,7 @@ fun SearchChannelListView(
         if (channels.isEmpty()) {
             item {
                 Text(
-                    text = "You don't have any channels yet",
+                    text = "No channels found",
                     modifier = Modifier.padding(16.dp)
                 )
             }

@@ -11,8 +11,8 @@ import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.repository.UserInfoRepository
 import pt.isel.chimp.domain.user.User
 import pt.isel.chimp.domain.ApiError
+import pt.isel.chimp.repository.ChImpRepo
 import pt.isel.chimp.service.http.utils.ChImpException
-import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
 
@@ -29,8 +29,8 @@ sealed class CreateInvitationScreenState {
 
 
 class CreateInvitationViewModel(
-    private val repo: UserInfoRepository,
-    private val service: ChImpService,
+    private val userInfoRepository: UserInfoRepository,
+    private val repo: ChImpRepo,
     initialState : CreateInvitationScreenState = CreateInvitationScreenState.Idle
 ) : ViewModel() {
 
@@ -42,12 +42,12 @@ class CreateInvitationViewModel(
 
 
     fun searchUsers(query: String) {
-        if (_state.value != CreateInvitationScreenState.Loading) {
-            //    _state.value = CreateInvitationScreenState.Loading
+        if (_state.value != CreateInvitationScreenState.SearchUser(query)) {
+            _state.value = CreateInvitationScreenState.SearchUser(query)
             viewModelScope.launch {
                 _state.value = try {
-                    val user = repo.getUserInfo() ?: throw ChImpException("User not found", null)
-                    when (val users = service.userService.findUserByUsername(query)) {
+                    val user = userInfoRepository.getUserInfo() ?: throw ChImpException("User not found", null)
+                    when (val users = repo.userRepo.fetchByUsername(query)) {
                         is Success -> {
                             _users.value = users.value.filter { it.id != user.id }
                             CreateInvitationScreenState.Idle
@@ -61,29 +61,25 @@ class CreateInvitationViewModel(
         }
     }
 
-    fun inviteMember(channel: Channel, user: User?, role: Role?) {
-        if (user == null || role == null) {
-            _state.value = CreateInvitationScreenState.Error(ApiError("User and Role must be selected"))
-            return
-        }
-        /*if (_state.value != CreateInvitationScreenState.Loading) {
-            _state.value = CreateInvitationScreenState.Loading*/
-        viewModelScope.launch {
-            _state.value = try {
-                when (val result = service.invitationService.createChannelInvitation(
-                    user.id,
-                    channel.id,
-                    role
-                )) {
-                    is Success -> CreateInvitationScreenState.Success
-                    is Failure -> CreateInvitationScreenState.Error(result.value)
+    fun inviteMember(channel: Channel, user: User, role: Role) {
+        if (_state.value != CreateInvitationScreenState.Loading) {
+            _state.value = CreateInvitationScreenState.Loading
+            viewModelScope.launch {
+                _state.value = try {
+                    when (val result = repo.invitationRepo.createInvitation(
+                        user.id,
+                        channel.id,
+                        role
+                    )) {
+                        is Success -> CreateInvitationScreenState.Success
+                        is Failure -> CreateInvitationScreenState.Error(result.value)
+                    }
+                } catch (e: Throwable) {
+                    CreateInvitationScreenState.Error(ApiError("Error inviting user to Channel"))
                 }
-            } catch (e: Throwable) {
-                CreateInvitationScreenState.Error(ApiError("Error inviting user to Channel"))
             }
         }
     }
-    //}
 
     fun setIdle() {
         _state.value = CreateInvitationScreenState.Idle
@@ -95,13 +91,13 @@ class CreateInvitationViewModel(
 
 @Suppress("UNCHECKED_CAST")
 class CreateInvitationViewModelFactory(
-    private val repo: UserInfoRepository,
-    private val service: ChImpService,
+    private val userInfoRepository: UserInfoRepository,
+    private val repo: ChImpRepo,
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return CreateInvitationViewModel(
-            repo,
-            service
+            userInfoRepository,
+            repo
         ) as T
     }
 }

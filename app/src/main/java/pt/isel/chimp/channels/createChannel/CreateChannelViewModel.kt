@@ -6,15 +6,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import pt.isel.chimp.domain.Role
+import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.channel.Visibility
 import pt.isel.chimp.domain.repository.UserInfoRepository
-import pt.isel.chimp.domain.ApiError
-import pt.isel.chimp.service.http.utils.ChImpException
 import pt.isel.chimp.repository.ChImpRepo
-import pt.isel.chimp.service.ChImpService
-import pt.isel.chimp.service.ChannelService
+import pt.isel.chimp.service.http.utils.ChImpException
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
 
@@ -26,7 +23,6 @@ sealed interface CreateChannelScreenState {
 }
 
 class CreateChannelViewModel (
-    private val channelService: ChannelService,
     private val repo: ChImpRepo,
     private val userInfo: UserInfoRepository,
     initialState: CreateChannelScreenState = CreateChannelScreenState.Idle
@@ -42,18 +38,13 @@ class CreateChannelViewModel (
             viewModelScope.launch {
                 _state.value = try {
                     val userInfo = userInfo.getUserInfo() ?: throw ChImpException("User not found", null)
-                    val channel = channelService.createChannel(
+                    val channel = repo.channelRepo.createChannel(
                         name,
                         userInfo.id,
                         Visibility.valueOf(visibility)
                     )
                     when (channel) {
-                        is Success -> {
-                            repo.channelRepo.insertChannels(userInfo.id,
-                                mapOf(channel.value to Role.READ_WRITE)
-                            )
-                            CreateChannelScreenState.Success(channel.value)
-                        }
+                        is Success -> CreateChannelScreenState.Success(channel.value)
                         is Failure -> CreateChannelScreenState.Error(channel.value)
                     }
                 } catch (e: Throwable) {
@@ -71,11 +62,10 @@ class CreateChannelViewModel (
 
 @Suppress("UNCHECKED_CAST")
 class CreateChannelViewModelFactory(
-    private val service: ChImpService,
     private val repo: ChImpRepo,
     private val userInfo: UserInfoRepository
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>):  T {
-        return CreateChannelViewModel(service.channelService, repo, userInfo) as T
+        return CreateChannelViewModel(repo, userInfo) as T
     }
 }

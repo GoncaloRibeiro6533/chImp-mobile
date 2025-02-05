@@ -11,6 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pt.isel.chimp.components.LoadingView
+import pt.isel.chimp.domain.ChannelParcelable
+import pt.isel.chimp.domain.Role
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.ui.NavigationHandlers
 import pt.isel.chimp.ui.TopBar
@@ -20,7 +22,7 @@ import pt.isel.chimp.ui.theme.ChImpTheme
 fun CreateChannelScreen(
     viewModel: CreateChannelViewModel,
     onNavigateBack: () -> Unit = { },
-    onChannelCreated: () -> Unit
+    onChannelCreated: (ChannelParcelable) -> Unit
 ) {
 
     ChImpTheme {
@@ -48,7 +50,7 @@ fun CreateChannelScreen(
                         LoadingView()
                     }
                     is CreateChannelScreenState.Success -> {
-                        onChannelCreated()
+                        onChannelCreated(currentState.channel.toParcelable(Role.READ_WRITE))
                     }
                     is CreateChannelScreenState.Error -> {
                         ErrorAlert(
@@ -63,19 +65,3 @@ fun CreateChannelScreen(
         }
     }
 }
-
-/*
-@Suppress("UNCHECKED_CAST")
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun CreateChannelScreenPreview() {
-    val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
-    val cookieRepo = CookiesRepo(preferences)
-    CreateChannelScreen(
-        viewModel = CreateChannelViewModel(MockChannelService(RepoMockImpl(cookieRepo),
-            cookieRepo
-            )),
-        onNavigateBack = { },
-        onChannelCreated = { }
-    )
-}*/

@@ -56,36 +56,21 @@ fun ChannelScreen(
                     is ChannelScreenState.Uninitialized -> {
                         // do nothing
                     }
-                    is ChannelScreenState.LoadFromRemote,
-                    is ChannelScreenState.SaveData
-                        -> {
-                        if (state !is ChannelScreenState.SaveData )LoadingView()
-                        if (state is ChannelScreenState.LoadFromRemote) viewModel.loadRemoteData(channel)
-                        if (state is ChannelScreenState.SaveData) viewModel.saveData(
-                            state.messages
-                        )
-                    }
-
+                    is ChannelScreenState.Loading -> LoadingView()
                     is ChannelScreenState.LoadingMoreMessages,
-                    is ChannelScreenState.SaveMore,
                     is ChannelScreenState.Success,
                     is ChannelScreenState.SendingMessage,
                     is ChannelScreenState.LoadedAll
                         -> {
-                        if (state is ChannelScreenState.SaveMore) viewModel.saveData(
-                            state.messages
-                        )
                         ChannelView(
                             messages = viewModel.messages,
                             onMessageSend = { content -> viewModel.sendMessage(channel, content) },
                             userRole = role,
-                            onLoadMore = { size -> viewModel.loadRemoteData(channel, skip = size) },
-                            loadingMoreMessages = state is ChannelScreenState.LoadingMoreMessages
-                                    || state is ChannelScreenState.SaveMore,
+                            onLoadMore = { size -> viewModel.loadMoreMessages(channel, skip = size) },
+                            loadingMoreMessages = state is ChannelScreenState.LoadingMoreMessages,
                             loadedAll = state is ChannelScreenState.LoadedAll
                         )
                     }
-
                     is ChannelScreenState.Error ->
                         ErrorAlert(
                             title = "Error",

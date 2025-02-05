@@ -11,7 +11,6 @@ import pt.isel.chimp.service.mock.repo.RepoMockImpl
 
 class ChImpServiceMock(
     private val cookieStorage: CookiesRepo,
-    private val repo: ChImpRepo
 ) : ChImpService {
 
     val repoMock : RepoMockImpl by lazy {
@@ -25,7 +24,7 @@ class ChImpServiceMock(
         MockChannelService(repoMock, cookieStorage)
     }
     override val messageService: MessageService by lazy {
-        MockMessageService(repoMock, cookieStorage, repo)
+        MockMessageService(repoMock, cookieStorage)
     }
 
     override val invitationService: InvitationService by lazy {

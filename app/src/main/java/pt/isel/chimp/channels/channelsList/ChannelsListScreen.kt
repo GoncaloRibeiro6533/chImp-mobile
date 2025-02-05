@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.isel.chimp.channels.ChannelParcelable
+import pt.isel.chimp.domain.ChannelParcelable
 import pt.isel.chimp.components.LoadingView
 import pt.isel.chimp.profile.ErrorAlert
 import pt.isel.chimp.ui.NavigationHandlers
@@ -58,13 +58,7 @@ fun ChannelsListScreen(
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
                 when (state) {
-                    is ChannelsListScreenState.LoadFromRemote,
-                    is ChannelsListScreenState.SaveData
-                        -> {
-                        LoadingView()
-                        if (state is ChannelsListScreenState.LoadFromRemote) viewModel.loadRemoteData()
-                        if (state is ChannelsListScreenState.SaveData) viewModel.saveData(state.user,state.channels)
-                    }
+                    is ChannelsListScreenState.Loading -> LoadingView()
                     is ChannelsListScreenState.Uninitialized -> {
                         // do nothing
                     }
@@ -86,19 +80,3 @@ fun ChannelsListScreen(
         }
     }
 }
-/*
-@Suppress("UNCHECKED_CAST")
-@Preview(showBackground = true , showSystemUi = true)
-@Composable
-fun PreviewChannelsListScreen() {
-    val preferences: DataStore<Preferences> = preferencesDataStore(name = "preferences") as DataStore<Preferences>
-    ChannelsListScreen(
-        viewModel = ChannelsListViewModel(
-            UserInfoRepo(preferences),
-            MockChannelService(RepoMockImpl(), CookiesRepo(preferences))
-        ),
-        onMenuRequested = { },
-        onChannelSelected = { }
-    )
-}
-*/
