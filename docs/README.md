@@ -121,7 +121,7 @@ This diagram illustrates the overall architecture of the ChImp application, incl
 
 ## ChImp Activity and Screen Diagram
 
-![](<pdm.drawio%20(2).png>)
+![Activity diagram](<navigation.png>)
 
 ## General Overview
 
