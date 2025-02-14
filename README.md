@@ -64,8 +64,6 @@ the server is implemented in Kotlin using the Spring framework.
 - João Marques
 - Tiago Silva
 
- Professor: Eng. Paulo Pereira
-
 @ISEL<br>
 Bachelor in Computer Science and Computer Engineering<br>
 Mobile Devices Programming - LEIC53D - Group 15<br>
