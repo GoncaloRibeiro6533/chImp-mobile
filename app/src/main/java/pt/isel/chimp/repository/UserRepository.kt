@@ -3,9 +3,7 @@ package pt.isel.chimp.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import pt.isel.chimp.domain.ApiError
-import pt.isel.chimp.domain.profile.Profile
 import pt.isel.chimp.domain.user.User
-import pt.isel.chimp.profile.ProfileScreenState
 import pt.isel.chimp.repository.interfaces.UserRepositoryInterface
 import pt.isel.chimp.service.ChImpService
 import pt.isel.chimp.storage.ChImpClientDB

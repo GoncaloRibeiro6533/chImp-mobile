@@ -13,4 +13,5 @@ interface MessageRepositoryInterface {
     suspend fun deleteMessages(channel: Channel)
     suspend fun clear()
     suspend fun loadMoreMessages(channel: Channel, limit: Int, skip: Int): Either<ApiError,List<Message>>
+    suspend fun hasMoreMessages(channel: Channel, limit: Int, skip: Int) : Boolean
 }

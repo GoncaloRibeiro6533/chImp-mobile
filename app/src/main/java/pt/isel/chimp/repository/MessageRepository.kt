@@ -3,6 +3,7 @@ package pt.isel.chimp.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import pt.isel.chimp.domain.ApiError
 import pt.isel.chimp.domain.channel.Channel
 import pt.isel.chimp.domain.message.Message
 import pt.isel.chimp.domain.user.User
@@ -12,6 +13,7 @@ import pt.isel.chimp.service.http.utils.ChImpException
 import pt.isel.chimp.storage.ChImpClientDB
 import pt.isel.chimp.storage.entities.MessageEntity
 import pt.isel.chimp.storage.entities.UserEntity
+import pt.isel.chimp.utils.Either
 import pt.isel.chimp.utils.Failure
 import pt.isel.chimp.utils.Success
 import pt.isel.chimp.utils.failure
@@ -69,7 +71,7 @@ class MessageRepository(
     }
 
     private suspend fun getFromAPI(channel: Channel, limit: Int, skip: Int) =
-            remote.messageService.getMessagesByChannel(channel.id, limit, skip)
+        remote.messageService.getMessagesByChannel(channel.id, limit, skip)
 
     override suspend fun fetchMessages(channel: Channel, limit: Int, skip: Int): Flow<List<Message>> {
         if (!local.channelDao().isLoaded(channel.id)) {
@@ -93,12 +95,16 @@ class MessageRepository(
         local.messageDao().clear()
     }
 
-      override suspend fun loadMoreMessages(channel: Channel, limit: Int, skip: Int) =
-        when (val result = getFromAPI(channel, limit, skip)) {
+     override suspend fun hasMoreMessages(channel: Channel, limit: Int, skip: Int) =
+        local.messageDao().nMessagesOfChannel(channel.id) > limit + skip
+
+    override suspend fun loadMoreMessages(channel: Channel, limit: Int, skip: Int) : Either<ApiError, List<Message>> {
+        return when (val result = getFromAPI(channel, limit, skip)) {
             is Success -> {
                 insertMessage(result.value)
                 success(result.value)
             }
             is Failure -> failure(result.value)
         }
+    }
 }
