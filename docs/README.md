@@ -86,21 +86,21 @@ This diagram illustrates the overall architecture of the ChImp application, incl
 - **app/**: Main source code and resources.
   - **src/**: Source code.
     - **main/**: Main source code and resources.
-      - **java/pt/isel/chimp/screens**: Kotlin source files.
-        - **about/**: About screen.
-        - **authentication/**: Authentication screens.
-        - **channels/**: Channel screens.
-        - **components/**: Reusable UI components.
-        - **domain/**: Domain models.
-        - **home/**: Home screen.
+      - **java/pt/isel/chimp**: Kotlin source files.
+        - **ui/screens**: Screens
+          - **about/**: About screen.
+          - **authentication/**: Authentication screens.
+          - **channels/**: Channel screens.
+          - **components/**: Reusable UI components.
+          - **domain/**: Domain models.
+          - **home/**: Home screen.
+          - **invitationList/**: Invitation List screen.
+          - **menu/**: Menu screen.
+          - **profile/**: Profile screen. 
         - **infrastructure/**: Data persistence using DataStore
-        - **invitationList/**: Invitation List screen.
-        - **menu/**: Menu screen.
-        - **profile/**: Profile screen.
         - **repository/**: Data access layer following the Repository Pattern.
         - **service/**: API communication, including the mock service.
         - **storage/**: Local data storage using room.
-        - **ui/**: UI classes and themes.
         - **utils/**: Utility classes.
       - **res/**: Resources (layouts, drawables, etc.).
       - **AndroidManifest.xml**: Android manifest file.
