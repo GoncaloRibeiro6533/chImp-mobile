@@ -86,7 +86,7 @@ This diagram illustrates the overall architecture of the ChImp application, incl
 - **app/**: Main source code and resources.
   - **src/**: Source code.
     - **main/**: Main source code and resources.
-      - **java/pt/isel/chimp/**: Kotlin source files.
+      - **java/pt/isel/chimp/screens**: Kotlin source files.
         - **about/**: About screen.
         - **authentication/**: Authentication screens.
         - **channels/**: Channel screens.
